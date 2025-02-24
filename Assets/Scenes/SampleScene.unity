@@ -592,9 +592,10 @@ GameObject:
   m_Component:
   - component: {fileID: 654743014}
   - component: {fileID: 654743015}
+  - component: {fileID: 654743016}
   m_Layer: 0
   m_Name: Monster
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -608,7 +609,7 @@ Transform:
   m_GameObject: {fileID: 654743013}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.084, y: 0, z: 1}
+  m_LocalPosition: {x: 2.7, y: -6.14, z: 1}
   m_LocalScale: {x: 0.25, y: 0.31, z: 0.31}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -627,7 +628,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56827805079674daa87cabe3255b5b13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 0.5
+  maxHealth: 3
+  isClone: 0
+  fixedPosition: {x: 0, y: 0, z: 0}
+--- !u!136 &654743016
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654743013}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &763387503
 GameObject:
   m_ObjectHideFlags: 0
@@ -1755,6 +1782,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
+  maxHealth: 100
 --- !u!54 &1962844612
 Rigidbody:
   m_ObjectHideFlags: 0

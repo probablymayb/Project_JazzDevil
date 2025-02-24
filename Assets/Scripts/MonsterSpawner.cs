@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    public GameObject monsterPrefab; // 몬스터 프리팹
+    public GameObject monsterPrefab; // 몬스터 프리팹 (원본)
     public float minDistance = 3f;   // 몬스터 최소 스폰 거리
     public float maxDistance = 10f;  // 몬스터 최대 스폰 거리
 
@@ -16,31 +16,42 @@ public class MonsterSpawner : MonoBehaviour
 
     void SpawnMonster()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player"); // 플레이어 찾기
+        if (monsterPrefab == null)
+        {
+            Debug.LogWarning("MonsterPrefab이 설정되지 않았습니다. MonsterSpawner에 Prefab을 할당하세요.");
+            return;
+        }
 
-        if (player != null && monsterPrefab != null)
+        // 플레이어 기준으로 스폰 위치 설정 (없을 경우 맵 중앙)
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Vector3 basePosition = player != null ? player.transform.position : Vector3.zero;
+
+        Vector3 spawnPosition = GetRandomSpawnPosition(basePosition);
+
+        // MonsterPrefab을 기준으로 인스턴스 생성
+        GameObject newMonster = Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
+
+        // 클론으로 설정
+        MonsterAI monsterAI = newMonster.GetComponent<MonsterAI>();
+        if (monsterAI != null)
         {
-            Vector3 spawnPosition = GetRandomSpawnPosition(player.transform.position);
-            Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
+            monsterAI.isClone = true; // 복제된 몬스터로 설정
+            monsterAI.speed = 1.0f;   // 복제 몬스터 속도 활성화
         }
-        else
-        {
-            Debug.LogWarning("Player 또는 MonsterPrefab이 설정되지 않았습니다!");
-        }
+
     }
 
-    Vector3 GetRandomSpawnPosition(Vector3 playerPosition)
+    Vector3 GetRandomSpawnPosition(Vector3 basePosition)
     {
         Vector3 spawnPosition;
         float distance;
 
         do
         {
-            // 랜덤 방향 설정 (XY 평면이 아닌, XZ 평면에서)
             Vector2 randomCircle = Random.insideUnitCircle.normalized;
-            distance = Random.Range(minDistance, maxDistance); // 최소~최대 거리 사이에서 랜덤 선택
-            spawnPosition = playerPosition + new Vector3(randomCircle.x * distance, 0, randomCircle.y * distance);
-        } while (Vector3.Distance(spawnPosition, playerPosition) < minDistance); // 최소 거리보다 가까우면 다시 생성
+            distance = Random.Range(minDistance, maxDistance);
+            spawnPosition = basePosition + new Vector3(randomCircle.x * distance, 0, randomCircle.y * distance);
+        } while (Vector3.Distance(spawnPosition, basePosition) < minDistance);
 
         return spawnPosition;
     }
