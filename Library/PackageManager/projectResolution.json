@@ -1,18 +1,18 @@
 {
   "context": {
-    "projectPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Packages",
+    "projectPath": "E:/UnityProjects/Project_JazzDevil/Packages",
     "unityVersion": "6000.0.37f1"
   },
   "inputs": [
-    "/Users/jongha/Documents/GitHub/Project_JazzDevil/Packages/manifest.json",
-    "/Users/jongha/Documents/GitHub/Project_JazzDevil/Packages/packages-lock.json",
-    "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/BuiltInPackagesCombined.sha1"
+    "E:\\UnityProjects\\Project_JazzDevil\\Packages\\manifest.json",
+    "E:\\UnityProjects\\Project_JazzDevil\\Packages\\packages-lock.json",
+    "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\BuiltInPackagesCombined.sha1"
   ],
   "outputs": {
     "com.unity.2d.animation@10.1.4": {
       "name": "com.unity.2d.animation",
       "displayName": "2D Animation",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.2d.animation@494a3b4e73a9",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.2d.animation@494a3b4e73a9",
       "fingerprint": "494a3b4e73a9ae26677ef6e9fd6bff4ca643770a",
       "editorCompatibility": "2023.1.0a1",
       "version": "10.1.4",
@@ -22,7 +22,7 @@
     "com.unity.2d.sprite@1.0.0": {
       "name": "com.unity.2d.sprite",
       "displayName": "2D Sprite",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.2d.sprite@072d7bd355e5",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.2d.sprite@072d7bd355e5",
       "fingerprint": "072d7bd355e55ee3ded20a6a52435a4f5fded0d8",
       "editorCompatibility": "2019.2.0a1",
       "version": "1.0.0",
@@ -32,7 +32,7 @@
     "com.unity.ai.navigation@2.0.5": {
       "name": "com.unity.ai.navigation",
       "displayName": "AI Navigation",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.ai.navigation@9f76b145f0a8",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.ai.navigation@9f76b145f0a8",
       "fingerprint": "9f76b145f0a8dd734ff2a4877f7f7edb83b7f62c",
       "editorCompatibility": "2023.2.0a18",
       "version": "2.0.5",
@@ -42,7 +42,7 @@
     "com.unity.collab-proxy@2.6.0": {
       "name": "com.unity.collab-proxy",
       "displayName": "Version Control",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.collab-proxy@001b54a8988a",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.collab-proxy@001b54a8988a",
       "fingerprint": "001b54a8988a14785c8e209d6c788bb15f9e58cf",
       "editorCompatibility": "2021.3.0f1",
       "version": "2.6.0",
@@ -52,7 +52,7 @@
     "com.unity.ide.rider@3.0.31": {
       "name": "com.unity.ide.rider",
       "displayName": "JetBrains Rider Editor",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.ide.rider@7921be93db40",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.ide.rider@7921be93db40",
       "fingerprint": "7921be93db40ec070fcb01ed82d1c3df1bbdddcd",
       "editorCompatibility": "2019.2.6f1",
       "version": "3.0.31",
@@ -62,7 +62,7 @@
     "com.unity.ide.visualstudio@2.0.22": {
       "name": "com.unity.ide.visualstudio",
       "displayName": "Visual Studio Editor",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.ide.visualstudio@8140e851d83e",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.ide.visualstudio@8140e851d83e",
       "fingerprint": "8140e851d83e922ca2021b04a89519de94ebe38c",
       "editorCompatibility": "2019.4.25f1",
       "version": "2.0.22",
@@ -72,7 +72,7 @@
     "com.unity.inputsystem@1.12.0": {
       "name": "com.unity.inputsystem",
       "displayName": "Input System",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.inputsystem@920b46832575",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.inputsystem@920b46832575",
       "fingerprint": "920b46832575a5beecb201e0a4570b4984b7ec34",
       "editorCompatibility": "2019.4.0a1",
       "version": "1.12.0",
@@ -82,7 +82,7 @@
     "com.unity.multiplayer.center@1.0.0": {
       "name": "com.unity.multiplayer.center",
       "displayName": "Multiplayer Center",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.multiplayer.center@f502d8ac613f",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.multiplayer.center@f502d8ac613f",
       "fingerprint": "f502d8ac613fa076192423e73892fbd89eb4049b",
       "editorCompatibility": "6000.0.0a1",
       "version": "1.0.0",
@@ -92,7 +92,7 @@
     "com.unity.render-pipelines.universal@17.0.3": {
       "name": "com.unity.render-pipelines.universal",
       "displayName": "Universal RP",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.render-pipelines.universal@15fef0f41df6",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.render-pipelines.universal@15fef0f41df6",
       "fingerprint": "15fef0f41df63b57e2797b4e2e5e8059e45eacd1",
       "editorCompatibility": "6000.0.0a1",
       "version": "17.0.3",
@@ -102,7 +102,7 @@
     "com.unity.test-framework@1.4.5": {
       "name": "com.unity.test-framework",
       "displayName": "Test Framework",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.test-framework@0a21eb82d95c",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.test-framework@0a21eb82d95c",
       "fingerprint": "0a21eb82d95cd331643a1e0ce4e8e9a5f18954c8",
       "editorCompatibility": "2019.4.0a10",
       "version": "1.4.5",
@@ -112,7 +112,7 @@
     "com.unity.timeline@1.8.7": {
       "name": "com.unity.timeline",
       "displayName": "Timeline",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.timeline@c58b4ee65782",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.timeline@c58b4ee65782",
       "fingerprint": "c58b4ee65782ad38338e29f7ee67787cb6998f04",
       "editorCompatibility": "2019.3.0a1",
       "version": "1.8.7",
@@ -122,7 +122,7 @@
     "com.unity.ugui@2.0.0": {
       "name": "com.unity.ugui",
       "displayName": "Unity UI",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.ugui@603b5c2e4e5a",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.ugui@603b5c2e4e5a",
       "fingerprint": "603b5c2e4e5a76409787d1f845212061e169767a",
       "editorCompatibility": "2019.2.0a1",
       "version": "2.0.0",
@@ -132,7 +132,7 @@
     "com.unity.visualscripting@1.9.5": {
       "name": "com.unity.visualscripting",
       "displayName": "Visual Scripting",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.visualscripting@1b53f46e931b",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.visualscripting@1b53f46e931b",
       "fingerprint": "1b53f46e931bea668e53f1feb0ac9138170c9455",
       "editorCompatibility": "2021.3.0a1",
       "version": "1.9.5",
@@ -142,7 +142,7 @@
     "com.unity.modules.accessibility@1.0.0": {
       "name": "com.unity.modules.accessibility",
       "displayName": "Accessibility",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.accessibility",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.accessibility",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -150,7 +150,7 @@
     "com.unity.modules.ai@1.0.0": {
       "name": "com.unity.modules.ai",
       "displayName": "AI",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.ai",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.ai",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -158,7 +158,7 @@
     "com.unity.modules.androidjni@1.0.0": {
       "name": "com.unity.modules.androidjni",
       "displayName": "Android JNI",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.androidjni",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.androidjni",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -166,7 +166,7 @@
     "com.unity.modules.animation@1.0.0": {
       "name": "com.unity.modules.animation",
       "displayName": "Animation",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.animation",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.animation",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -174,7 +174,7 @@
     "com.unity.modules.assetbundle@1.0.0": {
       "name": "com.unity.modules.assetbundle",
       "displayName": "Asset Bundle",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.assetbundle",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.assetbundle",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -182,7 +182,7 @@
     "com.unity.modules.audio@1.0.0": {
       "name": "com.unity.modules.audio",
       "displayName": "Audio",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.audio",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.audio",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -190,7 +190,7 @@
     "com.unity.modules.cloth@1.0.0": {
       "name": "com.unity.modules.cloth",
       "displayName": "Cloth",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.cloth",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.cloth",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -198,7 +198,7 @@
     "com.unity.modules.director@1.0.0": {
       "name": "com.unity.modules.director",
       "displayName": "Director",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.director",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.director",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -206,7 +206,7 @@
     "com.unity.modules.imageconversion@1.0.0": {
       "name": "com.unity.modules.imageconversion",
       "displayName": "Image Conversion",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.imageconversion",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.imageconversion",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -214,7 +214,7 @@
     "com.unity.modules.imgui@1.0.0": {
       "name": "com.unity.modules.imgui",
       "displayName": "IMGUI",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.imgui",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.imgui",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -222,7 +222,7 @@
     "com.unity.modules.jsonserialize@1.0.0": {
       "name": "com.unity.modules.jsonserialize",
       "displayName": "JSONSerialize",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.jsonserialize",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.jsonserialize",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -230,7 +230,7 @@
     "com.unity.modules.particlesystem@1.0.0": {
       "name": "com.unity.modules.particlesystem",
       "displayName": "Particle System",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.particlesystem",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.particlesystem",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -238,7 +238,7 @@
     "com.unity.modules.physics@1.0.0": {
       "name": "com.unity.modules.physics",
       "displayName": "Physics",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.physics",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.physics",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -246,7 +246,7 @@
     "com.unity.modules.physics2d@1.0.0": {
       "name": "com.unity.modules.physics2d",
       "displayName": "Physics 2D",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.physics2d",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.physics2d",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -254,7 +254,7 @@
     "com.unity.modules.screencapture@1.0.0": {
       "name": "com.unity.modules.screencapture",
       "displayName": "Screen Capture",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.screencapture",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.screencapture",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -262,7 +262,7 @@
     "com.unity.modules.terrain@1.0.0": {
       "name": "com.unity.modules.terrain",
       "displayName": "Terrain",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.terrain",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.terrain",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -270,7 +270,7 @@
     "com.unity.modules.terrainphysics@1.0.0": {
       "name": "com.unity.modules.terrainphysics",
       "displayName": "Terrain Physics",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.terrainphysics",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.terrainphysics",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -278,7 +278,7 @@
     "com.unity.modules.tilemap@1.0.0": {
       "name": "com.unity.modules.tilemap",
       "displayName": "Tilemap",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.tilemap",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.tilemap",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -286,7 +286,7 @@
     "com.unity.modules.ui@1.0.0": {
       "name": "com.unity.modules.ui",
       "displayName": "UI",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.ui",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.ui",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -294,7 +294,7 @@
     "com.unity.modules.uielements@1.0.0": {
       "name": "com.unity.modules.uielements",
       "displayName": "UIElements",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.uielements",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.uielements",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -302,7 +302,7 @@
     "com.unity.modules.umbra@1.0.0": {
       "name": "com.unity.modules.umbra",
       "displayName": "Umbra",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.umbra",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.umbra",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -310,7 +310,7 @@
     "com.unity.modules.unityanalytics@1.0.0": {
       "name": "com.unity.modules.unityanalytics",
       "displayName": "Unity Analytics",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unityanalytics",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.unityanalytics",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -318,7 +318,7 @@
     "com.unity.modules.unitywebrequest@1.0.0": {
       "name": "com.unity.modules.unitywebrequest",
       "displayName": "Unity Web Request",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequest",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.unitywebrequest",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -326,7 +326,7 @@
     "com.unity.modules.unitywebrequestassetbundle@1.0.0": {
       "name": "com.unity.modules.unitywebrequestassetbundle",
       "displayName": "Unity Web Request Asset Bundle",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestassetbundle",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.unitywebrequestassetbundle",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -334,7 +334,7 @@
     "com.unity.modules.unitywebrequestaudio@1.0.0": {
       "name": "com.unity.modules.unitywebrequestaudio",
       "displayName": "Unity Web Request Audio",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestaudio",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.unitywebrequestaudio",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -342,7 +342,7 @@
     "com.unity.modules.unitywebrequesttexture@1.0.0": {
       "name": "com.unity.modules.unitywebrequesttexture",
       "displayName": "Unity Web Request Texture",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequesttexture",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.unitywebrequesttexture",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -350,7 +350,7 @@
     "com.unity.modules.unitywebrequestwww@1.0.0": {
       "name": "com.unity.modules.unitywebrequestwww",
       "displayName": "Unity Web Request WWW",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestwww",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.unitywebrequestwww",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -358,7 +358,7 @@
     "com.unity.modules.vehicles@1.0.0": {
       "name": "com.unity.modules.vehicles",
       "displayName": "Vehicles",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.vehicles",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.vehicles",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -366,7 +366,7 @@
     "com.unity.modules.video@1.0.0": {
       "name": "com.unity.modules.video",
       "displayName": "Video",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.video",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.video",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -374,7 +374,7 @@
     "com.unity.modules.vr@1.0.0": {
       "name": "com.unity.modules.vr",
       "displayName": "VR",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.vr",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.vr",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -382,7 +382,7 @@
     "com.unity.modules.wind@1.0.0": {
       "name": "com.unity.modules.wind",
       "displayName": "Wind",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.wind",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.wind",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -390,7 +390,7 @@
     "com.unity.modules.xr@1.0.0": {
       "name": "com.unity.modules.xr",
       "displayName": "XR",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.xr",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.xr",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -398,7 +398,7 @@
     "com.unity.modules.subsystems@1.0.0": {
       "name": "com.unity.modules.subsystems",
       "displayName": "Subsystems",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.subsystems",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.subsystems",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -406,7 +406,7 @@
     "com.unity.modules.hierarchycore@1.0.0": {
       "name": "com.unity.modules.hierarchycore",
       "displayName": "Hierarchy Core",
-      "resolvedPath": "/Applications/Unity/Hub/Editor/6000.0.37f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.hierarchycore",
+      "resolvedPath": "E:\\UnityEditor\\6000.0.37f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\com.unity.modules.hierarchycore",
       "version": "1.0.0",
       "source": "builtin",
       "testable": false
@@ -414,7 +414,7 @@
     "com.unity.ext.nunit@2.0.5": {
       "name": "com.unity.ext.nunit",
       "displayName": "Custom NUnit",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.ext.nunit@60ef35ffd3cd",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.ext.nunit@60ef35ffd3cd",
       "fingerprint": "60ef35ffd3cd5e2f5c8887a4a4ca6148854cd092",
       "editorCompatibility": "2019.4.0a1",
       "version": "2.0.5",
@@ -424,7 +424,7 @@
     "com.unity.render-pipelines.core@17.0.3": {
       "name": "com.unity.render-pipelines.core",
       "displayName": "Core RP Library",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.render-pipelines.core@89eb3bdcd743",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.render-pipelines.core@89eb3bdcd743",
       "fingerprint": "89eb3bdcd743e8f493dab0dfcf09ae61877103a4",
       "editorCompatibility": "6000.0.0a1",
       "version": "17.0.3",
@@ -434,7 +434,7 @@
     "com.unity.shadergraph@17.0.3": {
       "name": "com.unity.shadergraph",
       "displayName": "Shader Graph",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.shadergraph@911117698220",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.shadergraph@911117698220",
       "fingerprint": "9111176982208cf007caa931c3cf2716ceec4632",
       "editorCompatibility": "6000.0.0a1",
       "version": "17.0.3",
@@ -444,7 +444,7 @@
     "com.unity.render-pipelines.universal-config@17.0.3": {
       "name": "com.unity.render-pipelines.universal-config",
       "displayName": "Universal RP Config",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.render-pipelines.universal-config@fa63c96d3e1a",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.render-pipelines.universal-config@fa63c96d3e1a",
       "fingerprint": "fa63c96d3e1af317d84d171cd6c0e0658ab159df",
       "editorCompatibility": "6000.0.0a1",
       "version": "17.0.3",
@@ -454,7 +454,7 @@
     "com.unity.2d.common@9.0.7": {
       "name": "com.unity.2d.common",
       "displayName": "2D Common",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.2d.common@bb1fc9b3d81b",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.2d.common@bb1fc9b3d81b",
       "fingerprint": "bb1fc9b3d81b3bb452c6708e8c088fe4224a0369",
       "editorCompatibility": "2023.1.0a1",
       "version": "9.0.7",
@@ -464,7 +464,7 @@
     "com.unity.collections@2.5.1": {
       "name": "com.unity.collections",
       "displayName": "Collections",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.collections@56bff8827a7e",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.collections@56bff8827a7e",
       "fingerprint": "56bff8827a7ef6d44fcee4f36e558a74da89c1a0",
       "editorCompatibility": "2022.3.11f1",
       "version": "2.5.1",
@@ -474,7 +474,7 @@
     "com.unity.searcher@4.9.2": {
       "name": "com.unity.searcher",
       "displayName": "Searcher",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.searcher@90d011a70418",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.searcher@90d011a70418",
       "fingerprint": "90d011a70418fd5b0f4b8e86df39444d2af228dd",
       "editorCompatibility": "2019.1.0a1",
       "version": "4.9.2",
@@ -484,7 +484,7 @@
     "com.unity.burst@1.8.19": {
       "name": "com.unity.burst",
       "displayName": "Burst",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.burst@7a907cf5a459",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.burst@7a907cf5a459",
       "fingerprint": "7a907cf5a4591e4e25f4203e3be84f240058c34d",
       "editorCompatibility": "2020.3.0a1",
       "version": "1.8.19",
@@ -494,7 +494,7 @@
     "com.unity.mathematics@1.3.2": {
       "name": "com.unity.mathematics",
       "displayName": "Mathematics",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.mathematics@8017b507cc74",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.mathematics@8017b507cc74",
       "fingerprint": "8017b507cc74bf0a1dd14b18aa860569f807314d",
       "editorCompatibility": "2021.3.0a1",
       "version": "1.3.2",
@@ -504,7 +504,7 @@
     "com.unity.rendering.light-transport@1.0.1": {
       "name": "com.unity.rendering.light-transport",
       "displayName": "Unity Light Transport Library",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.rendering.light-transport@307bc27a498f",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.rendering.light-transport@307bc27a498f",
       "fingerprint": "307bc27a498fc9cd409bbd426c85d8dc7f140bc1",
       "editorCompatibility": "2023.3.0b1",
       "version": "1.0.1",
@@ -514,7 +514,7 @@
     "com.unity.nuget.mono-cecil@1.11.4": {
       "name": "com.unity.nuget.mono-cecil",
       "displayName": "Mono Cecil",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.nuget.mono-cecil@d6f9955a5d5f",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.nuget.mono-cecil@d6f9955a5d5f",
       "fingerprint": "d6f9955a5d5f84d45442ff1ad0fb694cc6e2fd62",
       "editorCompatibility": "2018.4.0a1",
       "version": "1.11.4",
@@ -524,7 +524,7 @@
     "com.unity.test-framework.performance@3.0.3": {
       "name": "com.unity.test-framework.performance",
       "displayName": "Performance testing API",
-      "resolvedPath": "/Users/jongha/Documents/GitHub/Project_JazzDevil/Library/PackageCache/com.unity.test-framework.performance@fb0dc592af8b",
+      "resolvedPath": "E:\\UnityProjects\\Project_JazzDevil\\Library\\PackageCache\\com.unity.test-framework.performance@fb0dc592af8b",
       "fingerprint": "fb0dc592af8b524f1a06c50d7caf95552f1bcd2f",
       "editorCompatibility": "2020.3.0a1",
       "version": "3.0.3",

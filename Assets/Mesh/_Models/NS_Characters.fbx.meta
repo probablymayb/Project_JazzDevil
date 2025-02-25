@@ -1,0 +1,316 @@
+fileFormatVersion: 2
+guid: 3126785e2ef89e341902754ca1244eeb
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Head
+    100004: Hips
+    100006: LeftArm
+    100008: LeftFingers1
+    100010: LeftFingers2
+    100012: LeftFoot
+    100014: LeftForeArm
+    100016: LeftHand
+    100018: LeftLeg
+    100020: LeftShoulder
+    100022: LeftThumb1
+    100024: LeftThumb2
+    100026: LeftToeBase
+    100028: LeftUpLeg
+    100030: Neck
+    100032: NS_Character_Female_Dress_Wide
+    100034: NS_Character_Female_FeatherHat
+    100036: NS_Character_Male_Blazer
+    100038: NS_Character_Male_Coat
+    100040: NS_Character_Male_Policeman
+    100042: RightArm
+    100044: RightFingers3
+    100046: RightFingers4
+    100048: RightFoot
+    100050: RightForeArm
+    100052: RightHand
+    100054: RightLeg
+    100056: RightShoulder
+    100058: RightThumb3
+    100060: RightThumb4
+    100062: RightToeBase
+    100064: RightUpLeg
+    100066: Spine
+    100068: Spine1
+    100070: Spine2
+    100072: Guides
+    100074: Head 1
+    100076: Hips 1
+    100078: LeftArm 1
+    100080: LeftFoot 1
+    100082: LeftForeArm 1
+    100084: LeftHand 1
+    100086: LeftHandIndex1
+    100088: LeftHandIndex2
+    100090: LeftHandIndex3
+    100092: LeftHandMiddle1
+    100094: LeftHandMiddle2
+    100096: LeftHandMiddle3
+    100098: LeftHandPinky1
+    100100: LeftHandPinky2
+    100102: LeftHandPinky3
+    100104: LeftHandRing1
+    100106: LeftHandRing2
+    100108: LeftHandRing3
+    100110: LeftHandThumb1
+    100112: LeftHandThumb2
+    100114: LeftHandThumb3
+    100116: LeftLeg 1
+    100118: LeftShoulder 1
+    100120: LeftToeBase 1
+    100122: LeftUpLeg 1
+    100124: Neck 1
+    100126: NS_Character_Female_Necklace
+    100128: NS_Character_Female_Necklace 1
+    100130: NS_Character_Female_Necklace_Hat
+    100132: NS_Character_Female_Ponytail
+    100134: NS_Character_Female_Ponytail 1
+    100136: NS_Character_Male_Blazer 1
+    100138: NS_Character_Male_Blazer_Hat
+    100140: NS_Character_Male_Coat 1
+    100142: NS_Character_Male_Coat_Hat
+    100144: NS_Character_Male_Policeman 1
+    100146: NS_Character_Male_Policeman_Hat
+    100148: Reference
+    100150: RightArm 1
+    100152: RightFoot 1
+    100154: RightForeArm 1
+    100156: RightHand 1
+    100158: RightHandIndex4
+    100160: RightHandIndex5
+    100162: RightHandIndex6
+    100164: RightHandMiddle4
+    100166: RightHandMiddle5
+    100168: RightHandMiddle6
+    100170: RightHandPinky4
+    100172: RightHandPinky5
+    100174: RightHandPinky6
+    100176: RightHandRing4
+    100178: RightHandRing5
+    100180: RightHandRing6
+    100182: RightHandThumb4
+    100184: RightHandThumb5
+    100186: RightHandThumb6
+    100188: RightLeg 1
+    100190: RightShoulder 1
+    100192: RightToeBase 1
+    100194: RightUpLeg 1
+    100196: Spine 1
+    100198: Spine1 1
+    100200: Spine2 1
+    400000: //RootNode
+    400002: Head
+    400004: Hips
+    400006: LeftArm
+    400008: LeftFingers1
+    400010: LeftFingers2
+    400012: LeftFoot
+    400014: LeftForeArm
+    400016: LeftHand
+    400018: LeftLeg
+    400020: LeftShoulder
+    400022: LeftThumb1
+    400024: LeftThumb2
+    400026: LeftToeBase
+    400028: LeftUpLeg
+    400030: Neck
+    400032: NS_Character_Female_Dress_Wide
+    400034: NS_Character_Female_FeatherHat
+    400036: NS_Character_Male_Blazer
+    400038: NS_Character_Male_Coat
+    400040: NS_Character_Male_Policeman
+    400042: RightArm
+    400044: RightFingers3
+    400046: RightFingers4
+    400048: RightFoot
+    400050: RightForeArm
+    400052: RightHand
+    400054: RightLeg
+    400056: RightShoulder
+    400058: RightThumb3
+    400060: RightThumb4
+    400062: RightToeBase
+    400064: RightUpLeg
+    400066: Spine
+    400068: Spine1
+    400070: Spine2
+    400072: Guides
+    400074: Head 1
+    400076: Hips 1
+    400078: LeftArm 1
+    400080: LeftFoot 1
+    400082: LeftForeArm 1
+    400084: LeftHand 1
+    400086: LeftHandIndex1
+    400088: LeftHandIndex2
+    400090: LeftHandIndex3
+    400092: LeftHandMiddle1
+    400094: LeftHandMiddle2
+    400096: LeftHandMiddle3
+    400098: LeftHandPinky1
+    400100: LeftHandPinky2
+    400102: LeftHandPinky3
+    400104: LeftHandRing1
+    400106: LeftHandRing2
+    400108: LeftHandRing3
+    400110: LeftHandThumb1
+    400112: LeftHandThumb2
+    400114: LeftHandThumb3
+    400116: LeftLeg 1
+    400118: LeftShoulder 1
+    400120: LeftToeBase 1
+    400122: LeftUpLeg 1
+    400124: Neck 1
+    400126: NS_Character_Female_Necklace
+    400128: NS_Character_Female_Necklace 1
+    400130: NS_Character_Female_Necklace_Hat
+    400132: NS_Character_Female_Ponytail
+    400134: NS_Character_Female_Ponytail 1
+    400136: NS_Character_Male_Blazer 1
+    400138: NS_Character_Male_Blazer_Hat
+    400140: NS_Character_Male_Coat 1
+    400142: NS_Character_Male_Coat_Hat
+    400144: NS_Character_Male_Policeman 1
+    400146: NS_Character_Male_Policeman_Hat
+    400148: Reference
+    400150: RightArm 1
+    400152: RightFoot 1
+    400154: RightForeArm 1
+    400156: RightHand 1
+    400158: RightHandIndex4
+    400160: RightHandIndex5
+    400162: RightHandIndex6
+    400164: RightHandMiddle4
+    400166: RightHandMiddle5
+    400168: RightHandMiddle6
+    400170: RightHandPinky4
+    400172: RightHandPinky5
+    400174: RightHandPinky6
+    400176: RightHandRing4
+    400178: RightHandRing5
+    400180: RightHandRing6
+    400182: RightHandThumb4
+    400184: RightHandThumb5
+    400186: RightHandThumb6
+    400188: RightLeg 1
+    400190: RightShoulder 1
+    400192: RightToeBase 1
+    400194: RightUpLeg 1
+    400196: Spine 1
+    400198: Spine1 1
+    400200: Spine2 1
+    4300000: NS_Character_Female_Dress_Wide
+    4300002: NS_Character_Female_FeatherHat
+    4300004: NS_Character_Male_Blazer
+    4300006: NS_Character_Male_Coat
+    4300008: NS_Character_Male_Policeman
+    4300010: NS_Character_Male_Coat_Hat
+    4300012: NS_Character_Male_Blazer_Hat
+    4300014: NS_Character_Male_Policeman_Hat
+    4300016: NS_Character_Female_Necklace_Hat
+    4300018: NS_Character_Female_Necklace
+    4300020: NS_Character_Female_Ponytail
+    9500000: //RootNode
+    13700000: NS_Character_Female_Dress_Wide
+    13700002: NS_Character_Female_FeatherHat
+    13700004: NS_Character_Male_Blazer
+    13700006: NS_Character_Male_Coat
+    13700008: NS_Character_Male_Policeman
+    13700010: NS_Character_Female_Necklace 1
+    13700012: NS_Character_Female_Necklace_Hat
+    13700014: NS_Character_Female_Ponytail 1
+    13700016: NS_Character_Male_Blazer 1
+    13700018: NS_Character_Male_Blazer_Hat
+    13700020: NS_Character_Male_Coat 1
+    13700022: NS_Character_Male_Coat_Hat
+    13700024: NS_Character_Male_Policeman 1
+    13700026: NS_Character_Male_Policeman_Hat
+    2186277476908879412: ImportLogs
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
