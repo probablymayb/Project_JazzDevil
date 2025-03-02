@@ -65,8 +65,10 @@
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\RhythmManager.cs" />
     <Compile Include="Assets\Scripts\03. Monster\Monster.cs" />
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\NoteJudge.cs" />
+    <Compile Include="Assets\Scripts\02. Player\00. Shockwave\Shockwave.cs" />
     <Compile Include="Assets\Scripts\03. Monster\MonsterSpawner.cs" />
     <Compile Include="Assets\Scripts\02. Player\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\02. Player\00. Shockwave\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\NoteSpawner.cs" />
     <Compile Include="Assets\Scripts\01. Camera\MainCamera.cs" />
   </ItemGroup>

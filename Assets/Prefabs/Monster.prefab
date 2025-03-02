@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1462241314796755977}
   - component: {fileID: 4234368641117647901}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 4764512884699571658}
   - component: {fileID: 9045662003658631478}
   - component: {fileID: 2549186917689299501}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 1463108897735737651}
   - component: {fileID: 8372998065310970806}
   - component: {fileID: 4557846582026366611}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Monster
   m_TagString: Monster
   m_Icon: {fileID: 0}

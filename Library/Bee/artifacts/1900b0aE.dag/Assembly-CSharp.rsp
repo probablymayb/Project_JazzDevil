@@ -440,6 +440,8 @@
 "Assets/Scripts/00. Manager/00. RhythmManager/00. Note/NoteSpawner.cs"
 "Assets/Scripts/00. Manager/00. RhythmManager/RhythmManager.cs"
 "Assets/Scripts/01. Camera/MainCamera.cs"
+"Assets/Scripts/02. Player/00. Shockwave/ObjectPool.cs"
+"Assets/Scripts/02. Player/00. Shockwave/Shockwave.cs"
 "Assets/Scripts/02. Player/PlayerController.cs"
 "Assets/Scripts/03. Monster/Monster.cs"
 "Assets/Scripts/03. Monster/MonsterSpawner.cs"
