@@ -185,11 +185,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7515152946189556225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e014ec6abca0c74d84437b07e037c6d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5710be01b015190429ae9fc45f7157d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitTime: 0
-  spawnTime: 0
-  isHit: 0
-  initialScale: 3
-  targetScale: 0.1
+  shrinkDuration: 1
+  startScale: 3
+  endScale: 0.2

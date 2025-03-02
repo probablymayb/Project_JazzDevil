@@ -435,14 +435,14 @@
 -analyzer:"E:/UnityEditor/6000.0.40f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"E:/UnityEditor/6000.0.40f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 -analyzer:"E:/UnityEditor/6000.0.40f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
-"Assets/Scripts/MainCamera.cs"
-"Assets/Scripts/MonsterPrefab.cs"
-"Assets/Scripts/MonsterSpawner.cs"
-"Assets/Scripts/Note.cs"
-"Assets/Scripts/NoteJudge.cs"
-"Assets/Scripts/NoteSpawner.cs"
-"Assets/Scripts/PlayerController.cs"
-"Assets/Scripts/RhythmManager.cs"
+"Assets/Scripts/00. Manager/00. RhythmManager/00. Note/Note.cs"
+"Assets/Scripts/00. Manager/00. RhythmManager/00. Note/NoteJudge.cs"
+"Assets/Scripts/00. Manager/00. RhythmManager/00. Note/NoteSpawner.cs"
+"Assets/Scripts/00. Manager/00. RhythmManager/RhythmManager.cs"
+"Assets/Scripts/01. Camera/MainCamera.cs"
+"Assets/Scripts/02. Player/PlayerController.cs"
+"Assets/Scripts/03. Monster/Monster.cs"
+"Assets/Scripts/03. Monster/MonsterSpawner.cs"
 -langversion:9.0
 /deterministic
 /optimize+

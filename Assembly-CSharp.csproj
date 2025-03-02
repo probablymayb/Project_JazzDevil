@@ -61,14 +61,14 @@
     <Analyzer Include="E:\UnityEditor\6000.0.40f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\NoteJudge.cs" />
-    <Compile Include="Assets\Scripts\Note.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\NoteSpawner.cs" />
-    <Compile Include="Assets\Scripts\RhythmManager.cs" />
-    <Compile Include="Assets\Scripts\MonsterPrefab.cs" />
-    <Compile Include="Assets\Scripts\MainCamera.cs" />
-    <Compile Include="Assets\Scripts\MonsterSpawner.cs" />
+    <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\Note.cs" />
+    <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\RhythmManager.cs" />
+    <Compile Include="Assets\Scripts\03. Monster\Monster.cs" />
+    <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\NoteJudge.cs" />
+    <Compile Include="Assets\Scripts\03. Monster\MonsterSpawner.cs" />
+    <Compile Include="Assets\Scripts\02. Player\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\NoteSpawner.cs" />
+    <Compile Include="Assets\Scripts\01. Camera\MainCamera.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Mesh\_Shaders\NS_WaterShader.shader" />

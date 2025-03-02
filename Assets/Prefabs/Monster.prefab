@@ -241,11 +241,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8862366945470796105}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56827805079674daa87cabe3255b5b13, type: 3}
+  m_Script: {fileID: 11500000, guid: 67e074d76a8245c4a9b90fa35959d1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.5
+  speed: 1
   maxHealth: 3
+  attackDamage: 1
   isClone: 0
   fixedPosition: {x: 0, y: 0, z: 0}
 --- !u!136 &4557846582026366611
