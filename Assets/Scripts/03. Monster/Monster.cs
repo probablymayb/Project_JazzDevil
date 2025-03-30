@@ -2,79 +2,77 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    public float speed = 1.0f;           // ëª¬ìŠ¤í„° ì´ë™ ì†ë„
-    public int maxHealth = 3;            // ëª¬ìŠ¤í„° ìµœëŒ€ ì²´ë ¥
-    private int currentHealth;
-    private Transform player;
-    private float damageTimer = 0f;
-    private float damageInterval = 1f;   // 1ì´ˆ ê°„ê²©ìœ¼ë¡œ ë°ë¯¸ì§€
-    private float damageRange = 1f;      // í”Œë ˆì´ì–´ì™€ 1 ì´ë‚´ ê±°ë¦¬ì—ì„œ ë°ë¯¸ì§€
+    public MonsterSO monsterData;   // ½ºÅ©¸³ÅÍºí ¿ÀºêÁ§Æ® ¿¬°á
+    private Transform player;       // ÇÃ·¹ÀÌ¾î
+    private float currentHealth;    // ÇöÀç Ã¼·Â
+    private float attackTimer;      // °ø°İ Å¸ÀÌ¸Ó
 
-    [SerializeField] private int attackDamage = 1;
-    [HideInInspector] public bool isClone = false; // ë³µì œëœ ëª¬ìŠ¤í„° ì—¬ë¶€
-    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ì›ë³¸ ëª¬ìŠ¤í„° ìœ„ì¹˜ ê³ ì •
-
-    void Start()
+    private void Start()
     {
-        // "Player" íƒœê·¸ê°€ ìˆëŠ” ì˜¤ë¸Œì íŠ¸ ì°¾ê¸°
+        // "Player" ÅÂ±×°¡ ÀÖ´Â ¿ÀºêÁ§Æ® Ã£±â
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             player = playerObj.transform;
         }
-
-        // ëª¬ìŠ¤í„° ê°œë³„ ì²´ë ¥ ì´ˆê¸°í™”
-        currentHealth = maxHealth;
-
-        // í´ë¡  ì—¬ë¶€ì— ë”°ë¼ ë™ì‘ ê²°ì •
-        if (!isClone)
+        if (monsterData != null)
         {
-            transform.position = fixedPosition; // ì›ë³¸ ëª¬ìŠ¤í„° ê³ ì • ìœ„ì¹˜
-            speed = 0f; // ì›ë³¸ ëª¬ìŠ¤í„°ëŠ” ì›€ì§ì„ ë¶ˆê°€
+            currentHealth = monsterData.maxHealth;
         }
+        else
+        {
+            Debug.LogError("EnemySO ¿¡¼ÂÀÌ ÇÒ´çµÇÁö ¾ÊÀ½.");
+        }
+        attackTimer = 0f;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        // ì›ë³¸ ëª¬ìŠ¤í„°ëŠ” ì›€ì§ì´ì§€ ì•ŠìŒ
-        if (!isClone) return;
+        Move();
+        Attack();
+    }
 
-        if (player != null)
+    // ¿òÁ÷ÀÓ
+    private void Move()
+    {
+        // TODO : ºñÆ®¿¡ ¸ÂÃç ÀÌµ¿ÇÏµµ·Ï ¼öÁ¤ ÇÊ¿ä.
+        // ÇÃ·¹ÀÌ¾î¸¦ ÇâÇØ ÀÌµ¿
+        Vector3 direction = (player.position - transform.position).normalized;
+        transform.position += direction * monsterData.speed * Time.deltaTime;
+
+        // ¸ó½ºÅÍ°¡ ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸°Ô È¸Àü
+        transform.LookAt(player);
+    }
+
+    // °ø°İ ·ÎÁ÷
+    private void Attack()
+    {
+        // °Å¸® È®ÀÎ
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        // 1ÃÊ¸¶´Ù ÇÃ·¹ÀÌ¾î¿¡°Ô µ¥¹ÌÁö
+        if (distance <= monsterData.attackRange)
         {
-            // í”Œë ˆì´ì–´ë¥¼ í–¥í•´ ì´ë™
-            Vector3 direction = (player.position - transform.position).normalized;
-            transform.position += direction * speed * Time.deltaTime;
+            attackTimer += Time.deltaTime;
 
-            // ëª¬ìŠ¤í„°ê°€ í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ê²Œ íšŒì „
-            transform.LookAt(player);
-
-            // ê±°ë¦¬ í™•ì¸
-            float distance = Vector3.Distance(transform.position, player.position);
-
-            // 1ì´ˆë§ˆë‹¤ í”Œë ˆì´ì–´ì—ê²Œ ë°ë¯¸ì§€
-            if (distance <= damageRange)
+            if (attackTimer >= monsterData.attackWindup)
             {
-                damageTimer += Time.deltaTime;
-
-                if (damageTimer >= damageInterval)
+                PlayerController playerController = player.GetComponent<PlayerController>();
+                if (playerController != null)
                 {
-                    PlayerController playerController = player.GetComponent<PlayerController>();
-                    if (playerController != null)
-                    {
-                        Debug.Log("Player Damaged : " + attackDamage);
-                        playerController.TakeDamage(attackDamage); // í”Œë ˆì´ì–´ ì²´ë ¥ 1 ê°ì†Œ
-                    }
-                    damageTimer = 0f; // íƒ€ì´ë¨¸ ì´ˆê¸°í™”
+                    Debug.Log("Player Damaged : " + monsterData.attackDamage);
+                    playerController.TakeDamage(monsterData.attackDamage); // ÇÃ·¹ÀÌ¾î Ã¼·Â 1 °¨¼Ò
                 }
+                attackTimer = 0f; // Å¸ÀÌ¸Ó ÃÊ±âÈ­
             }
-            else
-            {
-                damageTimer = 0f; // ê±°ë¦¬ê°€ ë©€ì–´ì§€ë©´ íƒ€ì´ë¨¸ ì´ˆê¸°í™”
-            }
+        }
+        else
+        {
+            attackTimer = 0f; // °Å¸®°¡ ¸Ö¾îÁö¸é Å¸ÀÌ¸Ó ÃÊ±âÈ­
         }
     }
 
-    // ëª¬ìŠ¤í„° ì²´ë ¥ ê°ì†Œ
+    // ¸ó½ºÅÍ Ã¼·Â °¨¼Ò
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -86,10 +84,11 @@ public class Monster : MonoBehaviour
         }
     }
 
-    // ëª¬ìŠ¤í„° ì œê±°
+    // ¸ó½ºÅÍ Á¦°Å (¿ÀºêÁ§Æ® Ç®·Î ¹İÈ¯)
     private void Die()
     {
         Debug.Log("Monster is Dead!");
-        Destroy(gameObject); // ì‚­ì œëŠ” í´ë¡ ë§Œ ê°€ëŠ¥ (ì›ë³¸ì€ ì›€ì§ì´ì§€ ì•Šì•„ì„œ ê³µê²©ë°›ì§€ ì•ŠìŒ)
+        // TODO : ¿ÀºêÁ§Æ® Ç®¸µ Ãß°¡ ÈÄ ¾Æ·¡¿Í °°ÀÌ Ç®·Î ¹İÈ¯ÇÏ´Â ÄÚµå ÀÛ¼º ÇØ¾ß ÇÔ.
+        // EnemyPool.Instance.ReturnToPool(this);
     }
 }

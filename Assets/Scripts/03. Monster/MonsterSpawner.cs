@@ -32,12 +32,12 @@ public class MonsterSpawner : MonoBehaviour
         GameObject newMonster = Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
 
         // 클론으로 설정
-        Monster monsterAI = newMonster.GetComponent<Monster>();
-        if (monsterAI != null)
-        {
-            monsterAI.isClone = true; // 복제된 몬스터로 설정
-            monsterAI.speed = 1.0f;   // 복제 몬스터 속도 활성화
-        }
+        //Monster monsterAI = newMonster.GetComponent<Monster>();
+        //if (monsterAI != null)
+        //{
+        //    monsterAI.isClone = true; // 복제된 몬스터로 설정
+        //    monsterAI.speed = 1.0f;   // 복제 몬스터 속도 활성화
+        //}
 
     }
 
