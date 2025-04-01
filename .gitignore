@@ -35,7 +35,7 @@ fmod_editor.log
 /[Rr]ecordings/
 CrashReports/
 *.stacktrace
-*.pidb
+*.pidb*
 *.svd
 *.pdb
 *.mdb
@@ -61,19 +61,12 @@ CrashReports/
 
 ExportedObj/
 .consulo/
-*.unityproj
 *.tmp
 *.userprefs
-*.pidb
-*.booproj
-*.pdb
-*.mdb
+*.pdb*
+*.mdb*
 *.opendb
 *.VC.db
-
-*.pidb.meta
-*.pdb.meta
-*.mdb.meta
 
 sysinfo.txt
 
