@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MonsterSO", menuName = "Monsters/MonsterSO")]
+[CreateAssetMenu(fileName = "MonsterSO", menuName = "Scriptable Objects/MonsterSO")]
 public class MonsterSO : ScriptableObject
 {
     public float speed;                 // 몬스터 이동 속도

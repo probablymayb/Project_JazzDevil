@@ -1,14 +1,20 @@
 using UnityEngine;
 
-public class Monster : MonoBehaviour
+abstract public class Monster : MonoBehaviour
 {
     public MonsterSO monsterData;   // 스크립터블 오브젝트 연결
     private Transform player;       // 플레이어
     private float currentHealth;    // 현재 체력
-    private float attackTimer;      // 공격 타이머
+    private float attackTimer = 0f;      // 공격 타이머
 
-    private void Start()
+    protected IMonsterPattern AttackPattern = null;
+
+    private Animator animator;
+
+    protected virtual void Start()
     {
+        animator = GetComponentInChildren<Animator>();
+
         // "Player" 태그가 있는 오브젝트 찾기
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -23,10 +29,9 @@ public class Monster : MonoBehaviour
         {
             Debug.LogError("EnemySO 에셋이 할당되지 않음.");
         }
-        attackTimer = 0f;
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         Move();
         Attack();
@@ -49,26 +54,26 @@ public class Monster : MonoBehaviour
     {
         // 거리 확인
         float distance = Vector3.Distance(transform.position, player.position);
-
-        // 1초마다 플레이어에게 데미지
+        
+        // TODO : 초 단위가 아니라 비트 단위로 변경 필요
+        // Windup초마다 플레이어에게 데미지
         if (distance <= monsterData.attackRange)
         {
+            animator.SetBool("isWindup", true); // 준비 동작 애니메이션
+
             attackTimer += Time.deltaTime;
 
             if (attackTimer >= monsterData.attackWindup)
             {
-                PlayerController playerController = player.GetComponent<PlayerController>();
-                if (playerController != null)
-                {
-                    Debug.Log("Player Damaged : " + monsterData.attackDamage);
-                    playerController.TakeDamage(monsterData.attackDamage); // 플레이어 체력 1 감소
-                }
+                AttackPattern?.AttackPattern(player, animator, monsterData);
                 attackTimer = 0f; // 타이머 초기화
             }
         }
         else
         {
             attackTimer = 0f; // 거리가 멀어지면 타이머 초기화
+            animator.SetBool("isWindup", false);
+            animator.SetBool("isAttack", false);
         }
     }
 

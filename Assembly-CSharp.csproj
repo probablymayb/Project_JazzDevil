@@ -61,13 +61,20 @@
     <Analyzer Include="C:\UnityEditor\6000.0.40f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\03. Monster\IMonsterPattern.cs" />
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\Note.cs" />
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\RhythmManager.cs" />
+    <Compile Include="Assets\Scripts\04. Supporter\SupporterSO.cs" />
     <Compile Include="Assets\Scripts\03. Monster\Monster.cs" />
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\NoteJudge.cs" />
+    <Compile Include="Assets\Scripts\03. Monster\00. MeleeMonster\MeleeMonster.cs" />
+    <Compile Include="Assets\Scripts\Finder.cs" />
     <Compile Include="Assets\Scripts\02. Player\00. Shockwave\Shockwave.cs" />
     <Compile Include="Assets\Scripts\03. Monster\MonsterSpawner.cs" />
+    <Compile Include="Assets\Scripts\04. Supporter\ISupporterPattern.cs" />
+    <Compile Include="Assets\Scripts\04. Supporter\Supporter.cs" />
     <Compile Include="Assets\Scripts\02. Player\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\04. Supporter\00. Trumpet\Trumpet.cs" />
     <Compile Include="Assets\Scripts\02. Player\00. Shockwave\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\00. Manager\00. RhythmManager\00. Note\NoteSpawner.cs" />
     <Compile Include="Assets\Scripts\01. Camera\MainCamera.cs" />

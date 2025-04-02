@@ -447,9 +447,16 @@
 "Assets/Scripts/02. Player/00. Shockwave/ObjectPool.cs"
 "Assets/Scripts/02. Player/00. Shockwave/Shockwave.cs"
 "Assets/Scripts/02. Player/PlayerController.cs"
+"Assets/Scripts/03. Monster/00. MeleeMonster/MeleeMonster.cs"
+"Assets/Scripts/03. Monster/IMonsterPattern.cs"
 "Assets/Scripts/03. Monster/Monster.cs"
 "Assets/Scripts/03. Monster/MonsterSO.cs"
 "Assets/Scripts/03. Monster/MonsterSpawner.cs"
+"Assets/Scripts/04. Supporter/00. Trumpet/Trumpet.cs"
+"Assets/Scripts/04. Supporter/ISupporterPattern.cs"
+"Assets/Scripts/04. Supporter/Supporter.cs"
+"Assets/Scripts/04. Supporter/SupporterSO.cs"
+"Assets/Scripts/Finder.cs"
 -langversion:9.0
 /deterministic
 /optimize+
