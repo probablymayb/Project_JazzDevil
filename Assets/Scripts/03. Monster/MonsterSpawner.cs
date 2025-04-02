@@ -69,26 +69,17 @@ public class MonsterSpawner : MonoBehaviour
         // MonsterPrefab을 기준으로 인스턴스 생성
         GameObject newMonster = Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
         // 클론으로 설정
-<<<<<<< HEAD
-        //Monster monsterAI = newMonster.GetComponent<Monster>();
-        //if (monsterAI != null)
-        //{
-        //    monsterAI.isClone = true; // 복제된 몬스터로 설정
-        //    monsterAI.speed = 1.0f;   // 복제 몬스터 속도 활성화
-        //}
 
-=======
         Monster monsterAI = newMonster.GetComponent<Monster>();
 
         if (monsterAI != null)
         {
             monsterAI.isClone = true;                  // clone 플래그 설정
-            monsterAI.speed = fixedSpeed;              // 속도는 항상 고정
-            monsterAI.maxHealth = baseHealth + (waveIndex * healthPerWave);
+            //monsterAI.speed = fixedSpeed;              // 속도는 항상 고정
+            //monsterAI.maxHealth = baseHealth + (waveIndex * healthPerWave);
             monsterAI.ResetHealth();                   // 체력 초기화
             monsterAI.SetAttackDamage(baseDamage + (waveIndex * damagePerWave)); // 공격력 설정
         }
->>>>>>> test
     }
 
     /// 플레이어 기준 랜덤한 위치 생성

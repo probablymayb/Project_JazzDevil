@@ -7,14 +7,12 @@ abstract public class Monster : MonoBehaviour
     private float currentHealth;    // ÇöÀç Ã¼·Â
     private float attackTimer = 0f;      // °ø°İ Å¸ÀÌ¸Ó
 
-<<<<<<< HEAD
     protected IMonsterPattern AttackPattern = null;
-=======
+
     [SerializeField] private int attackDamage = 1;
-    [SerializeField] private int goldReward = 10; // ì´ ëª¬ìŠ¤í„°ë¥¼ ì²˜ì¹˜í•˜ë©´ ì£¼ëŠ” ê³¨ë“œ
-    [HideInInspector] public bool isClone = false; // ë³µì œëœ ëª¬ìŠ¤í„° ì—¬ë¶€
-    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ì›ë³¸ ëª¬ìŠ¤í„° ìœ„ì¹˜ ê³ ì •
->>>>>>> test
+    [SerializeField] private int goldReward = 10; // ??ëª¬ìŠ¤?°ë? ì²˜ì¹˜?˜ë©´ ì£¼ëŠ” ê³¨ë“œ
+    [HideInInspector] public bool isClone = false; // ë³µì œ??ëª¬ìŠ¤???¬ë?
+    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ?ë³¸ ëª¬ìŠ¤???„ì¹˜ ê³ ì •
 
     private Animator animator;
 
@@ -100,12 +98,9 @@ abstract public class Monster : MonoBehaviour
     private void Die()
     {
         Debug.Log("Monster is Dead!");
-<<<<<<< HEAD
         // TODO : ¿ÀºêÁ§Æ® Ç®¸µ Ãß°¡ ÈÄ ¾Æ·¡¿Í °°ÀÌ Ç®·Î ¹İÈ¯ÇÏ´Â ÄÚµå ÀÛ¼º ÇØ¾ß ÇÔ.
-        // EnemyPool.Instance.ReturnToPool(this);
-=======
 
-        // í”Œë ˆì´ì–´ì—ê²Œ ê³¨ë“œ ì§€ê¸‰*********
+        // ?Œë ˆ?´ì–´?ê²Œ ê³¨ë“œ ì§€ê¸?********
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -116,20 +111,19 @@ abstract public class Monster : MonoBehaviour
             }
         }
 
-        Destroy(gameObject); // ì‚­ì œëŠ” í´ë¡ ë§Œ ê°€ëŠ¥ (ì›ë³¸ì€ ì›€ì§ì´ì§€ ì•Šì•„ì„œ ê³µê²©ë°›ì§€ ì•ŠìŒ)
->>>>>>> test
+        Destroy(gameObject); // ?? œ???´ë¡ ë§?ê°€??(?ë³¸?€ ?€ì§ì´ì§€ ?Šì•„??ê³µê²©ë°›ì? ?ŠìŒ)
     }
 
 
-    // ê³µê²©ë ¥ ì„¤ì • í•¨ìˆ˜ (ìŠ¤í¬ë„ˆì—ì„œ í˜¸ì¶œ)*****
+    // ê³µê²©???¤ì • ?¨ìˆ˜ (?¤í¬?ˆì—???¸ì¶œ)*****
     public void SetAttackDamage(int damage)
     {
         attackDamage = damage;
     }
 
-    // ì²´ë ¥ì„ maxHealthë¡œ ì´ˆê¸°í™”*****
+    // ì²´ë ¥??maxHealthë¡?ì´ˆê¸°??****
     public void ResetHealth()
     {
-        currentHealth = maxHealth;
+        //currentHealth = maxHealth;
     }
 }
