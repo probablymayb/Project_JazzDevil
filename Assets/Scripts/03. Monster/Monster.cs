@@ -7,7 +7,14 @@ abstract public class Monster : MonoBehaviour
     private float currentHealth;    // ���� ü��
     private float attackTimer = 0f;      // ���� Ÿ�̸�
 
+<<<<<<< HEAD
     protected IMonsterPattern AttackPattern = null;
+=======
+    [SerializeField] private int attackDamage = 1;
+    [SerializeField] private int goldReward = 10; // 이 몬스터를 처치하면 주는 골드
+    [HideInInspector] public bool isClone = false; // 복제된 몬스터 여부
+    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // 원본 몬스터 위치 고정
+>>>>>>> test
 
     private Animator animator;
 
@@ -93,7 +100,36 @@ abstract public class Monster : MonoBehaviour
     private void Die()
     {
         Debug.Log("Monster is Dead!");
+<<<<<<< HEAD
         // TODO : ������Ʈ Ǯ�� �߰� �� �Ʒ��� ���� Ǯ�� ��ȯ�ϴ� �ڵ� �ۼ� �ؾ� ��.
         // EnemyPool.Instance.ReturnToPool(this);
+=======
+
+        // 플레이어에게 골드 지급*********
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            PlayerController pc = playerObj.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                pc.AddGold(goldReward);
+            }
+        }
+
+        Destroy(gameObject); // 삭제는 클론만 가능 (원본은 움직이지 않아서 공격받지 않음)
+>>>>>>> test
+    }
+
+
+    // 공격력 설정 함수 (스포너에서 호출)*****
+    public void SetAttackDamage(int damage)
+    {
+        attackDamage = damage;
+    }
+
+    // 체력을 maxHealth로 초기화*****
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
     }
 }
