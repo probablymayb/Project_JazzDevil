@@ -121,10 +121,14 @@ Material:
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 <<<<<<< HEAD
+--- !u!114 &8595966278717366427
+=======
+<<<<<<< HEAD
 --- !u!114 &1608497737107777290
 =======
 --- !u!114 &3436466941941174284
 >>>>>>> origin/my
+>>>>>>> test
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
