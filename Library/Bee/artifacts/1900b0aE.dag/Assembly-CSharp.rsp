@@ -443,8 +443,14 @@
 "Assets/Scripts/00. Manager/00. RhythmManager/00. Note/NoteJudge.cs"
 "Assets/Scripts/00. Manager/00. RhythmManager/00. Note/NoteSpawner.cs"
 "Assets/Scripts/00. Manager/00. RhythmManager/RhythmManager.cs"
+<<<<<<< HEAD
 "Assets/Scripts/00. Manager/01. WaveManager/GameTimer.cs"
 "Assets/Scripts/00. Manager/01. WaveManager/WaveManager.cs"
+=======
+"Assets/Scripts/00. Manager/EventManager.cs"
+"Assets/Scripts/00. Manager/GameManager.cs"
+"Assets/Scripts/00. Manager/Singleton.cs"
+>>>>>>> origin/my
 "Assets/Scripts/01. Camera/MainCamera.cs"
 "Assets/Scripts/02. Player/00. Shockwave/ObjectPool.cs"
 "Assets/Scripts/02. Player/00. Shockwave/Shockwave.cs"
