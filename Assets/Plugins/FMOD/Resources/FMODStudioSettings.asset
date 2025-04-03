@@ -380,8 +380,8 @@ MonoBehaviour:
   switchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: FMOD/music/music.fspro
-  sourceBankPath: FMOD/music/Build
+  sourceProjectPath: Assets/StreamingAssets/JazzDevil_FMOD/JazzDevil_FMOD.fspro
+  sourceBankPath: Assets/StreamingAssets/JazzDevil_FMOD/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
@@ -402,7 +402,8 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
+  MasterBanks:
+  - Master
   Banks: []
   BanksToLoad: []
   LiveUpdatePort: 9264
