@@ -4,6 +4,10 @@ using FMOD.Studio;
 using FMODUnity;
 public class AudioManager : Singleton<AudioManager>
 {
+    //일반 오디오 관리: 일회성 효과음, 환경음 등 재생
+    //FMOD 리소스 관리: 이벤트 인스턴스 생성, 이미터 초기화
+    //볼륨 컨트롤: 전체 음량 및 각 카테고리별 음량 관리
+
     [Header("볼륨 설정")]
     [Range(0f, 1f)] public float masterVolume = 1f;
     [Range(0f, 1f)] public float sfxVolume = 1f;
