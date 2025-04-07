@@ -16,6 +16,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private int attackDamage = 1;
 
+    //일단 골드 관련 변수*****
+    [Header("Inventory")]
+    [SerializeField] private int gold = 0;
+
     // 컴포넌트 참조
     private Rigidbody rb;
     private Animator spriteAnimator;
@@ -28,6 +32,11 @@ public class PlayerController : MonoBehaviour
     // 공격 관련 변수
     private float nextAttackTime;
     private List<Monster> monstersInRange = new List<Monster>();
+
+    // 외부(UI)에서 접근 가능한 변수*****
+    public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
+    public int Gold => gold;
 
     private void Awake()
     {
@@ -114,6 +123,29 @@ public class PlayerController : MonoBehaviour
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log("Player Healed: " + currentHealth);
+    }
+
+    //골드 추가 ******
+    public void AddGold(int amount)
+    {
+        gold += amount;
+        Debug.Log($"[Player] 골드 획득: +{amount} → 총 골드: {gold}");
+    }
+    
+    //골드 소모 ****** (상점 기능에 따라 변경 예정)
+    public bool SpendGold(int amount)
+    {
+        if (gold >= amount)
+        {
+            gold -= amount;
+            Debug.Log($"[Player] 골드 사용: -{amount} → 남은 골드: {gold}");
+            return true;
+        }
+        else
+        {
+            Debug.LogWarning("[Player] 골드 부족! 구매 실패");
+            return false;
+        }
     }
 
     // 새로운 공격 로직: 가장 가까운 몬스터 공격
