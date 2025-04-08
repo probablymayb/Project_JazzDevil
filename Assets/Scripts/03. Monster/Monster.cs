@@ -99,6 +99,7 @@ abstract public class Monster : MonoBehaviour
     {
         Debug.Log("Monster is Dead!");
         // TODO : ¿ÀºêÁ§Æ® Ç®¸µ Ãß°¡ ÈÄ ¾Æ·¡¿Í °°ÀÌ Ç®·Î ¹İÈ¯ÇÏ´Â ÄÚµå ÀÛ¼º ÇØ¾ß ÇÔ.
+        // EnemyPool.Instance.ReturnToPool(this);
 
         // ?Œë ˆ?´ì–´?ê²Œ ê³¨ë“œ ì§€ê¸?********
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
