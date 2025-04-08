@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 public class PlayerController : MonoBehaviour
 {
@@ -234,5 +235,11 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    // 데미지 업그레이드
+    public void UpgradeDamage(int upgradedDamage)
+    {
+        attackDamage = upgradedDamage;
     }
 }
