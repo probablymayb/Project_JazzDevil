@@ -6,6 +6,7 @@ abstract public class Monster : MonoBehaviour
     private Transform player;       // 플레이어
     private float currentHealth;    // 현재 체력
     private float attackTimer = 0f;      // 공격 타이머
+    private float speed;
 
     protected IMonsterPattern AttackPattern = null;
 
@@ -29,6 +30,7 @@ abstract public class Monster : MonoBehaviour
         if (monsterData != null)
         {
             currentHealth = monsterData.maxHealth;
+            speed = monsterData.speed;
         }
         else
         {
@@ -48,7 +50,7 @@ abstract public class Monster : MonoBehaviour
         // TODO : 비트에 맞춰 이동하도록 수정 필요.
         // 플레이어를 향해 이동
         Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * monsterData.speed * Time.deltaTime;
+        transform.position += direction * speed * Time.deltaTime;
 
         // 몬스터가 플레이어를 바라보게 회전
         transform.LookAt(player);
@@ -126,5 +128,17 @@ abstract public class Monster : MonoBehaviour
     public void ResetHealth()
     {
         //currentHealth = maxHealth;
+    }
+
+    // 이동 속도를 factor를 곱해서 조정하는 메서드
+    public void AdjustSpeed(float factor)
+    {
+        speed *= factor;
+    }
+    
+    // 이동 속도 원상 복구
+    public void ResetSpeed()
+    {
+        speed = monsterData.speed;
     }
 }
