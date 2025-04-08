@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Saxophone
   m_EditorClassIdentifier: 
   attackCooldown: 0
-  attackDamage: 0
+  attackDamage: 2
   attackRange: 0
