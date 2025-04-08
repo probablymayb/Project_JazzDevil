@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1462241314796755977}
   - component: {fileID: 4234368641117647901}
   - component: {fileID: 2687109652451349702}
+  - component: {fileID: 3961047051377121841}
   m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
@@ -110,6 +111,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3961047051377121841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2419408046695013915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e76d8f75c1cc5c4eb353dae39a10cfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4347066431537712348
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,6 +281,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterData: {fileID: 11400000, guid: ddd6c6fe6d09d3a48976ee493dd06f28, type: 2}
+  attackDamage: 1
+  goldReward: 10
+  isClone: 0
+  fixedPosition: {x: 0, y: 0, z: 0}
 --- !u!136 &4557846582026366611
 CapsuleCollider:
   m_ObjectHideFlags: 0
