@@ -74,6 +74,7 @@ public class MonsterSpawner : MonoBehaviour
 
         if (monsterAI != null)
         {
+            monsterAI.isClone = true;
             // 웨이브에 따라 능력치 계산*******
             int maxHp = baseHealth + (waveIndex * healthPerWave);
             int atk = baseDamage + (waveIndex * damagePerWave);

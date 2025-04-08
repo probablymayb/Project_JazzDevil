@@ -53,7 +53,7 @@ abstract public class Monster : MonoBehaviour
         // TODO : ��Ʈ�� ���� �̵��ϵ��� ���� �ʿ�.
         // �÷��̾ ���� �̵�
         Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * monsterData.speed * Time.deltaTime;
+        transform.position += direction * speed * Time.deltaTime;
 
         // ���Ͱ� �÷��̾ �ٶ󺸰� ȸ��
         transform.LookAt(player);
@@ -119,6 +119,7 @@ abstract public class Monster : MonoBehaviour
         Destroy(gameObject); // ??��???�론�?가??(?�본?� ?�직이지 ?�아??공격받�? ?�음)
     }
 
+    //clone 몬스터 스텟 초기화*****
     public void Initialize(int maxHp, int atk, float spd)
     {
         currentHealth = maxHp;
