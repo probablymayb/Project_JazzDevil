@@ -72,6 +72,7 @@
 		</relationship>
 		<relationship name="markers">
 			<destination>{55ac8dfe-6b51-4ee3-b6b8-2aaf2b82c2ea}</destination>
+			<destination>{e7564215-0085-42ba-91d1-9837299fef74}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{a12c5652-5054-4c44-909c-cd3b6aac14f7}">
@@ -116,6 +117,20 @@
 	<object class="TempoMarker" id="{55ac8dfe-6b51-4ee3-b6b8-2aaf2b82c2ea}">
 		<property name="position">
 			<value>0</value>
+		</property>
+		<relationship name="timeline">
+			<destination>{3ea9d134-f4f0-492c-86b4-086b94794812}</destination>
+		</relationship>
+		<relationship name="markerTrack">
+			<destination>{340757ab-75a4-4954-a67e-f6fb154e3b5e}</destination>
+		</relationship>
+	</object>
+	<object class="NamedMarker" id="{e7564215-0085-42ba-91d1-9837299fef74}">
+		<property name="position">
+			<value>6</value>
+		</property>
+		<property name="name">
+			<value>MusicBody</value>
 		</property>
 		<relationship name="timeline">
 			<destination>{3ea9d134-f4f0-492c-86b4-086b94794812}</destination>

@@ -1823,6 +1823,10 @@ MonoBehaviour:
   notePrefab: {fileID: 1609774102492902327, guid: 95bdc769dba6e0e49b894702afdf431d, type: 3}
   noteDuration: 2
   spawnPoint: {fileID: 117097690}
+  spawnInterval: 1
+  nextSpawn: 1
+  waitforString: 1
+  stringToWaitFor: MusicBody
 --- !u!4 &1557081593
 Transform:
   m_ObjectHideFlags: 0

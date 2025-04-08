@@ -60,6 +60,16 @@ public class RhythmManager : Singleton<RhythmManager>
         public FMOD.StringWrapper lastMarker = new FMOD.StringWrapper();
     }
 
+    //Beat Event
+    public delegate void BeatEventDelegate();
+    public static event BeatEventDelegate beatUpdated;
+
+    public delegate void MarkerListenerDelegate();
+    public static event MarkerListenerDelegate markerUpdated;
+
+    public static int lastBeat = 0;
+    public static string lastMarkerString = null;
+
 
     // 접근 프로퍼티
     public float CurrentBpm => currentBpm;
@@ -104,33 +114,24 @@ public class RhythmManager : Singleton<RhythmManager>
 
     private void Update()
     {
-        if (!isPlaying) return;
-
-        // 노래 위치 업데이트
-        songPosition = (float)(AudioSettings.dspTime - dspStartTime);
-
-        // 현재 비트 진행도 계산 (0~1)
-        float beatProgress = (songPosition % secPerBeat) / secPerBeat;
-        OnBeatProgress?.Invoke(beatProgress);
-
-        // 다음 비트 감지
-        if (songPosition >= nextBeatTime)
+        if (lastMarkerString != timelineInfo.lastMarker)
         {
-            // 비트 카운터 업데이트
-            currentBeat = (currentBeat + 1) % beatsPerBar;
+            lastMarkerString = timelineInfo.lastMarker;
 
-            // 마디 첫 비트인 경우
-            if (currentBeat == 0)
+            if (markerUpdated != null)
             {
-                currentBar++;
-                OnBar?.Invoke(currentBar);
+                markerUpdated();
             }
+        }
 
-            // 비트 이벤트 발생
-            OnBeat?.Invoke(currentBeat);
+        if (lastBeat != timelineInfo.currentBeat)
+        {
+            lastBeat = timelineInfo.currentBeat;
 
-            // 다음 비트 시간 계산
-            nextBeatTime += secPerBeat;
+            if (beatUpdated != null)
+            {
+                beatUpdated();
+            }
         }
     }
 
