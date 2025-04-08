@@ -39,3 +39,12 @@ public class PianoPattern : ISupporterPattern
         playerCon.Heal(supporterData.attackDamage);
     }
 }
+
+public class SaxophonePattern : ISupporterPattern
+{
+    public void ActPattern(Transform transform, Transform player, SupporterSO supporterData)
+    {
+        PlayerController playerCon = player.GetComponent<PlayerController>();
+        playerCon.UpgradeDamage(supporterData.attackDamage);
+    }
+}
