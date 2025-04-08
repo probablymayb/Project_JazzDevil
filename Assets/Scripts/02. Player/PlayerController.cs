@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using FMODUnity;   
+using FMOD.Studio;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private int currentHealth;
 
     [Header("Combat Settings")]
+    [SerializeField] private EventReference attackSound;
     [SerializeField] private GameObject shockwavePrefab = null;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 0.5f;
@@ -38,6 +41,8 @@ public class PlayerController : MonoBehaviour
     public int MaxHealth => maxHealth;
     public int CurrentHealth => currentHealth;
     public int Gold => gold;
+
+
 
     private void Awake()
     {
@@ -179,6 +184,8 @@ public class PlayerController : MonoBehaviour
 
         if (nearestMonster != null)
         {
+
+            AudioManager.Instance.PlayOneShot(attackSound, transform.position);
             // 충격파 생성
             if (shockwavePrefab != null)
             {

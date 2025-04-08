@@ -49,6 +49,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   maxHealth: 100
+  attackSound:
+    Guid:
+      Data1: 1114968096
+      Data2: 1080289715
+      Data3: -1534067292
+      Data4: 1798681645
+    Path: event:/punchy-acoustic-snare-263511
+  shockwavePrefab: {fileID: 0}
+  attackRange: 2
+  attackCooldown: 0.47
+  attackDamage: 1
+  gold: 0
 --- !u!54 &284974994558547270
 Rigidbody:
   m_ObjectHideFlags: 0
