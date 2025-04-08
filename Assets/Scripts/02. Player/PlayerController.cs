@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FMODUnity;   
 using FMOD.Studio;
 
+
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -241,5 +242,11 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    // 데미지 업그레이드
+    public void UpgradeDamage(int upgradedDamage)
+    {
+        attackDamage = upgradedDamage;
     }
 }

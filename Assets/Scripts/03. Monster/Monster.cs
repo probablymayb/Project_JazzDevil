@@ -2,6 +2,7 @@ using UnityEngine;
 
 abstract public class Monster : MonoBehaviour
 {
+
     public MonsterSO monsterData;   // ��ũ���ͺ� ������Ʈ ����
     private Transform player;       // �÷��̾�
     private float currentHealth;    // ���� ü��
@@ -104,6 +105,8 @@ abstract public class Monster : MonoBehaviour
     {
         Debug.Log("Monster is Dead!");
         // TODO : ������Ʈ Ǯ�� �߰� �� �Ʒ��� ���� Ǯ�� ��ȯ�ϴ� �ڵ� �ۼ� �ؾ� ��.
+        // EnemyPool.Instance.ReturnToPool(this);
+
 
         // ?�레?�어?�게 골드 지�?********
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -125,5 +128,17 @@ abstract public class Monster : MonoBehaviour
         currentHealth = maxHp;
         attackDamage = atk;
         speed = spd;
+    }
+
+    // �̵� �ӵ��� factor�� ���ؼ� �����ϴ� �޼���
+    public void AdjustSpeed(float factor)
+    {
+        speed *= factor;
+    }
+    
+    // �̵� �ӵ� ���� ����
+    public void ResetSpeed()
+    {
+        speed = monsterData.speed;
     }
 }
