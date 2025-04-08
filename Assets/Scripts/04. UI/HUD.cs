@@ -47,7 +47,7 @@ public class HUD : MonoBehaviour
                 // 골드를 텍스트로 표시
                 if (myText != null)
                 {
-                    myText.text = $"GOLD: {player.Gold}";
+                    myText.text = $"{player.Gold}";
                 }
                 break;
 

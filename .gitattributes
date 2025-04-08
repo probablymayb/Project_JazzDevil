@@ -1,3 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 *.extension filter=lfs diff=lfs merge=lfs -text
+*.cs text eol=crlf encoding=utf-8
+*.shader text eol=lf encoding=utf-8
+*.txt text eol=crlf encoding=utf-8
