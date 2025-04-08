@@ -2,8 +2,12 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using FMOD;
 using FMOD.Studio;
 using FMODUnity;
+using Debug = UnityEngine.Debug; 
+
 
 public class RhythmManager : Singleton<RhythmManager>
 {
@@ -38,6 +42,25 @@ public class RhythmManager : Singleton<RhythmManager>
     public event Action<int> OnBar; // 각 마디의 첫 비트에서 발생하는 이벤트
     public event Action<float> OnBeatProgress; // 현재 비트 진행도 (0~1)
 
+
+
+    //FMOD Timeline Tracker
+    [SerializeField] private EventReference music;
+
+    private FMOD.Studio.EventInstance musicInstance;
+
+    public TimelineInfo timelineInfo = null;
+    private GCHandle timelineHandle;
+    private FMOD.Studio.EVENT_CALLBACK beatCallback;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class TimelineInfo
+    {
+        public int currentBeat = 0;
+        public FMOD.StringWrapper lastMarker = new FMOD.StringWrapper();
+    }
+
+
     // 접근 프로퍼티
     public float CurrentBpm => currentBpm;
     public float SecPerBeat => secPerBeat;
@@ -53,11 +76,30 @@ public class RhythmManager : Singleton<RhythmManager>
         // 기본값 초기화
         currentBpm = defaultBpm;
         secPerBeat = 60f / currentBpm;
+
+        if (!music.IsNull)
+        {
+            musicInstance = RuntimeManager.CreateInstance(music);
+            musicInstance.start();
+        }
+        else
+        {
+            Debug.LogWarning("음악 이벤트 레퍼런스가 설정되지 않았습니다.");
+        }
     }
 
     private void Start()
     {
-        InitializeMusic();
+        if (!music.IsNull)
+        {
+            timelineInfo = new TimelineInfo();
+            beatCallback = new FMOD.Studio.EVENT_CALLBACK(BeatEventCallback);
+            //Ignore Garbage Collection !!!
+            timelineHandle = GCHandle.Alloc(timelineInfo, GCHandleType.Pinned);
+            musicInstance.setUserData(GCHandle.ToIntPtr(timelineHandle));
+            musicInstance.setCallback(beatCallback, FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT | FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+        }
+        //InitializeMusic();
     }
 
     private void Update()
@@ -267,11 +309,62 @@ public class RhythmManager : Singleton<RhythmManager>
 
     private void OnDestroy()
     {
+        musicInstance.setUserData(IntPtr.Zero);
+        musicInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        musicInstance.release();
+        timelineHandle.Free();
+
         // FMOD 인스턴스 정리
         if (musicEventInstance.isValid())
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             musicEventInstance.release();
         }
+
+    }
+
+    //FOR DEBUG
+    private void OnGUI()
+    {
+        GUILayout.Box($"Current Beat =  {timelineInfo.currentBeat}, Last Marker = {(string)timelineInfo.lastMarker}");
+    }
+
+    [AOT.MonoPInvokeCallback(typeof(FMOD.Studio.EVENT_CALLBACK))]
+    static FMOD.RESULT BeatEventCallback(FMOD.Studio.EVENT_CALLBACK_TYPE type, IntPtr instancePtr, IntPtr parameterPtr)
+    {
+        FMOD.Studio.EventInstance instance = new FMOD.Studio.EventInstance(instancePtr);
+
+        IntPtr timelineInfoPtr;
+        FMOD.RESULT result = instance.getUserData(out timelineInfoPtr);
+
+        if (result != FMOD.RESULT.OK)
+        {
+            Debug.LogError("timeline callback error :  " + result);
+        }
+        else if (timelineInfoPtr != IntPtr.Zero)
+        {
+            GCHandle timelineHandle = GCHandle.FromIntPtr(timelineInfoPtr);
+            TimelineInfo timelineInfo = (TimelineInfo)timelineHandle.Target;
+
+            switch (type)
+            {
+                case FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT:
+                    {
+                        var parameter = (FMOD.Studio.TIMELINE_BEAT_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(FMOD.Studio.TIMELINE_BEAT_PROPERTIES));
+                        timelineInfo.currentBeat = parameter.beat;            
+                    }
+                    break;
+
+                case FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER:
+                    {
+                        var parameter = (FMOD.Studio.TIMELINE_MARKER_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(FMOD.Studio.TIMELINE_MARKER_PROPERTIES));
+                        timelineInfo.lastMarker = parameter.name;
+                    }
+                    break;
+
+            }
+        }
+
+        return FMOD.RESULT.OK;
     }
 }

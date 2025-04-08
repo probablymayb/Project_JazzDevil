@@ -1867,14 +1867,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ff0fe321e7f4c47bb0b8c26255b624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicSources:
-  - {fileID: 1200253804}
-  - {fileID: 763387504}
-  - {fileID: 976101600}
-  - {fileID: 1717809829}
-  - {fileID: 1837208503}
-  - {fileID: 1207574606}
-  bpm: 120
+  musicEventReference:
+    Guid:
+      Data1: -352017049
+      Data2: 1321323867
+      Data3: -61040462
+      Data4: 1542544846
+    Path: event:/120_Drum
+  bpmParameterName: BPM
+  defaultBpm: 120
+  beatsPerBar: 4
+  music:
+    Guid:
+      Data1: -352017049
+      Data2: 1321323867
+      Data3: -61040462
+      Data4: 1542544846
+    Path: event:/120_Drum
 --- !u!4 &1581588847
 Transform:
   m_ObjectHideFlags: 0
