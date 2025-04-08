@@ -74,11 +74,14 @@ public class MonsterSpawner : MonoBehaviour
 
         if (monsterAI != null)
         {
-            monsterAI.isClone = true;                  // clone 플래그 설정
-            //monsterAI.speed = fixedSpeed;              // 속도는 항상 고정
-            //monsterAI.maxHealth = baseHealth + (waveIndex * healthPerWave);
-            monsterAI.ResetHealth();                   // 체력 초기화
-            monsterAI.SetAttackDamage(baseDamage + (waveIndex * damagePerWave)); // 공격력 설정
+            monsterAI.isClone = true;
+            // 웨이브에 따라 능력치 계산*******
+            int maxHp = baseHealth + (waveIndex * healthPerWave);
+            int atk = baseDamage + (waveIndex * damagePerWave);
+            float spd = fixedSpeed;
+
+            //능력치 초기화(Monseter.cs 내에서 처리)*****
+            monsterAI.Initialize(maxHp, atk, spd);
         }
     }
 
