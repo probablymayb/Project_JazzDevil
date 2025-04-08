@@ -4,3 +4,14 @@
 *.cs text eol=crlf encoding=utf-8
 *.shader text eol=lf encoding=utf-8
 *.txt text eol=crlf encoding=utf-8
+
+*.unity merge=unityyamlmerge
+*.prefab merge=unityyamlmerge
+*.asset merge=unityyamlmerge
+*.meta merge=unityyamlmerge
+
+# 유니티 전용 YAML 병합 도구를 사용하도록 설정
+*.unity merge=unityyamlmerge
+*.prefab merge=unityyamlmerge
+*.asset merge=unityyamlmerge
+*.meta merge=unityyamlmerge
