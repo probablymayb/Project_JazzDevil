@@ -30,3 +30,12 @@ public class TrumpetPattern : ISupporterPattern
         }
     }
 }
+
+public class PianoPattern : ISupporterPattern
+{
+    public void ActPattern(Transform transform, Transform player, SupporterSO supporterData)
+    {
+        PlayerController playerCon = player.GetComponent<PlayerController>();
+        playerCon.Heal(supporterData.attackDamage);
+    }
+}
