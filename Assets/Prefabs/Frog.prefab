@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 204769466236804195}
   - component: {fileID: 4557846582026366611}
   m_Layer: 3
-  m_Name: Monster
+  m_Name: Frog
   m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
