@@ -88,19 +88,22 @@ public class Shockwave : MonoBehaviour
     // 충격파 콜라이더와 충돌하는 몬스터에 데미지
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("sw attack");
         // 적 레이어인지 확인
-        if (((1 << other.gameObject.layer) & enemyLayer.value) != 0)
+        if (((other.gameObject.layer) == enemyLayer.value))
         {
             Monster monster = other.GetComponent<Monster>();
-            if (monster != null)
+            //if (monster != null)
             {
                 int monsterId = monster.GetInstanceID();
 
                 // 같은 몬스터에 중복 데미지 방지
-                if (!damagedMonsterIds.Contains(monsterId))
+                //if (!damagedMonsterIds.Contains(monsterId))
                 {
                     monster.TakeDamage(damageAmount);
                     damagedMonsterIds.Add(monsterId);
+                    Debug.Log("monster damaged" + damageAmount);
+
                 }
             }
         }

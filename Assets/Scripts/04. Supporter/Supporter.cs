@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 abstract public class Supporter : MonoBehaviour
@@ -21,6 +20,12 @@ abstract public class Supporter : MonoBehaviour
         }
 
         followSpeed = 5f;
+
+        // 상시 발동 시 ActPattern 발동
+        if (supporterData.attackCooldown == 0f)
+        {
+            ActPattern?.ActPattern(transform, player, supporterData);
+        }
     }
 
     protected virtual void FixedUpdate()
@@ -35,13 +40,17 @@ abstract public class Supporter : MonoBehaviour
             transform.LookAt(lookTarget);
         }
 
-        timer += Time.deltaTime;
-        // 만약 쿨 타임이 차면
-        if (timer > supporterData.attackCooldown)
+        // 상시 발동이 아니면 타이머를 잰다.
+        if (supporterData.attackCooldown != 0f)
         {
-            // 패턴
-            ActPattern?.ActPattern(transform, player, supporterData);
-            timer = 0f; // 타이머 초기화
+            timer += Time.deltaTime;
+            // 만약 쿨 타임이 차면
+            if (timer > supporterData.attackCooldown)
+            {
+                // 패턴
+                ActPattern?.ActPattern(transform, player, supporterData);
+                timer = 0f; // 타이머 초기화
+            }
         }
     }
 }
