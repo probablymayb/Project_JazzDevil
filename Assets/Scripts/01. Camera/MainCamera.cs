@@ -3,27 +3,27 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour
 {
     [Header("Target Settings")]
-    [SerializeField] private Transform target;  // ÇÃ·¹ÀÌ¾îÀÇ Transform
-    [SerializeField] private Vector3 offset = new Vector3(0f, 5f, -7f);  // Ä«¸Ş¶ó¿Í ÇÃ·¹ÀÌ¾î °£ÀÇ °Å¸®
+    [SerializeField] private Transform target;  // í”Œë ˆì´ì–´ì˜ Transform
+    [SerializeField] private Vector3 offset = new Vector3(0f, 5f, -7f);  // ì¹´ë©”ë¼ì™€ í”Œë ˆì´ì–´ ê°„ì˜ ê±°ë¦¬
 
     [Header("Movement Settings")]
-    [SerializeField] private float smoothSpeed = 5f;  // Ä«¸Ş¶ó ÀÌµ¿ ºÎµå·¯¿ò Á¤µµ
+    [SerializeField] private float smoothSpeed = 5f;  // ì¹´ë©”ë¼ ì´ë™ ë¶€ë“œëŸ¬ì›€ ì •ë„
 
     private void LateUpdate()
     {
         if (target == null)
             return;
 
-        // ¸ñÇ¥ À§Ä¡ °è»ê (ÇÃ·¹ÀÌ¾î À§Ä¡ + ¿ÀÇÁ¼Â)
+        // ëª©í‘œ ìœ„ì¹˜ ê³„ì‚° (í”Œë ˆì´ì–´ ìœ„ì¹˜ + ì˜¤í”„ì…‹)
         Vector3 desiredPosition = target.position + offset;
 
-        // ºÎµå·¯¿î ÀÌµ¿À» À§ÇØ Lerp »ç¿ë
+        // ë¶€ë“œëŸ¬ìš´ ì´ë™ì„ ìœ„í•´ Lerp ì‚¬ìš©
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
 
-        // Ä«¸Ş¶ó À§Ä¡ ¾÷µ¥ÀÌÆ®
-        transform.position = smoothedPosition;
+        // ì¹´ë©”ë¼ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
+        transform.position = desiredPosition;
 
-        // Ä«¸Ş¶ó°¡ ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸µµ·Ï ¼³Á¤
+        // ì¹´ë©”ë¼ê°€ í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ë„ë¡ ì„¤ì •
         transform.LookAt(target);
     }
 }

@@ -2,17 +2,19 @@ using UnityEngine;
 
 abstract public class Monster : MonoBehaviour
 {
-    public MonsterSO monsterData;   // ½ºÅ©¸³ÅÍºí ¿ÀºêÁ§Æ® ¿¬°á
-    private Transform player;       // ÇÃ·¹ÀÌ¾î
-    private float currentHealth;    // ÇöÀç Ã¼·Â
-    private float attackTimer = 0f;      // °ø°İ Å¸ÀÌ¸Ó
+
+    public MonsterSO monsterData;   // ï¿½ï¿½Å©ï¿½ï¿½ï¿½Íºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+    private Transform player;       // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
+    private float currentHealth;    // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½
+    private float attackTimer = 0f;      // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½
+    private float speed;            //instance monster speed*****
 
     protected IMonsterPattern AttackPattern = null;
 
     [SerializeField] private int attackDamage = 1;
-    [SerializeField] private int goldReward = 10; // ??ëª¬ìŠ¤?°ë? ì²˜ì¹˜?˜ë©´ ì£¼ëŠ” ê³¨ë“œ
-    [HideInInspector] public bool isClone = false; // ë³µì œ??ëª¬ìŠ¤???¬ë?
-    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ?ë³¸ ëª¬ìŠ¤???„ì¹˜ ê³ ì •
+    [SerializeField] private int goldReward = 10; // ??ëª¬ìŠ¤?ï¿½ï¿½? ì²˜ì¹˜?ï¿½ë©´ ì£¼ëŠ” ê³¨ë“œ
+    [HideInInspector] public bool isClone = false; // ë³µì œ??ëª¬ìŠ¤???ï¿½ï¿½?
+    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ?ï¿½ë³¸ ëª¬ìŠ¤???ï¿½ì¹˜ ê³ ì •
 
     private Animator animator;
 
@@ -20,19 +22,23 @@ abstract public class Monster : MonoBehaviour
     {
         animator = GetComponentInChildren<Animator>();
 
-        // "Player" ÅÂ±×°¡ ÀÖ´Â ¿ÀºêÁ§Æ® Ã£±â
+        // "Player" ì°¾ê¸°
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             player = playerObj.transform;
         }
+
+        //ë³µì œë˜ì§€ ì•ŠëŠ” ê¸°ë³¸ ëª¬ìŠ¤í„°ëŠ” soê¸°ì¤€ ì´ˆê¸°í™”
         if (monsterData != null)
         {
             currentHealth = monsterData.maxHealth;
+            attackDamage = monsterData.attackDamage;
+            speed = monsterData.speed;
         }
         else
         {
-            Debug.LogError("EnemySO ¿¡¼ÂÀÌ ÇÒ´çµÇÁö ¾ÊÀ½.");
+            Debug.LogError("EnemySO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
@@ -42,47 +48,47 @@ abstract public class Monster : MonoBehaviour
         Attack();
     }
 
-    // ¿òÁ÷ÀÓ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void Move()
     {
-        // TODO : ºñÆ®¿¡ ¸ÂÃç ÀÌµ¿ÇÏµµ·Ï ¼öÁ¤ ÇÊ¿ä.
-        // ÇÃ·¹ÀÌ¾î¸¦ ÇâÇØ ÀÌµ¿
+        // TODO : ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½.
+        // ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * monsterData.speed * Time.deltaTime;
+        transform.position += direction * speed * Time.deltaTime;
 
-        // ¸ó½ºÅÍ°¡ ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸°Ô È¸Àü
+        // ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½Ù¶óº¸°ï¿½ È¸ï¿½ï¿½
         transform.LookAt(player);
     }
 
-    // °ø°İ ·ÎÁ÷
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void Attack()
     {
-        // °Å¸® È®ÀÎ
+        // ï¿½Å¸ï¿½ È®ï¿½ï¿½
         float distance = Vector3.Distance(transform.position, player.position);
         
-        // TODO : ÃÊ ´ÜÀ§°¡ ¾Æ´Ï¶ó ºñÆ® ´ÜÀ§·Î º¯°æ ÇÊ¿ä
-        // WindupÃÊ¸¶´Ù ÇÃ·¹ÀÌ¾î¿¡°Ô µ¥¹ÌÁö
+        // TODO : ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+        // Windupï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (distance <= monsterData.attackRange)
         {
-            animator.SetBool("isWindup", true); // ÁØºñ µ¿ÀÛ ¾Ö´Ï¸ŞÀÌ¼Ç
+            animator.SetBool("isWindup", true); // ê³µê²© ì¤€ë¹„ ëª¨ì…˜
 
             attackTimer += Time.deltaTime;
 
             if (attackTimer >= monsterData.attackWindup)
             {
                 AttackPattern?.AttackPattern(player, animator, monsterData);
-                attackTimer = 0f; // Å¸ÀÌ¸Ó ÃÊ±âÈ­
+                attackTimer = 0f; // Å¸ï¿½Ì¸ï¿½ ï¿½Ê±ï¿½È­
             }
         }
         else
         {
-            attackTimer = 0f; // °Å¸®°¡ ¸Ö¾îÁö¸é Å¸ÀÌ¸Ó ÃÊ±âÈ­
+            attackTimer = 0f; // ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Ê±ï¿½È­
             animator.SetBool("isWindup", false);
             animator.SetBool("isAttack", false);
         }
     }
 
-    // ¸ó½ºÅÍ Ã¼·Â °¨¼Ò
+    // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -94,13 +100,15 @@ abstract public class Monster : MonoBehaviour
         }
     }
 
-    // ¸ó½ºÅÍ Á¦°Å (¿ÀºêÁ§Æ® Ç®·Î ¹İÈ¯)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ç®ï¿½ï¿½ ï¿½ï¿½È¯)
     private void Die()
     {
         Debug.Log("Monster is Dead!");
-        // TODO : ¿ÀºêÁ§Æ® Ç®¸µ Ãß°¡ ÈÄ ¾Æ·¡¿Í °°ÀÌ Ç®·Î ¹İÈ¯ÇÏ´Â ÄÚµå ÀÛ¼º ÇØ¾ß ÇÔ.
+        // TODO : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ç®ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï´ï¿½ ï¿½Úµï¿½ ï¿½Û¼ï¿½ ï¿½Ø¾ï¿½ ï¿½ï¿½.
+        // EnemyPool.Instance.ReturnToPool(this);
 
-        // ?Œë ˆ?´ì–´?ê²Œ ê³¨ë“œ ì§€ê¸?********
+
+        // ?ï¿½ë ˆ?ï¿½ì–´?ï¿½ê²Œ ê³¨ë“œ ì§€ï¿½?********
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -111,19 +119,26 @@ abstract public class Monster : MonoBehaviour
             }
         }
 
-        Destroy(gameObject); // ?? œ???´ë¡ ë§?ê°€??(?ë³¸?€ ?€ì§ì´ì§€ ?Šì•„??ê³µê²©ë°›ì? ?ŠìŒ)
+        Destroy(gameObject); // ??ï¿½ï¿½???ï¿½ë¡ ï¿½?ê°€??(?ï¿½ë³¸?ï¿½ ?ï¿½ì§ì´ì§€ ?ï¿½ì•„??ê³µê²©ë°›ï¿½? ?ï¿½ìŒ)
     }
 
-
-    // ê³µê²©???¤ì • ?¨ìˆ˜ (?¤í¬?ˆì—???¸ì¶œ)*****
-    public void SetAttackDamage(int damage)
+    //clone ëª¬ìŠ¤í„° ìŠ¤í…Ÿ ì´ˆê¸°í™”*****
+    public void Initialize(int maxHp, int atk, float spd)
     {
-        attackDamage = damage;
+        currentHealth = maxHp;
+        attackDamage = atk;
+        speed = spd;
     }
 
-    // ì²´ë ¥??maxHealthë¡?ì´ˆê¸°??****
-    public void ResetHealth()
+    // ï¿½Ìµï¿½ ï¿½Óµï¿½ï¿½ï¿½ factorï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ş¼ï¿½ï¿½ï¿½
+    public void AdjustSpeed(float factor)
     {
-        //currentHealth = maxHealth;
+        speed *= factor;
+    }
+    
+    // ï¿½Ìµï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public void ResetSpeed()
+    {
+        speed = monsterData.speed;
     }
 }
