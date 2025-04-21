@@ -157,7 +157,7 @@ abstract public class Monster : MonoBehaviour
     private IEnumerator PulsateAnimation()
     {
         float startSpeed = 2f;
-        float timer = 0f;
+        float timer = 0.1f;
 
         animator.speed = startSpeed;
         float duration = 60f / RhythmManager.Instance.CurrentBpm;
@@ -165,10 +165,10 @@ abstract public class Monster : MonoBehaviour
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            animator.speed = Mathf.Lerp(startSpeed, 0f, timer / duration);
+            animator.speed = Mathf.Lerp(startSpeed, 0.1f, timer / duration);
             yield return null;
         }
 
-        animator.speed = 0f;
+        animator.speed = 0.1f;
     }
 }
