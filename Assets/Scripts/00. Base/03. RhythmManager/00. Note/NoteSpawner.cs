@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class NoteSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject notePrefab;
-    [SerializeField] private float noteDuration = 2f;  // ³ëÆ®°¡ »ı¼ºµÇ°í ÆÇÁ¤Á¡±îÁö °É¸®´Â ½Ã°£
-    [SerializeField] private RectTransform spawnPoint; // CanvasÀÇ Áß¾Ó ÁöÁ¡
+    [SerializeField] private float noteDuration = 2f;  // ë…¸íŠ¸ê°€ ìƒì„±ë˜ê³  íŒì •ì ê¹Œì§€ ê±¸ë¦¬ëŠ” ì‹œê°„
+    [SerializeField] private RectTransform spawnPoint; // Canvasì˜ ì¤‘ì•™ ì§€ì 
 
     [SerializeField] private int spawnInterval = 1;
     [SerializeField] private int nextSpawn = 0;
@@ -18,6 +18,7 @@ public class NoteSpawner : MonoBehaviour
     private float nextSpawnTime;
     private RhythmManager rhythmManager;
 
+    private int iCount = 0;
 
     //for beat tracking
     [SerializeField] private bool waitforString = false;
@@ -31,6 +32,7 @@ public class NoteSpawner : MonoBehaviour
         //RhythmManager Subscribe.
         RhythmManager.markerUpdated += WaitForMarker;
         RhythmManager.beatUpdated += SpawnNote;
+        RhythmManager.beatUpdated += SpawnMonster;
     }
 
     private void OnDestroy()
@@ -39,6 +41,8 @@ public class NoteSpawner : MonoBehaviour
         //RhythmManager unSubscribe.
         RhythmManager.markerUpdated -= WaitForMarker;
         RhythmManager.beatUpdated -= SpawnNote;
+        RhythmManager.beatUpdated -= SpawnMonster;
+
     }
 
     private void Start()
@@ -47,7 +51,7 @@ public class NoteSpawner : MonoBehaviour
 
     private void Update()
     {
-        // BPM¿¡ ¸ÂÃç ³ëÆ® »ı¼º
+        // BPMì— ë§ì¶° ë…¸íŠ¸ ìƒì„±
         //if (rhythmManager.SongPosition >= nextSpawnTime)
         //{
         //    SpawnNote();
@@ -65,7 +69,7 @@ public class NoteSpawner : MonoBehaviour
             }
             else 
             {
-                // CanvasÀÇ Áß¾Ó¿¡ ³ëÆ® »ı¼º
+                // Canvasì˜ ì¤‘ì•™ì— ë…¸íŠ¸ ìƒì„±
                 GameObject note = Instantiate(notePrefab, spawnPoint);
                 note.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
 
@@ -75,6 +79,11 @@ public class NoteSpawner : MonoBehaviour
       
     }
 
+    private void SpawnMonster()
+    {
+        iCount++;
+        Debug.Log("hi" + iCount);
+    }
     private void WaitForMarker()
     {
         if (RhythmManager.Instance.timelineInfo.lastMarker == stringToWaitFor)
@@ -89,10 +98,10 @@ public class NoteSpawner : MonoBehaviour
     //    {
     //        if (note == null) continue;
 
-    //        // ³ëÆ® Å©±â ¾÷µ¥ÀÌÆ®
+    //        // ë…¸íŠ¸ í¬ê¸° ì—…ë°ì´íŠ¸
     //        note.UpdateScale(currentTime);
 
-    //        // ¹Ì½º Ã¼Å© (³Ê¹« ÀÛ¾ÆÁ³À» ¶§)
+    //        // ë¯¸ìŠ¤ ì²´í¬ (ë„ˆë¬´ ì‘ì•„ì¡Œì„ ë•Œ)
     //        if (note.transform.localScale.x < 0.05f && !note.isHit)
     //        {
     //            Debug.Log("Miss!");

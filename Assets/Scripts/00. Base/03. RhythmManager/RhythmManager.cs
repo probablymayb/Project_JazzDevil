@@ -11,24 +11,24 @@ using Debug = UnityEngine.Debug;
 
 public class RhythmManager : Singleton<RhythmManager>
 {
-    //¹ÚÀÚ Å¸ÀÌ¹Ö °è»ê
-    //ºñÆ® ÀÌº¥Æ®
-    //BPM °ü¸®
-    //¸®µë ÆÇÁ¤
+    //ë°•ì íƒ€ì´ë° ê³„ì‚°
+    //ë¹„íŠ¸ ì´ë²¤íŠ¸
+    //BPM ê´€ë¦¬
+    //ë¦¬ë“¬ íŒì •
 
-    [Header("FMOD ¼³Á¤")]
+    [Header("FMOD ì„¤ì •")]
     [SerializeField] private EventReference musicEventReference;
-    [SerializeField] private string bpmParameterName = "BPM"; // FMOD¿¡¼­ BPM ÆÄ¶ó¹ÌÅÍ¸í
+    [SerializeField] private string bpmParameterName = "BPM"; // FMODì—ì„œ BPM íŒŒë¼ë¯¸í„°ëª…
 
-    [Header("¸®µë ¼³Á¤")]
+    [Header("ë¦¬ë“¬ ì„¤ì •")]
     [SerializeField] private float defaultBpm = 120f;
-    [SerializeField] private int beatsPerBar = 4; // ¸¶µğ´ç ¹ÚÀÚ ¼ö
+    [SerializeField] private int beatsPerBar = 4; // ë§ˆë””ë‹¹ ë°•ì ìˆ˜
 
-    // FMOD ÀÌº¥Æ® ÀÎ½ºÅÏ½º
+    // FMOD ì´ë²¤íŠ¸ ì¸ìŠ¤í„´ìŠ¤
     private EventInstance musicEventInstance;
     private bool isPlaying = false;
 
-    // ¸®µë °ü·Ã º¯¼ö
+    // ë¦¬ë“¬ ê´€ë ¨ ë³€ìˆ˜
     private float currentBpm;
     private float secPerBeat;
     private float songPosition;
@@ -37,10 +37,10 @@ public class RhythmManager : Singleton<RhythmManager>
     private int currentBar = 0;
     private double dspStartTime;
 
-    // ÀÌº¥Æ® ½Ã½ºÅÛ
-    public event Action<int> OnBeat; // °¢ ºñÆ®¸¶´Ù ¹ß»ıÇÏ´Â ÀÌº¥Æ®
-    public event Action<int> OnBar; // °¢ ¸¶µğÀÇ Ã¹ ºñÆ®¿¡¼­ ¹ß»ıÇÏ´Â ÀÌº¥Æ®
-    public event Action<float> OnBeatProgress; // ÇöÀç ºñÆ® ÁøÇàµµ (0~1)
+    // ì´ë²¤íŠ¸ ì‹œìŠ¤í…œ
+    public event Action<int> OnBeat; // ê° ë¹„íŠ¸ë§ˆë‹¤ ë°œìƒí•˜ëŠ” ì´ë²¤íŠ¸
+    public event Action<int> OnBar; // ê° ë§ˆë””ì˜ ì²« ë¹„íŠ¸ì—ì„œ ë°œìƒí•˜ëŠ” ì´ë²¤íŠ¸
+    public event Action<float> OnBeatProgress; // í˜„ì¬ ë¹„íŠ¸ ì§„í–‰ë„ (0~1)
 
 
 
@@ -71,7 +71,7 @@ public class RhythmManager : Singleton<RhythmManager>
     public static string lastMarkerString = null;
 
 
-    // Á¢±Ù ÇÁ·ÎÆÛÆ¼
+    // ì ‘ê·¼ í”„ë¡œí¼í‹°
     public float CurrentBpm => currentBpm;
     public float SecPerBeat => secPerBeat;
     public float SongPosition => songPosition;
@@ -83,7 +83,7 @@ public class RhythmManager : Singleton<RhythmManager>
     {
         base.Awake();
 
-        // ±âº»°ª ÃÊ±âÈ­
+        // ê¸°ë³¸ê°’ ì´ˆê¸°í™”
         currentBpm = defaultBpm;
         secPerBeat = 60f / currentBpm;
 
@@ -94,7 +94,7 @@ public class RhythmManager : Singleton<RhythmManager>
         }
         else
         {
-            Debug.LogWarning("À½¾Ç ÀÌº¥Æ® ·¹ÆÛ·±½º°¡ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ìŒì•… ì´ë²¤íŠ¸ ë ˆí¼ëŸ°ìŠ¤ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
     }
 
@@ -136,64 +136,64 @@ public class RhythmManager : Singleton<RhythmManager>
     }
 
     /// <summary>
-    /// FMOD À½¾Ç ÀÌº¥Æ® ÃÊ±âÈ­
+    /// FMOD ìŒì•… ì´ë²¤íŠ¸ ì´ˆê¸°í™”
     /// </summary>
     private void InitializeMusic()
     {
         if (musicEventReference.IsNull)
         {
-            Debug.LogWarning("À½¾Ç ÀÌº¥Æ® ·¹ÆÛ·±½º°¡ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ìŒì•… ì´ë²¤íŠ¸ ë ˆí¼ëŸ°ìŠ¤ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ±âÁ¸ À½¾Ç ÀÎ½ºÅÏ½º Á¤¸®
+        // ê¸°ì¡´ ìŒì•… ì¸ìŠ¤í„´ìŠ¤ ì •ë¦¬
         if (musicEventInstance.isValid())
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             musicEventInstance.release();
         }
 
-        // »õ À½¾Ç ÀÎ½ºÅÏ½º »ı¼º
+        // ìƒˆ ìŒì•… ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
         musicEventInstance = RuntimeManager.CreateInstance(musicEventReference);
 
         try
         {
-            // ÇöÀç BPM °ª °¡Á®¿À±â
+            // í˜„ì¬ BPM ê°’ ê°€ì ¸ì˜¤ê¸°
             float bpmValue;
             RESULT result = musicEventInstance.getParameterByName(bpmParameterName, out bpmValue);
 
             if (result == RESULT.OK)
             {
                 currentBpm = bpmValue;
-                Debug.Log($"FMOD¿¡¼­ BPM °ªÀ» °¡Á®¿Ô½À´Ï´Ù: {currentBpm}");
+                Debug.Log($"FMODì—ì„œ BPM ê°’ì„ ê°€ì ¸ì™”ìŠµë‹ˆë‹¤: {currentBpm}");
             }
             else
             {
                 currentBpm = defaultBpm;
-                Debug.Log($"BPM ÆÄ¶ó¹ÌÅÍ¸¦ Ã£À» ¼ö ¾ø¾î ±âº»°ªÀ» »ç¿ëÇÕ´Ï´Ù: {currentBpm}");
+                Debug.Log($"BPM íŒŒë¼ë¯¸í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ì–´ ê¸°ë³¸ê°’ì„ ì‚¬ìš©í•©ë‹ˆë‹¤: {currentBpm}");
             }
         }
         catch (Exception e)
         {
-            Debug.LogError($"BPM °ªÀ» °¡Á®¿À´Â Áß ¿À·ù ¹ß»ı: {e.Message}");
+            Debug.LogError($"BPM ê°’ì„ ê°€ì ¸ì˜¤ëŠ” ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {e.Message}");
             currentBpm = defaultBpm;
         }
 
-        // BPM ±â¹İ Å¸ÀÌ¹Ö °è»ê
+        // BPM ê¸°ë°˜ íƒ€ì´ë° ê³„ì‚°
         UpdateBPMSettings();
     }
 
     /// <summary>
-    /// BPMÀÌ º¯°æµÇ¾úÀ» ¶§ °ü·Ã ¼³Á¤ ¾÷µ¥ÀÌÆ®
+    /// BPMì´ ë³€ê²½ë˜ì—ˆì„ ë•Œ ê´€ë ¨ ì„¤ì • ì—…ë°ì´íŠ¸
     /// </summary>
     private void UpdateBPMSettings()
     {
         secPerBeat = 60f / currentBpm;
-        Debug.Log($"ºñÆ®´ç ½Ã°£ ¾÷µ¥ÀÌÆ®: {secPerBeat} ÃÊ (BPM: {currentBpm})");
+        Debug.Log($"ë¹„íŠ¸ë‹¹ ì‹œê°„ ì—…ë°ì´íŠ¸: {secPerBeat} ì´ˆ (BPM: {currentBpm})");
     }
 
     /// <summary>
-    /// À½¾Ç Àç»ı ½ÃÀÛ
+    /// ìŒì•… ì¬ìƒ ì‹œì‘
     /// </summary>
     public void StartMusic()
     {
@@ -206,16 +206,16 @@ public class RhythmManager : Singleton<RhythmManager>
         musicEventInstance.start();
         isPlaying = true;
 
-        // Ã¹ ºñÆ® ½Ã°£ ¼³Á¤
+        // ì²« ë¹„íŠ¸ ì‹œê°„ ì„¤ì •
         nextBeatTime = 0;
-        currentBeat = -1; // Ã¹ ¾÷µ¥ÀÌÆ®¿¡¼­ 0À¸·Î Áõ°¡
+        currentBeat = -1; // ì²« ì—…ë°ì´íŠ¸ì—ì„œ 0ìœ¼ë¡œ ì¦ê°€
         currentBar = 0;
 
-        Debug.Log("À½¾Ç Àç»ı ½ÃÀÛ");
+        Debug.Log("ìŒì•… ì¬ìƒ ì‹œì‘");
     }
 
     /// <summary>
-    /// À½¾Ç Àç»ı Áß´Ü
+    /// ìŒì•… ì¬ìƒ ì¤‘ë‹¨
     /// </summary>
     public void StopMusic()
     {
@@ -223,46 +223,46 @@ public class RhythmManager : Singleton<RhythmManager>
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
             isPlaying = false;
-            Debug.Log("À½¾Ç Àç»ı Áß´Ü");
+            Debug.Log("ìŒì•… ì¬ìƒ ì¤‘ë‹¨");
         }
     }
 
     /// <summary>
-    /// À½¾Ç BPM º¯°æ
+    /// ìŒì•… BPM ë³€ê²½
     /// </summary>
     public void SetBPM(float newBpm)
     {
         if (newBpm <= 0)
         {
-            Debug.LogWarning($"À¯È¿ÇÏÁö ¾ÊÀº BPM °ª: {newBpm}");
+            Debug.LogWarning($"ìœ íš¨í•˜ì§€ ì•Šì€ BPM ê°’: {newBpm}");
             return;
         }
 
         currentBpm = newBpm;
         UpdateBPMSettings();
 
-        // FMOD ÀÌº¥Æ®¿¡ BPM ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+        // FMOD ì´ë²¤íŠ¸ì— BPM íŒŒë¼ë¯¸í„° ì„¤ì •
         if (musicEventInstance.isValid())
         {
             musicEventInstance.setParameterByName(bpmParameterName, newBpm);
-            Debug.Log($"BPM º¯°æ: {newBpm}");
+            Debug.Log($"BPM ë³€ê²½: {newBpm}");
         }
     }
 
     /// <summary>
-    /// Æ®·¢ È°¼ºÈ­ (FMOD ÆÄ¶ó¹ÌÅÍ ¼³Á¤)
+    /// íŠ¸ë™ í™œì„±í™” (FMOD íŒŒë¼ë¯¸í„° ì„¤ì •)
     /// </summary>
     public void SetTrackParameter(string paramName, float value)
     {
         if (musicEventInstance.isValid())
         {
             musicEventInstance.setParameterByName(paramName, value);
-            Debug.Log($"Æ®·¢ ÆÄ¶ó¹ÌÅÍ ¼³Á¤: {paramName} = {value}");
+            Debug.Log($"íŠ¸ë™ íŒŒë¼ë¯¸í„° ì„¤ì •: {paramName} = {value}");
         }
     }
 
     /// <summary>
-    /// Æ¯Á¤ ºñÆ® ¼ö¸¸Å­ ±â´Ù¸®´Â ÄÚ·çÆ¾
+    /// íŠ¹ì • ë¹„íŠ¸ ìˆ˜ë§Œí¼ ê¸°ë‹¤ë¦¬ëŠ” ì½”ë£¨í‹´
     /// </summary>
     public IEnumerator WaitForBeats(int beats)
     {
@@ -273,7 +273,7 @@ public class RhythmManager : Singleton<RhythmManager>
         {
             yield return null;
 
-            // ºñÆ®°¡ º¯°æµÇ¾ú´ÂÁö È®ÀÎ
+            // ë¹„íŠ¸ê°€ ë³€ê²½ë˜ì—ˆëŠ”ì§€ í™•ì¸
             if (currentBeat != startingBeat)
             {
                 targetBeatCount++;
@@ -283,14 +283,14 @@ public class RhythmManager : Singleton<RhythmManager>
     }
 
     /// <summary>
-    /// ºñÆ® ÆÇÁ¤ (Perfect, Good, Miss)
+    /// ë¹„íŠ¸ íŒì • (Perfect, Good, Miss)
     /// </summary>
     public BeatAccuracy GetBeatAccuracy(float tolerancePerfect = 0.05f, float toleranceGood = 0.15f)
     {
-        // ÇöÀç ºñÆ® ÁøÇàµµ °è»ê (0~1)
+        // í˜„ì¬ ë¹„íŠ¸ ì§„í–‰ë„ ê³„ì‚° (0~1)
         float beatProgress = (songPosition % secPerBeat) / secPerBeat;
 
-        // 0 ¶Ç´Â 1¿¡ °¡±î¿ï¼ö·Ï Á¤È®ÇÑ Å¸ÀÌ¹Ö
+        // 0 ë˜ëŠ” 1ì— ê°€ê¹Œìš¸ìˆ˜ë¡ ì •í™•í•œ íƒ€ì´ë°
         float accuracy = Mathf.Min(beatProgress, 1f - beatProgress) * 2;
 
         if (accuracy <= tolerancePerfect)
@@ -315,7 +315,7 @@ public class RhythmManager : Singleton<RhythmManager>
         musicInstance.release();
         timelineHandle.Free();
 
-        // FMOD ÀÎ½ºÅÏ½º Á¤¸®
+        // FMOD ì¸ìŠ¤í„´ìŠ¤ ì •ë¦¬
         if (musicEventInstance.isValid())
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
