@@ -48,6 +48,11 @@ abstract public class Monster : MonoBehaviour
         RhythmManager.beatUpdated += OnBeat;
     }
 
+    private void OnDestroy()
+    {
+        RhythmManager.beatUpdated -= OnBeat;
+    }
+
     protected virtual void FixedUpdate()
     {
         Move();
@@ -68,6 +73,8 @@ abstract public class Monster : MonoBehaviour
     // 공격 로직 판단 + 수행 함수
     private void Attack()
     {
+        if (!isActiveAndEnabled) return;
+
         // 플레이어와의 거리
         float distance = Vector3.Distance(transform.position, player.position);
         
@@ -149,6 +156,8 @@ abstract public class Monster : MonoBehaviour
     // beatUpdate 이벤트 발생 시 마다 함수 실행
     private void OnBeat()
     {
+        if (!isActiveAndEnabled) return;
+
         Attack();
         StartCoroutine(PulsateAnimation());
     }
@@ -158,17 +167,23 @@ abstract public class Monster : MonoBehaviour
     {
         float startSpeed = 2f;
         float timer = 0.1f;
+        float duration = 60f / RhythmManager.Instance.CurrentBpm;
+
+        if (animator == null) yield break;
 
         animator.speed = startSpeed;
-        float duration = 60f / RhythmManager.Instance.CurrentBpm;
 
         while (timer < duration)
         {
+            if (this == null || animator == null) yield break;
+
             timer += Time.deltaTime;
             animator.speed = Mathf.Lerp(startSpeed, 0.1f, timer / duration);
             yield return null;
         }
 
-        animator.speed = 0.1f;
+        if (animator != null)
+            animator.speed = 0.1f;
     }
+
 }

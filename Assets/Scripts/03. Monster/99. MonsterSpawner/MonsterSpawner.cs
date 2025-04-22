@@ -70,10 +70,10 @@ public class MonsterSpawner : MonoBehaviour
         GameObject newMonster = Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
         newMonster.layer = LayerMask.NameToLayer("Enemy"); // 레이어 명시적 설정
                                                            // 모든 자식 오브젝트에도 레이어 적용 (필요시)
-        foreach (Transform child in newMonster.transform)
-        {
-            child.gameObject.layer = LayerMask.NameToLayer("Enemy");
-        }
+        //foreach (Transform child in newMonster.transform)
+        //{
+        //    child.gameObject.layer = LayerMask.NameToLayer("Enemy");
+        //}
 
         Debug.Log("몬스터 콜라이더 상태: " +
           "isTrigger=" + newMonster.GetComponentInChildren<Collider>().isTrigger +
