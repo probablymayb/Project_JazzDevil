@@ -14,8 +14,8 @@ public class Trumpet : Supporter
         base.FixedUpdate();
     }
 
-    // TODO : ³ªÁß¿¡ »èÁ¦ÇØ¾ß ÇÔ.
-    // Æ®·³Æê ¹üÀ§ º¸±â Å×½ºÆ®
+    // TODO : ë‚˜ì¤‘ì— ì‚­ì œí•´ì•¼ í•¨.
+    // íŠ¸ëŸ¼í« ë²”ìœ„ ë³´ê¸° í…ŒìŠ¤íŠ¸
     private void OnDrawGizmos()
     {
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, 45f, 3f);

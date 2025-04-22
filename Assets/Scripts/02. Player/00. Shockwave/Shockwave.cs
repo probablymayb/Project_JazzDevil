@@ -49,8 +49,8 @@ public class Shockwave : MonoBehaviour
         // 시간이 지나면 자동 제거
         Destroy(gameObject, lifetime);
 
-        // 점점 커지는 콜라이더
         StartCoroutine(ExpandCollider());
+       
     }
 
     // 외부에서 데미지 값 설정
@@ -89,23 +89,40 @@ public class Shockwave : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("sw attack");
-        // 적 레이어인지 확인
-        if (((other.gameObject.layer) == enemyLayer.value))
+        // 적 레이어인지 확인 (비트 연산 사용)
+
+        //if (other.CompareTag("Player"))
+        //{
+        //    return;
+        //}
+
+        // 충돌한 객체의 상세 정보 출력
+        Debug.Log("충돌한 객체: " + other.gameObject.name +
+                  "\n레이어: " + LayerMask.LayerToName(other.gameObject.layer) +
+                  "\n태그: " + other.gameObject.tag +
+                  "\n부모: " + (other.transform.parent ? other.transform.parent.name : "없음"));
+
+        Debug.Log("enemyLayer.value: " + enemyLayer.value + ", Monster layer: " + other.gameObject.layer + ", Converted layer: " + (1 << other.gameObject.layer));
+
+        if (((1 << other.gameObject.layer) & enemyLayer.value) != 0)
         {
+            Debug.Log("sw Enemy Detected");
             Monster monster = other.GetComponent<Monster>();
-            //if (monster != null)
+            if (monster != null)
             {
                 int monsterId = monster.GetInstanceID();
-
                 // 같은 몬스터에 중복 데미지 방지
-                //if (!damagedMonsterIds.Contains(monsterId))
+                if (!damagedMonsterIds.Contains(monsterId))
                 {
                     monster.TakeDamage(damageAmount);
                     damagedMonsterIds.Add(monsterId);
                     Debug.Log("monster damaged" + damageAmount);
-
                 }
             }
+        }
+        else
+        {
+            Debug.Log("enemyLayer.value: " + enemyLayer.value + ", Converted layer: " + (1 << other.gameObject.layer));
         }
     }
 

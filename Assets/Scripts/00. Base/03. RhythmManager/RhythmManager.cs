@@ -6,29 +6,42 @@ using System.Runtime.InteropServices;
 using FMOD;
 using FMOD.Studio;
 using FMODUnity;
-using Debug = UnityEngine.Debug; 
-
+using Debug = UnityEngine.Debug;
 
 public class RhythmManager : Singleton<RhythmManager>
 {
-    //¹ÚÀÚ Å¸ÀÌ¹Ö °è»ê
-    //ºñÆ® ÀÌº¥Æ®
-    //BPM °ü¸®
-    //¸®µë ÆÇÁ¤
+    //ë°•ì íƒ€ì´ë° ê³„ì‚°
+    //ë¹„íŠ¸ ì´ë²¤íŠ¸
+    //BPM ê´€ë¦¬
+    //ë¦¬ë“¬ íŒì •
 
-    [Header("FMOD ¼³Á¤")]
+    [Header("FMOD ì„¤ì •")]
     [SerializeField] private EventReference musicEventReference;
-    [SerializeField] private string bpmParameterName = "BPM"; // FMOD¿¡¼­ BPM ÆÄ¶ó¹ÌÅÍ¸í
+    [SerializeField] private string bpmParameterName = "BPM"; // FMODì—ì„œ BPM íŒŒë¼ë¯¸í„°ëª…
 
-    [Header("¸®µë ¼³Á¤")]
+    [Header("ë¦¬ë“¬ ì„¤ì •")]
     [SerializeField] private float defaultBpm = 120f;
-    [SerializeField] private int beatsPerBar = 4; // ¸¶µğ´ç ¹ÚÀÚ ¼ö
+    [SerializeField] private int beatsPerBar = 4; // ë§ˆë””ë‹¹ ë°•ì ìˆ˜
 
-    // FMOD ÀÌº¥Æ® ÀÎ½ºÅÏ½º
+    [Header("ìŒì•… ì„¸ì…˜")]
+    [SerializeField] private EventReference[] additionalSessions;
+    [SerializeField] private string[] sessionNames; // ì„¸ì…˜ ì´ë¦„ (ë””ë²„ê·¸ìš©)
+
+    // BPM ê´€ë ¨ ì¶”ê°€ ì„¤ì •
+    [Header("BPM ì„¤ì •")]
+    [SerializeField] private float[] availableBpms = { 120f, 125f, 130f, 135f, 140f, 145f, 150f, 155f, 160f };
+    private int currentBpmIndex = 0; // í˜„ì¬ BPM ì¸ë±ìŠ¤
+
+    // FMOD ì´ë²¤íŠ¸ ì¸ìŠ¤í„´ìŠ¤
     private EventInstance musicEventInstance;
     private bool isPlaying = false;
 
-    // ¸®µë °ü·Ã º¯¼ö
+    // ì„¸ì…˜ ì´ë²¤íŠ¸ ì¸ìŠ¤í„´ìŠ¤ë“¤
+    private EventInstance[] sessionInstances;
+    private bool[] sessionActive;
+    private int nextSessionToActivate = 0; // ë‹¤ìŒì— í™œì„±í™”í•  ì„¸ì…˜ ì¸ë±ìŠ¤
+
+    // ë¦¬ë“¬ ê´€ë ¨ ë³€ìˆ˜
     private float currentBpm;
     private float secPerBeat;
     private float songPosition;
@@ -37,12 +50,15 @@ public class RhythmManager : Singleton<RhythmManager>
     private int currentBar = 0;
     private double dspStartTime;
 
-    // ÀÌº¥Æ® ½Ã½ºÅÛ
-    public event Action<int> OnBeat; // °¢ ºñÆ®¸¶´Ù ¹ß»ıÇÏ´Â ÀÌº¥Æ®
-    public event Action<int> OnBar; // °¢ ¸¶µğÀÇ Ã¹ ºñÆ®¿¡¼­ ¹ß»ıÇÏ´Â ÀÌº¥Æ®
-    public event Action<float> OnBeatProgress; // ÇöÀç ºñÆ® ÁøÇàµµ (0~1)
+    // í‚¤ ì…ë ¥ ê´€ë ¨ ë³€ìˆ˜
+    private bool keyPressed = false;
+    private float keyPressTime = 0f;
+    private bool bpmIncreaseRequested = false; // BPM ì¦ê°€ ìš”ì²­
 
-
+    // ì´ë²¤íŠ¸ ì‹œìŠ¤í…œ
+    public event Action<int> OnBeat; // ê° ë¹„íŠ¸ë§ˆë‹¤ ë°œìƒí•˜ëŠ” ì´ë²¤íŠ¸
+    public event Action<int> OnBar; // ê° ë§ˆë””ì˜ ì²« ë¹„íŠ¸ì—ì„œ ë°œìƒí•˜ëŠ” ì´ë²¤íŠ¸
+    public event Action<float> OnBeatProgress; // í˜„ì¬ ë¹„íŠ¸ ì§„í–‰ë„ (0~1)
 
     //FMOD Timeline Tracker
     [SerializeField] private EventReference music;
@@ -70,8 +86,7 @@ public class RhythmManager : Singleton<RhythmManager>
     public static int lastBeat = 0;
     public static string lastMarkerString = null;
 
-
-    // Á¢±Ù ÇÁ·ÎÆÛÆ¼
+    // ì ‘ê·¼ í”„ë¡œí¼í‹°
     public float CurrentBpm => currentBpm;
     public float SecPerBeat => secPerBeat;
     public float SongPosition => songPosition;
@@ -83,10 +98,11 @@ public class RhythmManager : Singleton<RhythmManager>
     {
         base.Awake();
 
-        // ±âº»°ª ÃÊ±âÈ­
-        currentBpm = defaultBpm;
+        // ê¸°ë³¸ê°’ ì´ˆê¸°í™”
+        currentBpm = availableBpms[currentBpmIndex];
         secPerBeat = 60f / currentBpm;
 
+        // ì£¼ ìŒì•… ì„¸ì…˜(ë“œëŸ¼) ì´ˆê¸°í™”
         if (!music.IsNull)
         {
             musicInstance = RuntimeManager.CreateInstance(music);
@@ -94,7 +110,39 @@ public class RhythmManager : Singleton<RhythmManager>
         }
         else
         {
-            Debug.LogWarning("À½¾Ç ÀÌº¥Æ® ·¹ÆÛ·±½º°¡ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ìŒì•… ì´ë²¤íŠ¸ ë ˆí¼ëŸ°ìŠ¤ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+        }
+
+        // ëª¨ë“  ì„¸ì…˜ ì¸ìŠ¤í„´ìŠ¤ ì´ˆê¸°í™”
+        InitializeSessionInstances();
+    }
+
+    /// <summary>
+    /// ëª¨ë“  ì„¸ì…˜ ì¸ìŠ¤í„´ìŠ¤ ì´ˆê¸°í™”
+    /// </summary>
+    private void InitializeSessionInstances()
+    {
+        if (additionalSessions == null || additionalSessions.Length == 0)
+        {
+            Debug.LogWarning("ì¶”ê°€ ì„¸ì…˜ì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        // ì¸ìŠ¤í„´ìŠ¤ ë° ìƒíƒœ ë°°ì—´ ì´ˆê¸°í™”
+        sessionInstances = new EventInstance[additionalSessions.Length];
+        sessionActive = new bool[additionalSessions.Length];
+
+        // ê° ì„¸ì…˜ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
+        for (int i = 0; i < additionalSessions.Length; i++)
+        {
+            if (!additionalSessions[i].IsNull)
+            {
+                sessionInstances[i] = RuntimeManager.CreateInstance(additionalSessions[i]);
+                sessionActive[i] = false;
+
+                string sessionName = i < sessionNames.Length ? sessionNames[i] : $"Session {i + 1}";
+                Debug.Log($"{sessionName} ì¸ìŠ¤í„´ìŠ¤ ìƒì„±ë¨");
+            }
         }
     }
 
@@ -114,6 +162,14 @@ public class RhythmManager : Singleton<RhythmManager>
 
     private void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Q) && !keyPressed)
+        {
+            keyPressed = true;
+            keyPressTime = Time.time;
+            Debug.Log("Q í‚¤ ì…ë ¥ ê°ì§€: ë‹¤ìŒ ë¹„íŠ¸ì—ì„œ ì„¸ì…˜ í™œì„±í™” ì¤€ë¹„");
+        }
+
         if (lastMarkerString != timelineInfo.lastMarker)
         {
             lastMarkerString = timelineInfo.lastMarker;
@@ -132,68 +188,184 @@ public class RhythmManager : Singleton<RhythmManager>
             {
                 beatUpdated();
             }
+
+            // í‚¤ ì…ë ¥ì´ ìˆì—ˆê³ , ë‹¤ìŒ ë¹„íŠ¸ê°€ ë„ë‹¬í–ˆë‹¤ë©´ ì„¸ì…˜ë“¤ ì‹œì‘
+            if (keyPressed)
+            {
+                ActivateNextSession();
+                keyPressed = false;
+            }
+
+            //// BPM ì¦ê°€ ìš”ì²­ì´ ìˆì—ˆë‹¤ë©´
+            //if (bpmIncreaseRequested)
+            //{
+            //    IncreaseBpm();
+            //    bpmIncreaseRequested = false;
+            //}
+        }
+
+        
+
+        // E í‚¤: BPM ì¦ê°€ ìš”ì²­
+        if (Input.GetKeyDown(KeyCode.E) && !bpmIncreaseRequested)
+        {
+            bpmIncreaseRequested = true;
+            Debug.Log("E í‚¤ ì…ë ¥ ê°ì§€: ë‹¤ìŒ ë¹„íŠ¸ì—ì„œ BPM ì¦ê°€ ì¤€ë¹„");
         }
     }
 
     /// <summary>
-    /// FMOD À½¾Ç ÀÌº¥Æ® ÃÊ±âÈ­
+    /// FMOD ìŒì•… ì´ë²¤íŠ¸ ì´ˆê¸°í™”
     /// </summary>
     private void InitializeMusic()
     {
         if (musicEventReference.IsNull)
         {
-            Debug.LogWarning("À½¾Ç ÀÌº¥Æ® ·¹ÆÛ·±½º°¡ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogWarning("ìŒì•… ì´ë²¤íŠ¸ ë ˆí¼ëŸ°ìŠ¤ê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ±âÁ¸ À½¾Ç ÀÎ½ºÅÏ½º Á¤¸®
+        // ê¸°ì¡´ ìŒì•… ì¸ìŠ¤í„´ìŠ¤ ì •ë¦¬
         if (musicEventInstance.isValid())
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             musicEventInstance.release();
         }
 
-        // »õ À½¾Ç ÀÎ½ºÅÏ½º »ı¼º
+        // ìƒˆ ìŒì•… ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
         musicEventInstance = RuntimeManager.CreateInstance(musicEventReference);
 
         try
         {
-            // ÇöÀç BPM °ª °¡Á®¿À±â
+            // í˜„ì¬ BPM ê°’ ê°€ì ¸ì˜¤ê¸°
             float bpmValue;
             RESULT result = musicEventInstance.getParameterByName(bpmParameterName, out bpmValue);
 
             if (result == RESULT.OK)
             {
                 currentBpm = bpmValue;
-                Debug.Log($"FMOD¿¡¼­ BPM °ªÀ» °¡Á®¿Ô½À´Ï´Ù: {currentBpm}");
+                Debug.Log($"FMODì—ì„œ BPM ê°’ì„ ê°€ì ¸ì™”ìŠµë‹ˆë‹¤: {currentBpm}");
             }
             else
             {
                 currentBpm = defaultBpm;
-                Debug.Log($"BPM ÆÄ¶ó¹ÌÅÍ¸¦ Ã£À» ¼ö ¾ø¾î ±âº»°ªÀ» »ç¿ëÇÕ´Ï´Ù: {currentBpm}");
+                Debug.Log($"BPM íŒŒë¼ë¯¸í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ì–´ ê¸°ë³¸ê°’ì„ ì‚¬ìš©í•©ë‹ˆë‹¤: {currentBpm}");
             }
         }
         catch (Exception e)
         {
-            Debug.LogError($"BPM °ªÀ» °¡Á®¿À´Â Áß ¿À·ù ¹ß»ı: {e.Message}");
+            Debug.LogError($"BPM ê°’ì„ ê°€ì ¸ì˜¤ëŠ” ì¤‘ ì˜¤ë¥˜ ë°œìƒ: {e.Message}");
             currentBpm = defaultBpm;
         }
 
-        // BPM ±â¹İ Å¸ÀÌ¹Ö °è»ê
+        // BPM ê¸°ë°˜ íƒ€ì´ë° ê³„ì‚°
         UpdateBPMSettings();
     }
 
     /// <summary>
-    /// BPMÀÌ º¯°æµÇ¾úÀ» ¶§ °ü·Ã ¼³Á¤ ¾÷µ¥ÀÌÆ®
+    /// ë‹¤ìŒ ì„¸ì…˜ í™œì„±í™” (ë¹„íŠ¸ì— ë§ì¶° ì‹¤í–‰ë¨)
+    /// </summary>
+       private void ActivateNextSession()
+    {
+        if (sessionInstances == null || sessionInstances.Length == 0)
+            return;
+
+        if (nextSessionToActivate >= sessionInstances.Length)
+        {
+            Debug.Log("ëª¨ë“  ì„¸ì…˜ì´ ì´ë¯¸ í™œì„±í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        int currentTimelinePos;
+        if (musicInstance.isValid() &&
+            musicInstance.getTimelinePosition(out currentTimelinePos) == RESULT.OK)
+        {
+            EventInstance instance = sessionInstances[nextSessionToActivate];
+            if (instance.isValid())
+            {
+                // ë™ê¸°í™”ë¥¼ ìœ„í•œ ì¶”ê°€ ì„¤ì •
+                instance.setTimelinePosition(currentTimelinePos);
+                instance.setParameterByName(bpmParameterName, currentBpm); // BPM ë™ê¸°í™”
+                instance.setCallback(beatCallback, EVENT_CALLBACK_TYPE.TIMELINE_BEAT); // ì½œë°± ê³µìœ 
+
+                RESULT result = instance.start();
+
+                if (result != RESULT.OK)
+                {
+                    Debug.LogError($"ì„¸ì…˜ ì‹œì‘ ì‹¤íŒ¨: {result}");
+                    return;
+                }
+
+                sessionActive[nextSessionToActivate] = true;
+
+                string sessionName = nextSessionToActivate < sessionNames.Length
+                    ? sessionNames[nextSessionToActivate]
+                    : $"Session {nextSessionToActivate + 1}";
+
+                Debug.Log($"{sessionName} ì„¸ì…˜ì´ íƒ€ì„ë¼ì¸ ìœ„ì¹˜ {currentTimelinePos}msì—ì„œ í™œì„±í™”ë¨");
+
+                nextSessionToActivate++;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// BPM ì¦ê°€ (ë¹„íŠ¸ì— ë§ì¶° ì‹¤í–‰ë¨)
+    /// </summary>
+    private void IncreaseBpm()
+    {
+        if (availableBpms == null || availableBpms.Length == 0)
+            return;
+
+        // ë‹¤ìŒ BPM ì¸ë±ìŠ¤ë¡œ ì´ë™
+        currentBpmIndex = (currentBpmIndex + 1) % availableBpms.Length;
+        float newBpm = availableBpms[currentBpmIndex];
+
+        // BPM ì„¤ì • ì ìš©
+        SetBPM(newBpm);
+
+        // BPM íŒŒë¼ë¯¸í„° ëª¨ë“  ì„¸ì…˜ì— ì ìš©
+        SetBpmForAllSessions(newBpm);
+
+        Debug.Log($"BPM ë³€ê²½ë¨: {newBpm}");
+    }
+
+    /// <summary>
+    /// ëª¨ë“  ì„¸ì…˜ì— BPM ì„¤ì •
+    /// </summary>
+    private void SetBpmForAllSessions(float bpm)
+    {
+        // ë©”ì¸ ìŒì•… ì¸ìŠ¤í„´ìŠ¤ì— BPM ì„¤ì •
+        if (musicInstance.isValid())
+        {
+            musicInstance.setParameterByName(bpmParameterName, bpm);
+        }
+
+        // ê° ì„¸ì…˜ì— BPM ì„¤ì •
+        if (sessionInstances != null)
+        {
+            foreach (var instance in sessionInstances)
+            {
+                if (instance.isValid())
+                {
+                    instance.setParameterByName(bpmParameterName, bpm);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// BPMì´ ë³€ê²½ë˜ì—ˆì„ ë•Œ ê´€ë ¨ ì„¤ì • ì—…ë°ì´íŠ¸
     /// </summary>
     private void UpdateBPMSettings()
     {
         secPerBeat = 60f / currentBpm;
-        Debug.Log($"ºñÆ®´ç ½Ã°£ ¾÷µ¥ÀÌÆ®: {secPerBeat} ÃÊ (BPM: {currentBpm})");
+        Debug.Log($"ë¹„íŠ¸ë‹¹ ì‹œê°„ ì—…ë°ì´íŠ¸: {secPerBeat} ì´ˆ (BPM: {currentBpm})");
     }
 
     /// <summary>
-    /// À½¾Ç Àç»ı ½ÃÀÛ
+    /// ìŒì•… ì¬ìƒ ì‹œì‘
     /// </summary>
     public void StartMusic()
     {
@@ -206,16 +378,16 @@ public class RhythmManager : Singleton<RhythmManager>
         musicEventInstance.start();
         isPlaying = true;
 
-        // Ã¹ ºñÆ® ½Ã°£ ¼³Á¤
+        // ì²« ë¹„íŠ¸ ì‹œê°„ ì„¤ì •
         nextBeatTime = 0;
-        currentBeat = -1; // Ã¹ ¾÷µ¥ÀÌÆ®¿¡¼­ 0À¸·Î Áõ°¡
+        currentBeat = -1; // ì²« ì—…ë°ì´íŠ¸ì—ì„œ 0ìœ¼ë¡œ ì¦ê°€
         currentBar = 0;
 
-        Debug.Log("À½¾Ç Àç»ı ½ÃÀÛ");
+        Debug.Log("ìŒì•… ì¬ìƒ ì‹œì‘");
     }
 
     /// <summary>
-    /// À½¾Ç Àç»ı Áß´Ü
+    /// ìŒì•… ì¬ìƒ ì¤‘ë‹¨
     /// </summary>
     public void StopMusic()
     {
@@ -223,46 +395,110 @@ public class RhythmManager : Singleton<RhythmManager>
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
             isPlaying = false;
-            Debug.Log("À½¾Ç Àç»ı Áß´Ü");
+            Debug.Log("ìŒì•… ì¬ìƒ ì¤‘ë‹¨");
         }
     }
 
     /// <summary>
-    /// À½¾Ç BPM º¯°æ
+    /// ìŒì•… BPM ë³€ê²½
     /// </summary>
     public void SetBPM(float newBpm)
     {
         if (newBpm <= 0)
         {
-            Debug.LogWarning($"À¯È¿ÇÏÁö ¾ÊÀº BPM °ª: {newBpm}");
+            Debug.LogWarning($"ìœ íš¨í•˜ì§€ ì•Šì€ BPM ê°’: {newBpm}");
             return;
         }
 
         currentBpm = newBpm;
         UpdateBPMSettings();
 
-        // FMOD ÀÌº¥Æ®¿¡ BPM ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+        // FMOD ì´ë²¤íŠ¸ì— BPM íŒŒë¼ë¯¸í„° ì„¤ì •
         if (musicEventInstance.isValid())
         {
             musicEventInstance.setParameterByName(bpmParameterName, newBpm);
-            Debug.Log($"BPM º¯°æ: {newBpm}");
+            Debug.Log($"BPM ë³€ê²½: {newBpm}");
         }
     }
 
     /// <summary>
-    /// Æ®·¢ È°¼ºÈ­ (FMOD ÆÄ¶ó¹ÌÅÍ ¼³Á¤)
+    /// íŠ¸ë™ í™œì„±í™” (FMOD íŒŒë¼ë¯¸í„° ì„¤ì •)
     /// </summary>
     public void SetTrackParameter(string paramName, float value)
     {
         if (musicEventInstance.isValid())
         {
             musicEventInstance.setParameterByName(paramName, value);
-            Debug.Log($"Æ®·¢ ÆÄ¶ó¹ÌÅÍ ¼³Á¤: {paramName} = {value}");
+            Debug.Log($"íŠ¸ë™ íŒŒë¼ë¯¸í„° ì„¤ì •: {paramName} = {value}");
         }
     }
 
     /// <summary>
-    /// Æ¯Á¤ ºñÆ® ¼ö¸¸Å­ ±â´Ù¸®´Â ÄÚ·çÆ¾
+    /// íŠ¹ì • ì„¸ì…˜ì˜ íŒŒë¼ë¯¸í„° ì„¤ì •
+    /// </summary>
+    public void SetSessionParameter(int sessionIndex, string paramName, float value)
+    {
+        if (sessionInstances == null || sessionIndex < 0 || sessionIndex >= sessionInstances.Length)
+            return;
+
+        if (sessionInstances[sessionIndex].isValid())
+        {
+            sessionInstances[sessionIndex].setParameterByName(paramName, value);
+        }
+    }
+
+    /// <summary>
+    /// íŠ¹ì • ì„¸ì…˜ ì¤‘ì§€
+    /// </summary>
+    public void StopSession(int sessionIndex)
+    {
+        if (sessionInstances == null || sessionIndex < 0 || sessionIndex >= sessionInstances.Length)
+            return;
+
+        if (sessionInstances[sessionIndex].isValid() && sessionActive[sessionIndex])
+        {
+            sessionInstances[sessionIndex].stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            sessionActive[sessionIndex] = false;
+
+            // ë‹¤ìŒ í™œì„±í™”í•  ì„¸ì…˜ ì¸ë±ìŠ¤ ì—…ë°ì´íŠ¸
+            if (sessionIndex < nextSessionToActivate)
+            {
+                nextSessionToActivate = sessionIndex;
+            }
+
+            string sessionName = sessionIndex < sessionNames.Length
+                ? sessionNames[sessionIndex]
+                : $"Session {sessionIndex + 1}";
+
+            Debug.Log($"{sessionName} ì„¸ì…˜ ì¤‘ì§€ë¨");
+        }
+    }
+
+    /// <summary>
+    /// ëª¨ë“  ì„¸ì…˜ ì¤‘ì§€
+    /// </summary>
+    public void StopAllSessions()
+    {
+        if (sessionInstances == null)
+            return;
+
+        for (int i = 0; i < sessionInstances.Length; i++)
+        {
+            if (sessionInstances[i].isValid() && sessionActive[i])
+            {
+                sessionInstances[i].stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                sessionActive[i] = false;
+            }
+        }
+
+        // ì„¸ì…˜ ì¸ë±ìŠ¤ ì´ˆê¸°í™”
+        nextSessionToActivate = 0;
+
+        Debug.Log("ëª¨ë“  ì„¸ì…˜ì´ ì¤‘ì§€ë˜ì—ˆìŠµë‹ˆë‹¤.");
+    }
+
+    /// <summary>
+    /// íŠ¹ì • ë¹„íŠ¸ ìˆ˜ë§Œí¼ ê¸°ë‹¤ë¦¬ëŠ” ì½”ë£¨í‹´
     /// </summary>
     public IEnumerator WaitForBeats(int beats)
     {
@@ -273,7 +509,7 @@ public class RhythmManager : Singleton<RhythmManager>
         {
             yield return null;
 
-            // ºñÆ®°¡ º¯°æµÇ¾ú´ÂÁö È®ÀÎ
+            // ë¹„íŠ¸ê°€ ë³€ê²½ë˜ì—ˆëŠ”ì§€ í™•ì¸
             if (currentBeat != startingBeat)
             {
                 targetBeatCount++;
@@ -283,29 +519,63 @@ public class RhythmManager : Singleton<RhythmManager>
     }
 
     /// <summary>
-    /// ºñÆ® ÆÇÁ¤ (Perfect, Good, Miss)
+    /// í˜„ì¬ ë¹„íŠ¸ ì§„í–‰ë„ ë°˜í™˜ (0 = ì •í™•íˆ ë¹„íŠ¸, 0.5 = ë¹„íŠ¸ ì‚¬ì´ ì¤‘ê°„)
     /// </summary>
-    public BeatAccuracy GetBeatAccuracy(float tolerancePerfect = 0.05f, float toleranceGood = 0.15f)
+    public float GetCurrentBeatProgress()
     {
-        // ÇöÀç ºñÆ® ÁøÇàµµ °è»ê (0~1)
-        float beatProgress = (songPosition % secPerBeat) / secPerBeat;
+        // FMODë¥¼ ì‚¬ìš©í•˜ì—¬ í˜„ì¬ ìŒì•…ì˜ ì¬ìƒ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
+        if (musicInstance.isValid())
+        {
+            FMOD.Studio.PLAYBACK_STATE state;
+            musicInstance.getPlaybackState(out state);
 
-        // 0 ¶Ç´Â 1¿¡ °¡±î¿ï¼ö·Ï Á¤È®ÇÑ Å¸ÀÌ¹Ö
-        float accuracy = Mathf.Min(beatProgress, 1f - beatProgress) * 2;
+            if (state != FMOD.Studio.PLAYBACK_STATE.PLAYING)
+                return 0.5f; // ì¬ìƒ ì¤‘ì´ ì•„ë‹Œ ê²½ìš° ê¸°ë³¸ê°’ ë°˜í™˜
 
-        if (accuracy <= tolerancePerfect)
-            return BeatAccuracy.Perfect;
-        else if (accuracy <= toleranceGood)
-            return BeatAccuracy.Good;
-        else
-            return BeatAccuracy.Miss;
+            int timelinePosition = 0;
+            musicInstance.getTimelinePosition(out timelinePosition);
+
+            //ë°€ë¦¬ì´ˆë¥¼ ì´ˆë¡œ ë³€í™˜
+            float positionInSeconds = timelinePosition / 1000.0f;
+
+            //í˜„ì¬ ë¹„íŠ¸ ìœ„ì¹˜ ê³„ì‚° (BPM ê¸°ë°˜)
+            float beatsPerSecond = CurrentBpm / 60.0f;
+            float currentBeatPosition = positionInSeconds * beatsPerSecond;
+
+            //ê°€ì¥ ê°€ê¹Œìš´ ë¹„íŠ¸ì™€ì˜ ê±°ë¦¬ ê³„ì‚°
+            float closestBeat = Mathf.Round(currentBeatPosition);
+            float beatDistance = Mathf.Abs(currentBeatPosition - closestBeat);
+
+            //ì •ê·œí™”ëœ ê°’ìœ¼ë¡œ ë°˜í™˜ (0 = ì •í™•íˆ ë¹„íŠ¸, 0.5 = ë¹„íŠ¸ ì‚¬ì´ ì¤‘ê°„)
+            return beatDistance;
+        }
+
+        Debug.LogWarning("FMOD ì¸ìŠ¤í„´ìŠ¤ ì—†ìŒ");
+
+        //FMOD ì¸ìŠ¤í„´ìŠ¤ ìœ íš¨í•˜ì§€ ì•Šì€ ê²½ìš°
+        if (timelineInfo != null)
+        {
+            float beatDuration = SecPerBeat;
+            float timeSinceStart = Time.time; // ë˜ëŠ” ë” ì •í™•í•œ ì‹œê°„ ì¸¡ì • ì‚¬ìš©
+
+            float beatsElapsed = timeSinceStart / beatDuration;
+            float currentBeatPartial = beatsElapsed - Mathf.Floor(beatsElapsed);
+
+            // 0.5 ê¸°ì¤€ìœ¼ë¡œ ë¹„íŠ¸ ê±°ë¦¬ ê³„ì‚°
+            float normalizedDistance = Mathf.Abs(currentBeatPartial - 0.5f);
+            return normalizedDistance;
+        }
+
+        return 0.5f; // ê¸°ë³¸ê°’ (ê°€ì¥ ë¶€ì •í™•í•œ ê°’)
     }
 
-    public enum BeatAccuracy
+    /// <summary>
+    /// ê°€ì¥ ìµœê·¼ ë¹„íŠ¸ ì‹œê°„ ë°˜í™˜
+    /// </summary>
+    public float GetLastBeatTime()
     {
-        Miss,
-        Good,
-        Perfect
+        //êµ¬í˜„ì´ í•„ìš”í•¨ - FMODì—ì„œ ë§ˆì§€ë§‰ ë¹„íŠ¸ ì •ë³´ë¥¼ ê°€ì ¸ì™€ì•¼ í•¨
+        return Time.time - (Time.time % SecPerBeat);
     }
 
     private void OnDestroy()
@@ -315,19 +585,56 @@ public class RhythmManager : Singleton<RhythmManager>
         musicInstance.release();
         timelineHandle.Free();
 
-        // FMOD ÀÎ½ºÅÏ½º Á¤¸®
+        // FMOD ì¸ìŠ¤í„´ìŠ¤ ì •ë¦¬
         if (musicEventInstance.isValid())
         {
             musicEventInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             musicEventInstance.release();
         }
 
+        // ì„¸ì…˜ ì¸ìŠ¤í„´ìŠ¤ ì •ë¦¬
+        ReleaseSessionInstances();
+    }
+
+    /// <summary>
+    /// ì„¸ì…˜ ì¸ìŠ¤í„´ìŠ¤ ë¦¬ì†ŒìŠ¤ í•´ì œ
+    /// </summary>
+    private void ReleaseSessionInstances()
+    {
+        if (sessionInstances == null)
+            return;
+
+        for (int i = 0; i < sessionInstances.Length; i++)
+        {
+            if (sessionInstances[i].isValid())
+            {
+                sessionInstances[i].stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+                sessionInstances[i].release();
+            }
+        }
     }
 
     //FOR DEBUG
     private void OnGUI()
     {
         GUILayout.Box($"Current Beat =  {timelineInfo.currentBeat}, Last Marker = {(string)timelineInfo.lastMarker}");
+        GUILayout.Box($"Current BPM: {currentBpm}");
+
+        // í™œì„±í™”ëœ ì„¸ì…˜ í‘œì‹œ
+        if (sessionInstances != null && sessionNames != null)
+        {
+            string activeSessions = "Active Sessions: ";
+            for (int i = 0; i < sessionInstances.Length; i++)
+            {
+                if (i < sessionActive.Length && sessionActive[i])
+                {
+                    string name = i < sessionNames.Length ? sessionNames[i] : $"Session {i + 1}";
+                    activeSessions += name + ", ";
+                }
+            }
+
+            GUILayout.Box(activeSessions);
+        }
     }
 
     [AOT.MonoPInvokeCallback(typeof(FMOD.Studio.EVENT_CALLBACK))]
@@ -352,7 +659,7 @@ public class RhythmManager : Singleton<RhythmManager>
                 case FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT:
                     {
                         var parameter = (FMOD.Studio.TIMELINE_BEAT_PROPERTIES)Marshal.PtrToStructure(parameterPtr, typeof(FMOD.Studio.TIMELINE_BEAT_PROPERTIES));
-                        timelineInfo.currentBeat = parameter.beat;            
+                        timelineInfo.currentBeat = parameter.beat;
                     }
                     break;
 
@@ -362,7 +669,6 @@ public class RhythmManager : Singleton<RhythmManager>
                         timelineInfo.lastMarker = parameter.name;
                     }
                     break;
-
             }
         }
 
