@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 abstract public class Monster : MonoBehaviour
@@ -6,7 +7,7 @@ abstract public class Monster : MonoBehaviour
     public MonsterSO monsterData;   // ��ũ���ͺ� ������Ʈ ����
     private Transform player;       // �÷��̾�
     private float currentHealth;    // ���� ü��
-    private float attackTimer = 0f;      // ���� Ÿ�̸�
+    private int windupTimer = 0;    // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
     private float speed;            //instance monster speed*****
 
     protected IMonsterPattern AttackPattern = null;
@@ -42,10 +43,19 @@ abstract public class Monster : MonoBehaviour
         }
     }
 
+    protected void Awake()
+    {
+        RhythmManager.beatUpdated += OnBeat;
+    }
+
+    private void OnDestroy()
+    {
+        RhythmManager.beatUpdated -= OnBeat;
+    }
+
     protected virtual void FixedUpdate()
     {
         Move();
-        Attack();
     }
 
     // ������
@@ -60,29 +70,30 @@ abstract public class Monster : MonoBehaviour
         transform.LookAt(player);
     }
 
-    // ���� ����
+    // 공격 로직 판단 + 수행 함수
     private void Attack()
     {
-        // �Ÿ� Ȯ��
+        if (!isActiveAndEnabled) return;
+
+        // 플레이어와의 거리
         float distance = Vector3.Distance(transform.position, player.position);
         
-        // TODO : �� ������ �ƴ϶� ��Ʈ ������ ���� �ʿ�
-        // Windup�ʸ��� �÷��̾�� ������
+        // 공격 범위에 들어오면
         if (distance <= monsterData.attackRange)
         {
             animator.SetBool("isWindup", true); // 공격 준비 모션
 
-            attackTimer += Time.deltaTime;
+            windupTimer++;
 
-            if (attackTimer >= monsterData.attackWindup)
+            if (windupTimer > monsterData.attackWindup)
             {
                 AttackPattern?.AttackPattern(player, animator, monsterData);
-                attackTimer = 0f; // Ÿ�̸� �ʱ�ȭ
+                windupTimer = 0; // 공격 후 타이머 초기화
             }
         }
         else
         {
-            attackTimer = 0f; // �Ÿ��� �־����� Ÿ�̸� �ʱ�ȭ
+            windupTimer = 0; // 범위 벗어나면 타이머 초기화
             animator.SetBool("isWindup", false);
             animator.SetBool("isAttack", false);
         }
@@ -141,4 +152,38 @@ abstract public class Monster : MonoBehaviour
     {
         speed = monsterData.speed;
     }
+
+    // beatUpdate 이벤트 발생 시 마다 함수 실행
+    private void OnBeat()
+    {
+        if (!isActiveAndEnabled) return;
+
+        Attack();
+        StartCoroutine(PulsateAnimation());
+    }
+
+    // 비트에 맞춰 애니메이션 재생하는 코루틴
+    private IEnumerator PulsateAnimation()
+    {
+        float startSpeed = 2f;
+        float timer = 0.1f;
+        float duration = 60f / RhythmManager.Instance.CurrentBpm;
+
+        if (animator == null) yield break;
+
+        animator.speed = startSpeed;
+
+        while (timer < duration)
+        {
+            if (this == null || animator == null) yield break;
+
+            timer += Time.deltaTime;
+            animator.speed = Mathf.Lerp(startSpeed, 0.1f, timer / duration);
+            yield return null;
+        }
+
+        if (animator != null)
+            animator.speed = 0.1f;
+    }
+
 }

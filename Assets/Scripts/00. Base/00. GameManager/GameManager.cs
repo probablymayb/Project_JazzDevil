@@ -3,16 +3,17 @@ using UnityEngine;
 
     public enum EGameState
     {
+        Title,
         Wave,
         Shop,
-        Finish,
+        Finish
     };
 
     //test
     public class GameManager : Singleton<GameManager>
     {
         //[SerializeField] GameData gameData;
-        public EGameState CurrentGameState { get; set; } = EGameState.Wave;
+        public EGameState CurrentGameState { get; set; } = EGameState.Title;
 
         //public event Action<EGameState, EGameState> OnStartGameStateChange;
         //public event Action<EGameState, EGameState> OnFinishGameStateChange;

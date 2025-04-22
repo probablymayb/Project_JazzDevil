@@ -43,6 +43,11 @@ public class PlayerController : MonoBehaviour
     public int Gold => gold;
 
 
+    [Header("Note Timing Judge")]
+
+    //Note Timing 판단
+    [SerializeField] private NoteJudge noteJudge;
+
 
     private void Awake()
     {
@@ -50,6 +55,10 @@ public class PlayerController : MonoBehaviour
         detectionCollider = gameObject.AddComponent<SphereCollider>();
         detectionCollider.radius = attackRange;
         detectionCollider.isTrigger = true;
+
+        // NoteJudge 참조 찾기
+        if (noteJudge == null)
+            noteJudge = FindFirstObjectByType<NoteJudge>();
     }
 
     private void Start()
@@ -67,7 +76,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         // 게임 상태가 Shop일 땐 입력 무시*****
-        if (GameManager.Instance.CurrentGameState == EGameState.Shop)
+        if (GameManager.Instance.CurrentGameState == EGameState.Shop || GameManager.Instance.CurrentGameState == EGameState.Finish)
             return;
 
         ProcessInputs();
@@ -76,7 +85,7 @@ public class PlayerController : MonoBehaviour
         // 공격 입력 처리
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= nextAttackTime)
         {
-            AttackNearestMonster();
+            Attack();
             nextAttackTime = Time.time + attackCooldown;
         }
     }
@@ -84,7 +93,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         // 게임 상태가 Shop일 땐 입력 무시*****
-        if (GameManager.Instance.CurrentGameState == EGameState.Shop)
+        if (GameManager.Instance.CurrentGameState == EGameState.Shop || GameManager.Instance.CurrentGameState == EGameState.Finish)
             return;
 
         Move();
@@ -162,8 +171,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 새로운 공격 로직: 가장 가까운 몬스터 공격
-    private void AttackNearestMonster()
+
+    private void Attack()
+    {
+        // 노트 판정 요청
+        JudgementResult judgement = JudgementResult.Miss;
+        float damageMultiplier = 1.0f;
+
+        if (noteJudge != null)
+        {
+            judgement = noteJudge.Judge();
+            damageMultiplier = noteJudge.GetDamageMultiplier(judgement);
+        }
+
+        // 판정에 따른 데미지 계산
+        int finalDamage = Mathf.RoundToInt(attackDamage * damageMultiplier);
+
+        // 가장 가까운 몬스터 공격
+        AttackNearestMonster(finalDamage);
+    }
+
+    private void AttackNearestMonster(int damage)
     {
         // 리스트에서 사라진 몬스터 제거
         for (int i = monstersInRange.Count - 1; i >= 0; i--)
@@ -192,8 +220,6 @@ public class PlayerController : MonoBehaviour
 
         if (nearestMonster != null)
         {
-
-            AudioManager.Instance.PlayOneShot(attackSound, transform.position);
             // 충격파 생성
             if (shockwavePrefab != null)
             {
@@ -203,18 +229,17 @@ public class PlayerController : MonoBehaviour
                 Shockwave shockwaveComponent = shockwave.GetComponent<Shockwave>();
                 if (shockwaveComponent != null)
                 {
-                    shockwaveComponent.Initialize(attackDamage);
+                    shockwaveComponent.Initialize(damage);
                 }
                 else
                 {
                     // Shockwave 컴포넌트가 없는 경우 직접 데미지 처리
-                    nearestMonster.TakeDamage(attackDamage);
+                    nearestMonster.TakeDamage(damage);
                 }
             }
             else
             {
-                // 충격파 프리팹이 없는 경우 직접 데미지 처리
-                nearestMonster.TakeDamage(attackDamage);
+                Debug.LogWarning("Shockwave 프리팹이 없습니다");
             }
         }
     }
