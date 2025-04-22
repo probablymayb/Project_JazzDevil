@@ -18,7 +18,8 @@ public class NoteSpawner : MonoBehaviour
     private float nextSpawnTime;
     private RhythmManager rhythmManager;
 
-    private int iCount = 0;
+    //for test
+    //private int iCount = 0;
 
     //for beat tracking
     [SerializeField] private bool waitforString = false;
@@ -81,8 +82,9 @@ public class NoteSpawner : MonoBehaviour
 
     private void SpawnMonster()
     {
-        iCount++;
-        Debug.Log("hi" + iCount);
+        //test
+        //iCount++;
+        //Debug.Log("hi" + iCount);
     }
     private void WaitForMarker()
     {

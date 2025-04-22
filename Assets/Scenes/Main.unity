@@ -2520,6 +2520,10 @@ PrefabInstance:
       propertyPath: expandSpeed
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8350001729575889856, guid: 28903700e7449494b8947e5ea43b5e86, type: 3}
+      propertyPath: enemyLayer.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3158,6 +3162,10 @@ PrefabInstance:
     - target: {fileID: 4234368641117647901, guid: 035241ce9ffe69244a32b4e8e765662b, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4557846582026366611, guid: 035241ce9ffe69244a32b4e8e765662b, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8862366945470796105, guid: 035241ce9ffe69244a32b4e8e765662b, type: 3}
       propertyPath: m_Name
