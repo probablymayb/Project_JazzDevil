@@ -73,6 +73,7 @@
 		<relationship name="markers">
 			<destination>{55ac8dfe-6b51-4ee3-b6b8-2aaf2b82c2ea}</destination>
 			<destination>{e7564215-0085-42ba-91d1-9837299fef74}</destination>
+			<destination>{54223f47-e735-4d04-a999-9ab8e2288b25}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{a12c5652-5054-4c44-909c-cd3b6aac14f7}">
@@ -131,6 +132,20 @@
 		</property>
 		<property name="name">
 			<value>MusicBody</value>
+		</property>
+		<relationship name="timeline">
+			<destination>{3ea9d134-f4f0-492c-86b4-086b94794812}</destination>
+		</relationship>
+		<relationship name="markerTrack">
+			<destination>{340757ab-75a4-4954-a67e-f6fb154e3b5e}</destination>
+		</relationship>
+	</object>
+	<object class="LoopRegion" id="{54223f47-e735-4d04-a999-9ab8e2288b25}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="length">
+			<value>48.048000000000002</value>
 		</property>
 		<relationship name="timeline">
 			<destination>{3ea9d134-f4f0-492c-86b4-086b94794812}</destination>
