@@ -49,8 +49,8 @@ public class Shockwave : MonoBehaviour
         // 시간이 지나면 자동 제거
         Destroy(gameObject, lifetime);
 
-        // 점점 커지는 콜라이더
         StartCoroutine(ExpandCollider());
+       
     }
 
     // 외부에서 데미지 값 설정
@@ -101,6 +101,8 @@ public class Shockwave : MonoBehaviour
                   "\n레이어: " + LayerMask.LayerToName(other.gameObject.layer) +
                   "\n태그: " + other.gameObject.tag +
                   "\n부모: " + (other.transform.parent ? other.transform.parent.name : "없음"));
+
+        Debug.Log("enemyLayer.value: " + enemyLayer.value + ", Monster layer: " + other.gameObject.layer + ", Converted layer: " + (1 << other.gameObject.layer));
 
         if (((1 << other.gameObject.layer) & enemyLayer.value) != 0)
         {

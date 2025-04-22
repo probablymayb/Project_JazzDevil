@@ -198,7 +198,6 @@ public class PlayerController : MonoBehaviour
             if (shockwavePrefab != null)
             {
                 GameObject shockwave = Instantiate(shockwavePrefab, nearestMonster.transform.position, Quaternion.identity);
-
                 // Shockwave 컴포넌트가 있다면 초기화
                 Shockwave shockwaveComponent = shockwave.GetComponent<Shockwave>();
                 if (shockwaveComponent != null)

@@ -121,8 +121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e1a72aff243c2741a8a046507ef35bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 1
-  expandSpeed: 2
+  lifetime: 3
+  expandSpeed: 1
   maxRadius: 3
   defaultDamage: 3
   enemyLayer:

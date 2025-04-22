@@ -2472,6 +2472,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shockwave
       objectReference: {fileID: 0}
+    - target: {fileID: 4777567964922956666, guid: 28903700e7449494b8947e5ea43b5e86, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8304535522065857047, guid: 28903700e7449494b8947e5ea43b5e86, type: 3}
       propertyPath: m_LocalPosition.x
       value: 58.271515
@@ -2847,6 +2851,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 251d178e97d2c6c478b68053963daa90, type: 2}
+    - target: {fileID: 4697730742109342054, guid: 2ab81dd2ff5ca1446acfa0fbc5841c3d, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4995279755869887817, guid: 2ab81dd2ff5ca1446acfa0fbc5841c3d, type: 3}
       propertyPath: m_Name
       value: Player
