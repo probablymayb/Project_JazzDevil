@@ -3,8 +3,11 @@ using UnityEngine.UI;
 
 public class WaveManager : MonoBehaviour
 {
-    [SerializeField] private GameObject shopPopup;               // 인스펙터에서 ShopPopup 연결
+    [SerializeField] private GameObject shopPopup;              // 인스펙터에서 ShopPopup 연결
     [SerializeField] private Button startNextWaveButton;        // 버튼 참조
+    [SerializeField] private GameObject resultPopup;            // 인스펙터에서 DefeatPopup 연결
+    [SerializeField] private Button returnToTitleButton;        // 타이틀 복귀 버튼 참조
+
     
     [Header("웨이브 설정")]
     public int totalWaves = 4;                 // 총 웨이브 수
@@ -33,8 +36,15 @@ public class WaveManager : MonoBehaviour
             shopPopup.SetActive(false); // 게임 시작 시 상점 숨기기
         if (startNextWaveButton != null)
             startNextWaveButton.onClick.AddListener(OnStartNextWaveButtonClicked);  //버튼 이벤트 연결
+        
+        // 결과창
+        if (resultPopup != null)
+            resultPopup.SetActive(false); // 게임 시작 시 결과창 숨기기
+        if (returnToTitleButton != null)
+            returnToTitleButton.onClick.AddListener(OnReturnToTitleButtonClicked); // 버튼 이벤트 연결
 
         // 첫 웨이브 시작
+        GameManager.Instance.CurrentGameState = EGameState.Wave;
         StartNextWave();
     }
 
@@ -114,31 +124,46 @@ public class WaveManager : MonoBehaviour
         CancelInvoke(nameof(CheckWaveState));
         isWaveRunning = false;
 
-    if (success)
-    {
-        Debug.Log("[WaveManager] 웨이브 성공! 몬스터 제거 + 상점 진입");
-
-        // 게임 상태 변경(GameManager - EGameState)
-        GameManager.Instance.CurrentGameState = EGameState.Shop;
-
-        // 모든 몬스터 제거 (보상 없이)
-        var monsters = FindObjectsByType<Monster>(FindObjectsSortMode.None);
-        foreach (var monster in monsters)
+        if (success)
         {
-            if (monster.isClone)
-            {
-                Destroy(monster.gameObject); // 골드 지급 없는 파괴
-            }
-        }
+            Debug.Log("[WaveManager] 웨이브 성공! 몬스터 제거 + 상점 진입");
 
-        // 상점 팝업 띄우기
-        ShowShopPopup();
-    }
-    else
-    {
-        Debug.LogError("[WaveManager] 게임 오버!");
-        // 실패 처리 추가 예정
-    }
+            // 게임 상태 변경(GameManager - EGameState)
+            GameManager.Instance.CurrentGameState = EGameState.Shop;
+
+            // 모든 몬스터 제거 (보상 없이)
+            var monsters = FindObjectsByType<Monster>(FindObjectsSortMode.None);
+            foreach (var monster in monsters)
+            {
+                if (monster.isClone)
+                {
+                    Destroy(monster.gameObject); // 골드 지급 없는 파괴
+                }
+            }
+
+            // 상점 팝업 띄우기
+            ShowShopPopup();
+        }
+        else
+        {     
+            Debug.LogError("[WaveManager] 게임 오버!");
+
+            // 게임 상태 변경
+            GameManager.Instance.CurrentGameState = EGameState.Finish;
+
+            // 모든 몬스터 제거 (보상 없이)
+            var monsters = FindObjectsByType<Monster>(FindObjectsSortMode.None);
+            foreach (var monster in monsters)
+            {
+                if (monster.isClone)
+                {
+                    Destroy(monster.gameObject); // 골드 지급 없는 파괴
+                }
+            }
+
+            // 패배 UI 표시
+            ShowResultPopup();
+        }
     }
 
     //상점 팝업 함수
@@ -163,5 +188,27 @@ public class WaveManager : MonoBehaviour
         shopPopup.SetActive(false);
         currentWave++;
         StartNextWave();
+    }
+
+    //패배 결과 화면 팝업 함수
+    private void ShowResultPopup()
+    {
+        if (resultPopup == null)
+        {
+            Debug.LogWarning("[WaveManager] ResultPopup이 할당되지 않았습니다.");
+            return;
+        }
+
+        if (resultPopup.activeSelf) return; // 이미 켜져 있다면 무시
+
+        Debug.Log("[WaveManager] 결과 팝업 활성화");
+        resultPopup.SetActive(true);
+    }
+
+    //Title로 복귀 버튼
+    public void OnReturnToTitleButtonClicked()
+    {
+        GameManager.Instance.CurrentGameState = EGameState.Title;
+        SceneLoader.LoadScene(SceneLoader.SceneName.Title); // 씬 로딩으로 되돌아감
     }
 }
