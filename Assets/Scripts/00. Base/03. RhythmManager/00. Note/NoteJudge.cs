@@ -23,7 +23,7 @@ public class NoteJudge : MonoBehaviour
         float currentScale = closestNote.transform.localScale.x;
         float timeOffset = 1f;//Mathf.Abs(RhythmManager.Instance.SongPosition - closestNote.hitTime);
 
-        // Å©±â ±â¹Ý ÆÇÁ¤
+        // í¬ê¸° ê¸°ë°˜ íŒì •
         if (currentScale > 0.1f && currentScale < 0.3f)
         {
             Debug.Log("Perfect!");
@@ -45,6 +45,6 @@ public class NoteJudge : MonoBehaviour
         //note.Hit();
         noteSpawner.RemoveNote(note);
         Destroy(note.gameObject);
-        // Ãß°¡ÀûÀÎ ÆÇÁ¤ Ã³¸® (Á¡¼ö, ÄÞº¸ µî)
+        // ì¶”ê°€ì ì¸ íŒì • ì²˜ë¦¬ (ì ìˆ˜, ì½¤ë³´ ë“±)
     }
 }
