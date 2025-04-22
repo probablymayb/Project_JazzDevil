@@ -220,9 +220,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab5ff828a84c4894183e0094c08ef18a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noteSpawner: {fileID: 1557081592}
-  perfectWindow: 0.05
+  excellentWindow: 0.05
+  solidWindow: 0.1
   goodWindow: 0.1
+  excellentSoundPath: event:/Judgement/Excellent
+  solidSoundPath: event:/Judgement/Solid
+  goodSoundPath: event:/Judgement/Good
+  missSoundPath: event:/Judgement/Miss
+  excellentDamageMultiplier: 2
+  solidDamageMultiplier: 1.5
+  goodDamageMultiplier: 1
+  missDamageMultiplier: 0.5
 --- !u!4 &202226543 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4885773917346102, guid: 5c78605a787e4dc46ba19842fb334685, type: 3}
@@ -877,6 +885,7 @@ Transform:
   - {fileID: 1581588847}
   - {fileID: 241549453}
   - {fileID: 1460280416}
+  - {fileID: 1802017341}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &894155113 stripped
@@ -2110,6 +2119,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2a19d8b6e0338448b8ed12a114d458f, type: 3}
+--- !u!1 &1802017340
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1802017341}
+  - component: {fileID: 1802017342}
+  m_Layer: 0
+  m_Name: NoteJudge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1802017341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802017340}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 875019372}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1802017342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802017340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5ff828a84c4894183e0094c08ef18a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  excellentWindow: 0.05
+  solidWindow: 0.1
+  goodWindow: 0.2
+  excellentSoundPath: event:/punchy-acoustic-snare-263511
+  solidSoundPath: event:/punchy-acoustic-snare-263511
+  goodSoundPath: event:/punchy-acoustic-snare-263511
+  missSoundPath: event:/punchy-acoustic-snare-263511
+  excellentDamageMultiplier: 2
+  solidDamageMultiplier: 1.5
+  goodDamageMultiplier: 1
+  missDamageMultiplier: 0.1
 --- !u!1001 &1913304475
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2889,6 +2953,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6750498061140976017, guid: 2ab81dd2ff5ca1446acfa0fbc5841c3d, type: 3}
+      propertyPath: noteJudge
+      value: 
+      objectReference: {fileID: 1802017342}
     - target: {fileID: 6750498061140976017, guid: 2ab81dd2ff5ca1446acfa0fbc5841c3d, type: 3}
       propertyPath: attackRange
       value: 5

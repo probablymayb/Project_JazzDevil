@@ -283,29 +283,63 @@ public class RhythmManager : Singleton<RhythmManager>
     }
 
     /// <summary>
-    /// 비트 판정 (Perfect, Good, Miss)
+    /// 현재 비트 진행도 반환 (0 = 정확히 비트, 0.5 = 비트 사이 중간)
     /// </summary>
-    public BeatAccuracy GetBeatAccuracy(float tolerancePerfect = 0.05f, float toleranceGood = 0.15f)
+    public float GetCurrentBeatProgress()
     {
-        // 현재 비트 진행도 계산 (0~1)
-        float beatProgress = (songPosition % secPerBeat) / secPerBeat;
+        // FMOD를 사용하여 현재 음악의 재생 위치 가져오기
+        if (musicInstance.isValid())
+        {
+            FMOD.Studio.PLAYBACK_STATE state;
+            musicInstance.getPlaybackState(out state);
 
-        // 0 또는 1에 가까울수록 정확한 타이밍
-        float accuracy = Mathf.Min(beatProgress, 1f - beatProgress) * 2;
+            if (state != FMOD.Studio.PLAYBACK_STATE.PLAYING)
+                return 0.5f; // 재생 중이 아닌 경우 기본값 반환
 
-        if (accuracy <= tolerancePerfect)
-            return BeatAccuracy.Perfect;
-        else if (accuracy <= toleranceGood)
-            return BeatAccuracy.Good;
-        else
-            return BeatAccuracy.Miss;
+            int timelinePosition = 0;
+            musicInstance.getTimelinePosition(out timelinePosition);
+
+            //밀리초를 초로 변환
+            float positionInSeconds = timelinePosition / 1000.0f;
+
+            //현재 비트 위치 계산 (BPM 기반)
+            float beatsPerSecond = CurrentBpm / 60.0f;
+            float currentBeatPosition = positionInSeconds * beatsPerSecond;
+
+            //가장 가까운 비트와의 거리 계산
+            float closestBeat = Mathf.Round(currentBeatPosition);
+            float beatDistance = Mathf.Abs(currentBeatPosition - closestBeat);
+
+            //정규화된 값으로 반환 (0 = 정확히 비트, 0.5 = 비트 사이 중간)
+            return beatDistance;
+        }
+
+        Debug.LogWarning("FMOD 인스턴스 없음");
+
+        //FMOD 인스턴스 유효하지 않은 경우
+        if (timelineInfo != null)
+        {
+            float beatDuration = SecPerBeat;
+            float timeSinceStart = Time.time; // 또는 더 정확한 시간 측정 사용
+
+            float beatsElapsed = timeSinceStart / beatDuration;
+            float currentBeatPartial = beatsElapsed - Mathf.Floor(beatsElapsed);
+
+            // 0.5 기준으로 비트 거리 계산
+            float normalizedDistance = Mathf.Abs(currentBeatPartial - 0.5f);
+            return normalizedDistance;
+        }
+
+        return 0.5f; // 기본값 (가장 부정확한 값)
     }
 
-    public enum BeatAccuracy
+    /// <summary>
+    /// 가장 최근 비트 시간 반환
+    /// </summary>
+    public float GetLastBeatTime()
     {
-        Miss,
-        Good,
-        Perfect
+        //구현이 필요함 - FMOD에서 마지막 비트 정보를 가져와야 함
+        return Time.time - (Time.time % SecPerBeat);
     }
 
     private void OnDestroy()
