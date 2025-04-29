@@ -1,16 +1,15 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 public class ObjectPool
 {
     private GameObject prefab;
-    private Queue<GameObject> inactiveObjects;
+    private Queue<GameObject> pool;
     private Transform poolParent;
 
-    public ObjectPool(GameObject prefab, int initialSize)
+    public ObjectPool(GameObject prefab, int initialSize = 10)
     {
         this.prefab = prefab;
-        inactiveObjects = new Queue<GameObject>(initialSize);
+        pool = new Queue<GameObject>(initialSize);
 
         // 풀의 부모 오브젝트 생성
         GameObject poolObj = new GameObject($"{prefab.name}Pool");
@@ -21,28 +20,22 @@ public class ObjectPool
         {
             GameObject obj = Object.Instantiate(prefab, poolParent);
             obj.SetActive(false);
-            inactiveObjects.Enqueue(obj);
+            pool.Enqueue(obj);
         }
     }
 
     public GameObject GetObject()
     {
-        if (inactiveObjects.Count > 0)
-        {
-            return inactiveObjects.Dequeue();
-        }
-        else
-        {
-            // 풀이 비었으면 새로운 오브젝트 생성
-            GameObject newObject = Object.Instantiate(prefab, poolParent);
-            return newObject;
-        }
+        GameObject obj = pool.Count > 0 ? pool.Dequeue() : Object.Instantiate(prefab, poolParent);
+        obj.transform.SetParent(null);
+        obj.SetActive(true);
+        return obj;
     }
 
     public void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
         obj.transform.SetParent(poolParent);
-        inactiveObjects.Enqueue(obj);
+        pool.Enqueue(obj);
     }
 }
