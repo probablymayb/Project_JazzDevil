@@ -36,6 +36,11 @@ public class NoteSpawner : MonoBehaviour
         RhythmManager.beatUpdated += SpawnMonster;
     }
 
+    private void Start()
+    {
+        PoolManager.Instance.CreatePool(notePrefab, 10); // 노트 10개 풀 미리 생성
+    }
+
     private void OnDestroy()
     {
 
@@ -44,10 +49,6 @@ public class NoteSpawner : MonoBehaviour
         RhythmManager.beatUpdated -= SpawnNote;
         RhythmManager.beatUpdated -= SpawnMonster;
 
-    }
-
-    private void Start()
-    {
     }
 
     private void Update()
@@ -70,9 +71,15 @@ public class NoteSpawner : MonoBehaviour
             }
             else 
             {
-                // Canvas의 중앙에 노트 생성
-                GameObject note = Instantiate(notePrefab, spawnPoint);
+                // Canvas의 중앙에 노트 생성 (풀에서 Get)
+                GameObject note = PoolManager.Instance.Get(notePrefab);
                 note.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+
+                Note noteComp = note.transform.GetChild(0).GetComponent<Note>();
+                if (noteComp != null)
+                {
+                    noteComp.poolPrefabRef = notePrefab; // 반환용 참조
+                }
 
                 nextSpawn = spawnInterval - 1;
             }

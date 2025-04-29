@@ -19,6 +19,8 @@ abstract public class Monster : MonoBehaviour
 
     private Animator animator;
 
+    [HideInInspector] public GameObject poolPrefabRef; // 풀 반환용 프리팹 참조
+
     protected virtual void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -130,7 +132,8 @@ abstract public class Monster : MonoBehaviour
             }
         }
 
-        Destroy(gameObject); // ??��???�론�?가??(?�본?� ?�직이지 ?�아??공격받�? ?�음)
+        // 풀로 반환
+        PoolManager.Instance.Return(poolPrefabRef, gameObject);
     }
 
     //clone 몬스터 스텟 초기화*****
