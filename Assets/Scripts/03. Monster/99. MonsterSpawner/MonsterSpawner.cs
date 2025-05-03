@@ -23,6 +23,10 @@ public class MonsterSpawner : MonoBehaviour
 
     private Coroutine spawnCoroutine;    // 현재 웨이브 스폰 상태 저장용
 
+    private void Start()
+    {
+        PoolManager.Instance.CreatePool(monsterPrefab, 20);
+    }
 
     /// WaveManager에서 호출: 일정 시간동안 몬스터를 계속 스폰
     public void SpawnWave(int waveIndex, float duration)
@@ -66,9 +70,15 @@ public class MonsterSpawner : MonoBehaviour
         Vector3 basePosition = player != null ? player.transform.position : Vector3.zero;
         Vector3 spawnPosition = GetRandomSpawnPosition(basePosition);
 
+        // 풀에서 몬스터 가져오기
+        GameObject newMonster = PoolManager.Instance.Get(monsterPrefab);
+        newMonster.transform.position = spawnPosition;
+        newMonster.transform.rotation = Quaternion.identity;
+        newMonster.layer = LayerMask.NameToLayer("Enemy");
+
         // MonsterPrefab을 기준으로 인스턴스 생성
-        GameObject newMonster = Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
-        newMonster.layer = LayerMask.NameToLayer("Enemy"); // 레이어 명시적 설정
+        //GameObject newMonster = Instantiate(monsterPrefab, spawnPosition, Quaternion.identity);
+        //newMonster.layer = LayerMask.NameToLayer("Enemy"); // 레이어 명시적 설정
                                                            // 모든 자식 오브젝트에도 레이어 적용 (필요시)
         //foreach (Transform child in newMonster.transform)
         //{
@@ -93,6 +103,9 @@ public class MonsterSpawner : MonoBehaviour
 
             //능력치 초기화(Monseter.cs 내에서 처리)*****
             monsterAI.Initialize(maxHp, atk, spd);
+
+            // 반환용 참조
+            monsterAI.poolPrefabRef = monsterPrefab;
         }
     }
 

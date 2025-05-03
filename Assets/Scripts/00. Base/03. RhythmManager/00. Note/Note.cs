@@ -11,17 +11,25 @@ public class Note : MonoBehaviour
     private float currentTime = 0f;
     private RectTransform rectTransform;
 
+    [HideInInspector] public GameObject poolPrefabRef; // í’€ ë°˜í™˜ìš© í”„ë¦¬íŒ¹ ì°¸ì¡°
+
     private void Awake()
     {
         noteImage = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
+    }
 
-        // ½ÃÀÛÇÒ ¶§ ÀÌ¹ÌÁö°¡ º¸ÀÌµµ·Ï ¾ËÆÄ°ª ¼³Á¤
+    private void OnEnable()
+    {
+        // íƒ€ì´ë¨¸ ì´ˆê¸°í™”
+        currentTime = 0f;
+
+        // ì‹œìž‘í•  ë•Œ ì´ë¯¸ì§€ê°€ ë³´ì´ë„ë¡ ì•ŒíŒŒê°’ ì„¤ì •
         Color startColor = noteImage.color;
         startColor.a = 1f;
         noteImage.color = startColor;
 
-        // ½ÃÀÛ Å©±â ¼³Á¤
+        // ì‹œìž‘ í¬ê¸° ì„¤ì •
         rectTransform.localScale = Vector3.one * startScale;
     }
 
@@ -30,15 +38,16 @@ public class Note : MonoBehaviour
         currentTime += Time.deltaTime;
         float progress = currentTime / shrinkDuration;
 
-        // Å©±â°¡ startScale¿¡¼­ endScale·Î ÁÙ¾îµéµµ·Ï ¼öÁ¤
+        // í¬ê¸°ê°€ startScaleì—ì„œ endScaleë¡œ ì¤„ì–´ë“¤ë„ë¡ ìˆ˜ì •
         float currentScale = Mathf.Lerp(startScale, endScale, progress);
         rectTransform.localScale = Vector3.one * currentScale;
 
-        // ¾ËÆÄ°ª º¯°æ Á¦°Å (°è¼Ó º¸ÀÌµµ·Ï)
+        // ì•ŒíŒŒê°’ ë³€ê²½ ì œê±° (ê³„ì† ë³´ì´ë„ë¡)
 
         if (progress >= 1f)
         {
-            Destroy(gameObject);
+            // í’€ë¡œ ë°˜í™˜
+            PoolManager.Instance.Return(poolPrefabRef, transform.parent.gameObject);
         }
     }
 }
