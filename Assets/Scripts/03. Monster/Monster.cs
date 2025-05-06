@@ -104,11 +104,11 @@ abstract public class Monster : MonoBehaviour
     private void Die()
     {
         Debug.Log("Monster is Dead!");
-        // TODO : ������Ʈ Ǯ�� �߰� �� �Ʒ��� ���� Ǯ�� ��ȯ�ϴ� �ڵ� �ۼ� �ؾ� ��.
+        // TODO : 풀링 구현
         // EnemyPool.Instance.ReturnToPool(this);
 
 
-        // ?�레?�어?�게 골드 지�?********
+        // 플레이어 골드 획득********
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {

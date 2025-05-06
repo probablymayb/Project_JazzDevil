@@ -5,7 +5,6 @@ using UnityEngine;
     {
         Title,
         Wave,
-        Shop,
         Finish
     };
 
