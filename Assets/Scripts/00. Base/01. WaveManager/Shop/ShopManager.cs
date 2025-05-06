@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 public class ShopManager : MonoBehaviour
 {
-    public GameObject shopTriggerPrefab;
+    public GameObject fieldShopPrefab;
     public float totalGameDuration = 3f; // 일단 총 3분 게임 - 타이머 수정하면서 수정 예정
 
     private float elapsedTime = 0f;
@@ -30,13 +30,13 @@ public class ShopManager : MonoBehaviour
 
         Vector3 spawnPosition = GetRandomSpawnPosition(basePosition);
 
-        if (shopTriggerPrefab == null)
+        if (fieldShopPrefab == null)
         {
             Debug.LogError("[ShopManager] shopTriggerPrefab이 비어 있음!");
             return;
         }
 
-        GameObject trigger = Instantiate(shopTriggerPrefab, spawnPosition, Quaternion.identity);
+        GameObject trigger = Instantiate(fieldShopPrefab, spawnPosition, Quaternion.identity);
     }
 
     private Vector3 GetRandomSpawnPosition(Vector3 basePosition)

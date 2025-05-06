@@ -22,12 +22,6 @@ public class WaveManager : MonoBehaviour
     public Text waveTextUI;                    // current Stage 참조
 
 
-    [Header("참조")]
-    public MonsterSpawner spawner;
-    public GameTimer timer;
-    public PlayerController player;
-    public Text waveTextUI;
-
     private int currentWave = 0;
     private bool isWaveRunning = false;
 

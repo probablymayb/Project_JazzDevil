@@ -7,7 +7,7 @@ using DG.Tweening;
 /// <summary>
 /// 상점 UI 연출 및 아이템 구매 처리 담당 (PlayerController의 골드 사용)
 /// </summary>
-public class LiveShopUIManager : MonoBehaviour
+public class LiveShopUIManager : Singleton<LiveShopUIManager>
 {
     [System.Serializable]
     public class ItemSlot
