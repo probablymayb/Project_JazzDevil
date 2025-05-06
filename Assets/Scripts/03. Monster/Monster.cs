@@ -4,11 +4,12 @@ using UnityEngine;
 abstract public class Monster : MonoBehaviour
 {
 
-    public MonsterSO monsterData;   // ��ũ���ͺ� ������Ʈ ����
-    private Transform player;       // �÷��̾�
-    private float currentHealth;    // ���� ü��
-    private int windupTimer = 0;    // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
-    private float speed;            //instance monster speed*****
+    public MonsterSO monsterData;               // ��ũ���ͺ� ������Ʈ ����
+    private Transform player;                   // �÷��̾�
+    private float currentHealth;                // ���� ü��
+    private int windupTimer = 0;                // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
+    private float speed;                        //instance monster speed*****
+    private float damageEffectDuration = 0.5f;  // isDamaged 유지 시간
 
     protected IMonsterPattern AttackPattern = null;
 
@@ -18,12 +19,18 @@ abstract public class Monster : MonoBehaviour
     public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ?�본 몬스???�치 고정
 
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;            // 원래의 색상을 저장하는 용도의 변수
 
     [HideInInspector] public GameObject poolPrefabRef; // 풀 반환용 프리팹 참조
 
     protected virtual void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        spriteRenderer = transform.Find("Sprite").GetComponent<SpriteRenderer>();
+
+        // 원래 색상 저장
+        originalColor = spriteRenderer.color;
 
         // "Player" 찾기
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -111,6 +118,11 @@ abstract public class Monster : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            // 피격 데미지
+            StartCoroutine(DamageCoroutine());
+        }
     }
 
     // ���� ���� (������Ʈ Ǯ�� ��ȯ)
@@ -189,4 +201,12 @@ abstract public class Monster : MonoBehaviour
             animator.speed = 0.1f;
     }
 
+    private IEnumerator DamageCoroutine()
+    {
+        animator.SetBool("isDamaged", true);
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(damageEffectDuration);
+        animator.SetBool("isDamaged", false);
+        spriteRenderer.color = originalColor;
+    }
 }
