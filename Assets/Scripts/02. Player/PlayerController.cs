@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         // 게임 상태가 Shop일 땐 입력 무시*****
-        if (GameManager.Instance.CurrentGameState == EGameState.Shop || GameManager.Instance.CurrentGameState == EGameState.Finish)
+        if (GameManager.Instance.CurrentGameState == EGameState.Finish)
             return;
 
         ProcessInputs();
@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         // 게임 상태가 Shop일 땐 입력 무시*****
-        if (GameManager.Instance.CurrentGameState == EGameState.Shop || GameManager.Instance.CurrentGameState == EGameState.Finish)
+        if (GameManager.Instance.CurrentGameState == EGameState.Finish)
             return;
 
         Move();
