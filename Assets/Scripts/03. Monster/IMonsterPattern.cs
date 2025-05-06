@@ -13,7 +13,7 @@ public class MeleePattern : IMonsterPattern
         if (playerController != null)
         {
             Debug.Log("Player Damaged : " + monsterData.attackDamage);
-            playerController.TakeDamage(monsterData.attackDamage); // ÇÃ·¹ÀÌ¾î Ã¼·Â °¨¼Ò
+            playerController.TakeDamage(monsterData.attackDamage); // í”Œë ˆì´ì–´ ì²´ë ¥ ê°ì†Œ
             animator.SetBool("isWindup", false);
             animator.SetBool("isAttack", true);
         }
