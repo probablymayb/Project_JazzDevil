@@ -8,7 +8,6 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private GameObject resultPopup;            // 인스펙터에서 DefeatPopup 연결
     [SerializeField] private Button returnToTitleButton;        // 타이틀 복귀 버튼 참조
 
-    
     [Header("웨이브 설정")]
     public int totalWaves = 4;                 // 총 웨이브 수
     public float waveDuration = 20f;           // 각 웨이브 유지 시간
@@ -20,6 +19,7 @@ public class WaveManager : MonoBehaviour
     public GameTimer timer;                    // 타이머 참조
     public PlayerController player;            // 플레이어 참조
     public Text waveTextUI;                    // current Stage 참조
+    public FieldShopSpawner fieldShopSpawner;  // 필드 상점 스포너 참조
 
     private int currentWave = 0;               // 현재 진행 중인 웨이브 인덱스
     private bool isWaveRunning = false;        // 웨이브 진행 여부
@@ -143,6 +143,9 @@ public class WaveManager : MonoBehaviour
 
             // 상점 팝업 띄우기
             ShowShopPopup();
+
+            // 필드 상점 스포너로 스폰
+            fieldShopSpawner.Spawn();
         }
         else
         {     
