@@ -7,50 +7,67 @@ abstract public class Supporter : MonoBehaviour
     protected ISupporterPattern ActPattern = null;
 
     private Transform player;
-    private float followSpeed;  // ÇÃ·¹ÀÌ¾î µû¸£´Â ¼Óµµ
-    private float timer = 0f;   // ÆĞÅÏ Å¸ÀÌ¸Ó
+    private float timer = 0f;   // íŒ¨í„´ íƒ€ì´ë¨¸
+
+    // í”Œë ˆì´ì–´ ì£¼ìœ„ ê³µì „ ê´€ë ¨ ë³€ìˆ˜
+    private float orbitSpeed = 20f;   // ê³µì „ ì†ë„
+    private Vector3 offset;     // í”Œë ˆì´ì–´ì™€ì˜ ê±°ë¦¬
 
     protected virtual void Start()
     {
-        // "Player" ÅÂ±×°¡ ÀÖ´Â ¿ÀºêÁ§Æ® Ã£±â
+        // "Player" íƒœê·¸ê°€ ìˆëŠ” ì˜¤ë¸Œì íŠ¸ ì°¾ê¸°
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             player = playerObj.transform;
         }
 
-        followSpeed = 5f;
-
-        // »ó½Ã ¹ßµ¿ ½Ã ActPattern ¹ßµ¿
+        // ìƒì‹œ ë°œë™ ì‹œ ActPattern ë°œë™
         if (supporterData.attackCooldown == 0f)
         {
             ActPattern?.ActPattern(transform, player, supporterData);
         }
+
+        // í”Œë ˆì´ì–´ì™€ì˜ offset ì´ˆê¸°í™”
+        offset = transform.position - player.position;
     }
 
     protected virtual void FixedUpdate()
     {
-        // ÇÃ·¹ÀÌ¾î µû¶ó´Ù´Ï±â
-        transform.position = Vector3.Lerp(transform.position, player.position, followSpeed * Time.deltaTime);
+        // í”Œë ˆì´ì–´ ì£¼ìœ„ë¥¼ ê³µì „í•˜ê¸°
+        OrbitPlayer();
 
-        // °¡Àå °¡±î¿î Àû ¹Ù¶óº¸±â
+        // ê°€ì¥ ê°€ê¹Œìš´ ì  ë°”ë¼ë³´ê¸°
         Transform lookTarget = Finder.NearestObject(transform, "Monster");
         if (lookTarget != null)
         {
-            transform.LookAt(lookTarget);
+            Vector3 direction = lookTarget.position - transform.position; // íƒ€ê²Ÿê¹Œì§€ì˜ ë°©í–¥ ë²¡í„°
+            direction.y = 0f; // pitch íšŒì „ ë°©ì§€
+            if (direction != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(direction);
+            }
         }
 
-        // »ó½Ã ¹ßµ¿ÀÌ ¾Æ´Ï¸é Å¸ÀÌ¸Ó¸¦ Àé´Ù.
+        // ìƒì‹œ ë°œë™ì´ ì•„ë‹ˆë©´ íƒ€ì´ë¨¸ë¥¼ ì°ë‹¤.
         if (supporterData.attackCooldown != 0f)
         {
             timer += Time.deltaTime;
-            // ¸¸¾à Äğ Å¸ÀÓÀÌ Â÷¸é
+            // ë§Œì•½ ì¿¨ íƒ€ì„ì´ ì°¨ë©´
             if (timer > supporterData.attackCooldown)
             {
-                // ÆĞÅÏ
+                // íŒ¨í„´
                 ActPattern?.ActPattern(transform, player, supporterData);
-                timer = 0f; // Å¸ÀÌ¸Ó ÃÊ±âÈ­
+                timer = 0f; // íƒ€ì´ë¨¸ ì´ˆê¸°í™”
             }
         }
+    }
+
+    // í”Œë ˆì´ì–´ ì£¼ìœ„ ê³µì „
+    private void OrbitPlayer()
+    {
+        transform.position = player.position + offset;
+        transform.RotateAround(player.position, Vector3.up, orbitSpeed * Time.deltaTime);
+        offset = transform.position - player.position;
     }
 }
