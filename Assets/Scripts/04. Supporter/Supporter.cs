@@ -13,6 +13,8 @@ abstract public class Supporter : MonoBehaviour
     private float orbitSpeed = 20f;   // 공전 속도
     private Vector3 offset;     // 플레이어와의 거리
 
+    [HideInInspector] public GameObject poolPrefabRef; // 풀 반환용 프리팹 참조
+
     protected virtual void Start()
     {
         // "Player" 태그가 있는 오브젝트 찾기
@@ -34,9 +36,6 @@ abstract public class Supporter : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        // 플레이어 주위를 공전하기
-        OrbitPlayer();
-
         // 가장 가까운 적 바라보기
         Transform lookTarget = Finder.NearestObject(transform, "Monster");
         if (lookTarget != null)
@@ -61,13 +60,5 @@ abstract public class Supporter : MonoBehaviour
                 timer = 0f; // 타이머 초기화
             }
         }
-    }
-
-    // 플레이어 주위 공전
-    private void OrbitPlayer()
-    {
-        transform.position = player.position + offset;
-        transform.RotateAround(player.position, Vector3.up, orbitSpeed * Time.deltaTime);
-        offset = transform.position - player.position;
     }
 }
