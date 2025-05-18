@@ -19,14 +19,14 @@ public class KontraBass : Supporter
             Monster monster = other.GetComponent<Monster>();
             if (monster != null)
             {
-                monster.AdjustSpeed(supporterData.attackDamage / 100); // (attackDamage)% º”µµ∑Œ ¡∂¡§
+                monster.AdjustSpeed(supporterData.attackDamage / 100); // (attackDamage)% ÏÜçÎèÑÎ°ú Ï°∞Ï†ï
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Mosnter"))
+        if (other.CompareTag("Monster"))
         {
             Monster monster = other.GetComponent<Monster>();
             if (monster != null)
