@@ -180,20 +180,21 @@ abstract public class Monster : MonoBehaviour
     // 비트에 맞춰 애니메이션 재생하는 코루틴
     private IEnumerator PulsateAnimation()
     {
-        float startSpeed = 2f;
-        float timer = 0.1f;
+        float startAnimSpeed = 2f;
+        float timer = 0f;
         float duration = 60f / RhythmManager.Instance.CurrentBpm;
 
         if (animator == null) yield break;
 
-        animator.speed = startSpeed;
+        animator.speed = startAnimSpeed;
 
         while (timer < duration)
         {
             if (this == null || animator == null) yield break;
 
             timer += Time.deltaTime;
-            animator.speed = Mathf.Lerp(startSpeed, 0.1f, timer / duration);
+            speed = Mathf.Lerp(monsterData.speed, 0f, timer / duration);
+            animator.speed = Mathf.Lerp(startAnimSpeed, 0f, timer / duration);
             yield return null;
         }
 

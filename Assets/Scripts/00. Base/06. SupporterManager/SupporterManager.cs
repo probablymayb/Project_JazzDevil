@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,7 +9,8 @@ public class SupporterManager : MonoBehaviour
 {
     [Header("회전 설정")]
     [SerializeField] private float orbitRadius = 1f;    // 회전 반경
-    [SerializeField] private float rotationSpeed = 30f; // 회전 속도
+    [SerializeField] private float maxRotSpeed = 100f;   // 회전 최대 속도
+    private float rotationSpeed; // 회전 속도
 
     private Transform playerTransform;
 
@@ -22,6 +25,15 @@ public class SupporterManager : MonoBehaviour
         {
             playerTransform = playerObj.transform;
         }
+
+        RhythmManager.beatUpdated += OnBeat;
+
+        rotationSpeed = maxRotSpeed; // 회전 속도 초기화
+    }
+
+    private void OnDestroy()
+    {
+        RhythmManager.beatUpdated -= OnBeat;
     }
 
     private void Update()
@@ -97,4 +109,37 @@ public class SupporterManager : MonoBehaviour
             }
         }
     }
+
+    // 박자에 맞춰 코루틴을 실행
+    private void OnBeat()
+    {
+        if (!isActiveAndEnabled) return;
+        StartCoroutine(PulsateAnimation());
+    }
+
+    // 박자에 맞춰 동료를 움직이는 코루틴 (Monster.cs에서 가져옴)
+    // 추후 동료 애니메이션 구현 시 주석 처리된 코드 사용할 예정임
+    private IEnumerator PulsateAnimation()
+    {
+        float timer = 0f;
+        float duration = 60f / RhythmManager.Instance.CurrentBpm;
+
+        //if (animator == null) yield break;
+
+        //animator.speed = startSpeed;
+
+        while (timer < duration)
+        {
+            if (this == null/* || animator == null*/) yield break;
+
+            timer += Time.deltaTime;
+            //animator.speed = Mathf.Lerp(maxRotSpeed, 0f, timer / duration);
+            rotationSpeed = Mathf.Lerp(maxRotSpeed, 0f, timer / duration);
+            yield return null;
+        }
+
+        //if (animator != null)
+        //    animator.speed = 0.1f;
+    }
+
 }
