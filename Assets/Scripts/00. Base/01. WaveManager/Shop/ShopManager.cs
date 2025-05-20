@@ -37,12 +37,13 @@ public class ShopManager : MonoBehaviour
         }
 
         GameObject trigger = Instantiate(shopTriggerPrefab, spawnPosition, Quaternion.identity);
+        Debug.Log($"[ShopManager] 트리거 생성 위치: {spawnPosition}");
     }
 
     private Vector3 GetRandomSpawnPosition(Vector3 basePosition)
     {
-        float minDistance = 3f;
-        float maxDistance = 8f;
+        float minDistance = 4f;
+        float maxDistance = 10f;
 
         Vector3 spawnPosition;
         float distance;
