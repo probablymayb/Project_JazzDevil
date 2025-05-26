@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using FMODUnity;   
+using FMODUnity;
 using FMOD.Studio;
 
 
@@ -24,10 +24,12 @@ public class PlayerController : MonoBehaviour
     [Header("Inventory")]
     [SerializeField] private int gold = 0;
 
-    // 컴포넌트 참조
+    //Animator
     private Rigidbody rb;
-    private Animator spriteAnimator;
+    private Animator upperBodyAnimator;  // 상체 애니메이터
+    private Animator lowerBodyAnimator;  // 하체 애니메이터
     private SphereCollider detectionCollider;
+    private int attackCounter = 0;
 
     // 입력 변수
     private float horizontalInput;
@@ -64,7 +66,21 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        spriteAnimator = transform.Find("Sprite")?.GetComponent<Animator>();
+
+        // 상체와 하체 애니메이터 각각 찾기
+        Transform upperBodyTransform = transform.Find("UpperBody");
+        Transform lowerBodyTransform = transform.Find("LowerBody");
+
+        if (upperBodyTransform != null)
+            upperBodyAnimator = upperBodyTransform.GetComponent<Animator>();
+        else
+            Debug.LogWarning("[PlayerController] UpperBody를 찾을 수 없습니다!");
+
+        if (lowerBodyTransform != null)
+            lowerBodyAnimator = lowerBodyTransform.GetComponent<Animator>();
+        else
+            Debug.LogWarning("[PlayerController] LowerBody를 찾을 수 없습니다!");
+
         currentHealth = maxHealth;
 
         // 회전 제한
@@ -118,10 +134,11 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimationState()
     {
-        if (spriteAnimator != null)
+        // 하체 애니메이션만 이동 상태에 따라 업데이트
+        if (lowerBodyAnimator != null)
         {
             bool isMoving = Mathf.Abs(horizontalInput) > 0.1f || Mathf.Abs(verticalInput) > 0.1f;
-            spriteAnimator.SetBool("isMove", isMoving);
+            lowerBodyAnimator.SetBool("isMove", isMoving);
         }
     }
 
@@ -154,7 +171,7 @@ public class PlayerController : MonoBehaviour
         gold += amount;
         Debug.Log($"[Player] 골드 획득: +{amount} → 총 골드: {gold}");
     }
-    
+
     //골드 소모 ****** (상점 기능에 따라 변경 예정)
     public bool SpendGold(int amount)
     {
@@ -171,9 +188,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void Attack()
     {
+        // 상체 공격 애니메이션 트리거
+        if (upperBodyAnimator != null)
+        {
+            attackCounter++;
+            Debug.Log($"🎯 attackCounter % 2 = {attackCounter % 2}");
+            Debug.Log($"🎯 SetInteger AttackCounter = {attackCounter % 2}");
+
+            upperBodyAnimator.SetBool("isAttack", true);
+            upperBodyAnimator.SetInteger("AttackCounter", attackCounter % 2);
+
+            // 🔍 실제 Animator Parameter 값 확인
+            int currentAttackCounter = upperBodyAnimator.GetInteger("AttackCounter");
+            Debug.Log($"🎯 [ANIMATOR] 실제 AttackCounter 값 = {currentAttackCounter}");
+
+           
+        }
+
         // 노트 판정 요청
         JudgementResult judgement = JudgementResult.Miss;
         float damageMultiplier = 1.0f;
@@ -281,5 +314,29 @@ public class PlayerController : MonoBehaviour
     public void UpgradeDamage(int upgradedDamage)
     {
         attackDamage = upgradedDamage;
+    }
+
+    //UpperBody Animation
+    public void OnAttackStart()
+    {
+        Debug.Log("[PlayerController] Attack Start Event - 0% 지점");
+
+        // 역방향 완료 시 isAttack을 false로 설정
+        if (upperBodyAnimator != null)
+        {
+            AnimatorStateInfo stateInfo = upperBodyAnimator.GetCurrentAnimatorStateInfo(0);
+            // 현재 상태의 속도가 음수면 역방향
+            Debug.Log(stateInfo.GetType());
+            if (stateInfo.speed < 0 || stateInfo.speedMultiplier < 0)
+            {
+                upperBodyAnimator.SetBool("isAttack", false);
+                Debug.Log("[PlayerController] 역방향 공격 완료!");
+            }
+            else
+            {
+                Debug.Log("[PlayerController] 정방향 공격 시작!");
+
+            }
+        }
     }
 }
