@@ -96,7 +96,7 @@ abstract public class Monster : MonoBehaviour
 
             if (windupTimer > monsterData.attackWindup)
             {
-                AttackPattern?.AttackPattern(player, animator, monsterData);
+                AttackPattern?.AttackPattern(transform, player, animator, monsterData);
                 windupTimer = 0; // 공격 후 타이머 초기화
             }
         }
