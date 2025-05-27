@@ -2,6 +2,7 @@ using UnityEngine;
 public class NoteJudge : MonoBehaviour
 {
     [SerializeField] private NoteSpawner noteSpawner;
+    [SerializeField] private JudgeNoteTextUI JudgeNoteTextUI;
 
     [Header("Judgement Settings")]
     [SerializeField] private float perfectWindow = 0.05f;
@@ -17,8 +18,13 @@ public class NoteJudge : MonoBehaviour
 
     private void CheckNoteHit()
     {
+        Debug.Log("CheckNoteHit 호출됨");
         Note closestNote = noteSpawner.GetClosestNote();
-        if (closestNote == null) return;
+        if (closestNote == null)
+        {
+            Debug.Log("null");
+            return;
+        }
 
         float currentScale = closestNote.transform.localScale.x;
         float timeOffset = 1f;//Mathf.Abs(RhythmManager.Instance.SongPosition - closestNote.hitTime);
@@ -45,6 +51,13 @@ public class NoteJudge : MonoBehaviour
         //note.Hit();
         noteSpawner.RemoveNote(note);
         Destroy(note.gameObject);
+
+        //note 판정 text
+        if (JudgeNoteTextUI != null)
+        {
+            JudgeNoteTextUI.ShowJudge(judgement);
+        }
+
         // 추가적인 판정 처리 (점수, 콤보 등)
     }
 }
