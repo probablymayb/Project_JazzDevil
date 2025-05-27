@@ -5,9 +5,9 @@ abstract public class Monster : MonoBehaviour
 {
 
     public MonsterSO monsterData;               // ��ũ���ͺ� ������Ʈ ����
-    private Transform player;                   // �÷��̾�
+    protected Transform player;                   // �÷��̾�
     private float currentHealth;                // ���� ü��
-    private int windupTimer = 0;                // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
+    protected int windupTimer = 0;                // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
     private float speed;                        //instance monster speed*****
     private float damageEffectDuration = 0.5f;  // isDamaged 유지 시간
 
@@ -18,7 +18,7 @@ abstract public class Monster : MonoBehaviour
     [HideInInspector] public bool isClone = false; // 복제??몬스???��?
     public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ?�본 몬스???�치 고정
 
-    private Animator animator;
+    protected Animator animator;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;            // 원래의 색상을 저장하는 용도의 변수
 
@@ -80,7 +80,7 @@ abstract public class Monster : MonoBehaviour
     }
 
     // 공격 로직 판단 + 수행 함수
-    private void Attack()
+    protected virtual void Attack()
     {
         if (!isActiveAndEnabled) return;
 
@@ -96,7 +96,7 @@ abstract public class Monster : MonoBehaviour
 
             if (windupTimer > monsterData.attackWindup)
             {
-                AttackPattern?.AttackPattern(player, animator, monsterData);
+                AttackPattern?.AttackPattern(transform, player, animator, monsterData);
                 windupTimer = 0; // 공격 후 타이머 초기화
             }
         }
