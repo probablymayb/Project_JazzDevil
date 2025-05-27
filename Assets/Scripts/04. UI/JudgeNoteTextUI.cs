@@ -27,7 +27,7 @@ public class JudgeNoteTextUI : MonoBehaviour
         switch (result)
         {
             case "Perfect":
-                judgeText.color = new Color(1f, 0.92f, 0.016f, 1f); // 노랑
+                judgeText.color = new Color(1f, 0.89f, 0.45f, 1f); // 금색
                 break;
             case "Good":
                 judgeText.color = new Color(0.3f, 1f, 0.3f, 1f); // 연두
