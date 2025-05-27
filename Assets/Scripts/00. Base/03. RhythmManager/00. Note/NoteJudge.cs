@@ -17,6 +17,11 @@ public class NoteJudge : MonoBehaviour
     [SerializeField] private float solidWindow = 0.2f;      // ±100ms
     [SerializeField] private float goodWindow = 0.3f;       // ±200ms
 
+
+    //kj
+    [SerializeField] private NoteSpawner noteSpawner;
+    [SerializeField] private JudgeNoteTextUI JudgeNoteTextUI;
+
     //판정 발생 이벤트
     public event Action<JudgementResult> OnJudgement;
 
@@ -55,6 +60,13 @@ public class NoteJudge : MonoBehaviour
     public JudgementResult Judge()
     {
         if (rhythmManager == null) return JudgementResult.Miss;
+        Debug.Log("CheckNoteHit ȣ���");
+        Note closestNote = noteSpawner.GetClosestNote();
+        if (closestNote == null)
+        {
+            Debug.Log("null");
+            return;
+        }
 
         // RhythmManager의 비트 정보를 사용하여 정확도 판정
         float beatProgress = GetBeatProgress();
@@ -119,6 +131,19 @@ public class NoteJudge : MonoBehaviour
             default:
                 return missDamageMultiplier;
         }
+        //note.Hit();
+        noteSpawner.RemoveNote(note);
+        Destroy(note.gameObject);
+
+//kj
+        //note ���� text
+        if (JudgeNoteTextUI != null)
+        {
+            JudgeNoteTextUI.ShowJudge(judgement);
+        }
+
+        // �߰����� ���� ó�� (����, �޺� ��)
+
     }
 
     // 판정에 따른 사운드 재생

@@ -20,6 +20,8 @@ public class ShopUIManager : Singleton<ShopUIManager>
     {
         base.Awake();
         shopRootUI.SetActive(false);
+        if (returnButton != null)
+            returnButton.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -32,38 +34,40 @@ public class ShopUIManager : Singleton<ShopUIManager>
 
     public void OpenShop()
     {
-        // 모든 토글 상태 초기화
         foreach (var slotPrefab in itemSlotPrefabs)
         {
             var toggle = slotPrefab.transform.Find("ItemSlot/Toggle")?.GetComponent<Toggle>();
-            if (toggle != null)
-                toggle.isOn = false;
-        }
-
-        foreach (var slotPrefab in itemSlotPrefabs)
-        {
-            var toggle = slotPrefab.transform.Find("ItemSlot/Toggle")?.GetComponent<Toggle>();
-            if (toggle != null)
+            var background = slotPrefab.transform.Find("ItemSlot/Background")?.gameObject; // Background 경로 맞게!
+            if (toggle != null && background != null)
             {
                 toggle.isOn = false;
+                background.SetActive(false); // 초기화
 
-                // 🔽 디버깅 로그 추가
                 toggle.onValueChanged.RemoveAllListeners(); // 중복 방지
-                toggle.onValueChanged.AddListener((value) =>
+                toggle.onValueChanged.AddListener((isOn) =>
                 {
-                    Debug.Log($"[DEBUG] {slotPrefab.name} 클릭됨 - 토글 상태: {value}");
+                    Debug.Log($"[DEBUG] {slotPrefab.name} 클릭됨 - 토글 상태: {isOn}");
+                    background.SetActive(isOn);
                 });
             }
         }
 
         shopRootUI.SetActive(true);
         StartCoroutine(PlayOpenAnimation());
+
+        if (returnButton != null)
+            returnButton.gameObject.SetActive(true);
+        returnButton.interactable = true;
     }
 
     public void CloseShop()
     {
         returnButton.interactable = false;
+        if (returnButton != null)
+            returnButton.gameObject.SetActive(false);
+
         StartCoroutine(PlayCloseAnimation());
+        shopRootUI.SetActive(false);
     }
 
     private IEnumerator PlayOpenAnimation()
