@@ -223,6 +223,8 @@ MonoBehaviour:
   excellentWindow: 0.05
   solidWindow: 0.1
   goodWindow: 0.1
+  noteSpawner: {fileID: 0}
+  JudgeNoteTextUI: {fileID: 0}
   excellentSoundPath: event:/Judgement/Excellent
   solidSoundPath: event:/Judgement/Solid
   goodSoundPath: event:/Judgement/Good
@@ -1466,6 +1468,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4229891185946988, guid: 70f53ac0b41061641a548067be3b6087, type: 3}
   m_PrefabInstance: {fileID: 1628843236}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1313013055 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2287516358599384978, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+  m_PrefabInstance: {fileID: 1664729659}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886e4e905e2cb7a408d3042a1e0008d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1334562396 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4868206742303560, guid: 0d7f90fd90f580f4fbb8d7f287651a5d, type: 3}
@@ -2393,6 +2406,8 @@ MonoBehaviour:
   excellentWindow: 0.05
   solidWindow: 0.1
   goodWindow: 0.2
+  noteSpawner: {fileID: 1557081592}
+  JudgeNoteTextUI: {fileID: 1313013055}
   excellentSoundPath: event:/punchy-acoustic-snare-263511
   solidSoundPath: event:/punchy-acoustic-snare-263511
   goodSoundPath: event:/punchy-acoustic-snare-263511

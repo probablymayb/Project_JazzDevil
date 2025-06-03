@@ -17,23 +17,30 @@ public class JudgeNoteTextUI : MonoBehaviour
         judgeText.text = "";
     }
 
-    public void ShowJudge(string result)
+    public void ShowJudge(JudgementResult result)
     {
         if (seq != null) seq.Kill();
 
-        judgeText.text = result;
 
         // 판정별 색상
         switch (result)
         {
-            case "Perfect":
+            case JudgementResult.Excellent:
                 judgeText.color = new Color(1f, 0.89f, 0.45f, 1f); // 금색
+                judgeText.text = "Excellent";
+
                 break;
-            case "Good":
+            case JudgementResult.Solid:
                 judgeText.color = new Color(0.3f, 1f, 0.3f, 1f); // 연두
+                judgeText.text = "Solid";
                 break;
-            case "Miss":
+            case JudgementResult.Good:
+                judgeText.color = new Color(0.2f, 0.2f, 1.0f, 1f); // 파랑
+                judgeText.text = "Good";
+                break;
+            case JudgementResult.Miss:
                 judgeText.color = new Color(1f, 0.2f, 0.2f, 1f); // 빨강
+                judgeText.text = "Miss";
                 break;
             default:
                 judgeText.color = Color.white;

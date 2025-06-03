@@ -62,11 +62,6 @@ public class NoteJudge : MonoBehaviour
         if (rhythmManager == null) return JudgementResult.Miss;
         Debug.Log("CheckNoteHit ȣ���");
         Note closestNote = noteSpawner.GetClosestNote();
-        if (closestNote == null)
-        {
-            Debug.Log("null");
-            return;
-        }
 
         // RhythmManager의 비트 정보를 사용하여 정확도 판정
         float beatProgress = GetBeatProgress();
@@ -120,6 +115,13 @@ public class NoteJudge : MonoBehaviour
     // 데미지 배율 반환
     public float GetDamageMultiplier(JudgementResult judgement)
     {
+
+        if (JudgeNoteTextUI != null)
+        {
+            JudgeNoteTextUI.ShowJudge(judgement);
+        }
+       
+
         switch (judgement)
         {
             case JudgementResult.Excellent:
@@ -132,15 +134,10 @@ public class NoteJudge : MonoBehaviour
                 return missDamageMultiplier;
         }
         //note.Hit();
-        noteSpawner.RemoveNote(note);
-        Destroy(note.gameObject);
+        //noteSpawner.RemoveNote(note);
+        //Destroy(note.gameObject);
 
-//kj
-        //note ���� text
-        if (JudgeNoteTextUI != null)
-        {
-            JudgeNoteTextUI.ShowJudge(judgement);
-        }
+        
 
         // �߰����� ���� ó�� (����, �޺� ��)
 
