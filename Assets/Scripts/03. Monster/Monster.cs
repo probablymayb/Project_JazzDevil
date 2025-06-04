@@ -70,10 +70,16 @@ abstract public class Monster : MonoBehaviour
     // ������
     private void Move()
     {
+        if (player == null)
+        {
+            Debug.LogWarning("플레이어를 찾을 수 없음");
+            return;
+        }
+
         // TODO : ��Ʈ�� ���� �̵��ϵ��� ���� �ʿ�.
-        // �÷��̾ ���� �̵�
-        Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * speed * Time.deltaTime;
+            // �÷��̾ ���� �̵�
+            Vector3 direction = (player.position - transform.position).normalized;
+        transform.position += direction * speed * Time.fixedDeltaTime;
 
         // ���Ͱ� �÷��̾ �ٶ󺸰� ȸ��
         transform.LookAt(player);
