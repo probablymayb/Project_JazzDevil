@@ -10,9 +10,9 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private Button returnToTitleButton;
 
     [Header("웨이브 설정")]
-    public int totalWaves = 4;                 // 총 웨이브 수
+    public int totalWaves = 6;                 // 총 웨이브 수
     public float waveDuration = 20f;           // 각 웨이브 유지 시간
-    public int maxEnemyThreshold = 10;         // 실패 조건: 몬스터 수 초과 시 패배
+    public int maxEnemyThreshold = 20;         // 실패 조건: 몬스터 수 초과 시 패배
     public float checkInterval = 1f;           // 상태 체크 주기
     
     [Header("참조")]
@@ -20,10 +20,12 @@ public class WaveManager : MonoBehaviour
     public GameTimer timer;                    // 타이머 참조
     public PlayerController player;            // 플레이어 참조
     public Text waveTextUI;                    // current Stage 참조
+    public ShopManager shopManager;            // shopManager 참조
+    public NoteSpawner noteSpawner;            // noteSpawner 참조
 
 
-    private int currentWave = 0;
-    private bool isWaveRunning = false;
+    public int currentWave = 0;
+    public bool isWaveRunning = false;
 
     void Start()
     {
@@ -95,9 +97,12 @@ public class WaveManager : MonoBehaviour
 
         if (success)
         {
-
             Debug.Log("[WaveManager] 웨이브 성공");
             currentWave++;
+            if (shopManager != null)
+            {
+                shopManager.SpawnShopTrigger();
+            }
             StartNextWave();
         }
         else
@@ -107,12 +112,19 @@ public class WaveManager : MonoBehaviour
 
             GameManager.Instance.CurrentGameState = EGameState.Finish;
 
+            // 몬스터 스폰 중단
+            if (spawner != null)
+                spawner.StopCurrentWave();
+            // 생성되어 있는 몬스터 제거
             var monsters = FindObjectsByType<Monster>(FindObjectsSortMode.None);
             foreach (var monster in monsters)
             {
                 if (monster.isClone)
                     Destroy(monster.gameObject);
             }
+            //노트 생성 중단
+            if (noteSpawner != null)
+                noteSpawner.StopSpawningNotes();
 
             ShowResultPopup();
         }

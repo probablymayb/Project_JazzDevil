@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 게임 상태가 Shop일 땐 입력 무시*****
+        // 게임 상태가 Finish일 땐 입력 무시*****
         if (GameManager.Instance.CurrentGameState == EGameState.Finish)
             return;
 
