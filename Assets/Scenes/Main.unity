@@ -2922,6 +2922,14 @@ PrefabInstance:
       value: MonsterSpawner
       objectReference: {fileID: 0}
     - target: {fileID: 2078663007845287601, guid: 4d5a54043aee96c41873996076fbeb66, type: 3}
+      propertyPath: defaultMonsterPrefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2078663007845287601, guid: 4d5a54043aee96c41873996076fbeb66, type: 3}
+      propertyPath: 'defaultMonsterPrefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8862366945470796105, guid: 035241ce9ffe69244a32b4e8e765662b, type: 3}
+    - target: {fileID: 2078663007845287601, guid: 4d5a54043aee96c41873996076fbeb66, type: 3}
       propertyPath: waveConfigurations.Array.data[0].spawnWeights.Array.size
       value: 1
       objectReference: {fileID: 0}
