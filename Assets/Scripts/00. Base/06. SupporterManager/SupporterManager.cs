@@ -5,7 +5,7 @@ using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SupporterManager : MonoBehaviour
+public class SupporterManager : Singleton<SupporterManager>
 {
     [Header("회전 설정")]
     [SerializeField] private float orbitRadius = 1f;    // 회전 반경
