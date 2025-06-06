@@ -2104,6 +2104,18 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 8866614676552638162}
+    - target: {fileID: 7193332860672906104, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 296.3299
+      objectReference: {fileID: 0}
+    - target: {fileID: 7193332860672906104, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 496.8755
+      objectReference: {fileID: 0}
+    - target: {fileID: 7871907323712891532, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_Text
+      value: excellent
+      objectReference: {fileID: 0}
     - target: {fileID: 8863555573757993802, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
       propertyPath: m_Name
       value: UI
