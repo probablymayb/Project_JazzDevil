@@ -1690,48 +1690,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ff0fe321e7f4c47bb0b8c26255b624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicEventReference:
-    Guid:
-      Data1: -352017049
-      Data2: 1321323867
-      Data3: -61040462
-      Data4: 1542544846
-    Path: event:/120_Drum
   bpmParameterName: BPM
   defaultBpm: 120
   beatsPerBar: 4
-  additionalSessions:
-  - Guid:
-      Data1: 823844980
-      Data2: 1250809753
-      Data3: -1346226291
-      Data4: -1550909151
-    Path: event:/120_Bass
-  - Guid:
-      Data1: 247122296
-      Data2: 1205687866
-      Data3: 1576075925
-      Data4: 1851816330
-    Path: event:/120_Brass
-  - Guid:
-      Data1: -330406041
-      Data2: 1089316726
-      Data3: -905392228
-      Data4: -1859438733
-    Path: event:/120_Piano
-  - Guid:
-      Data1: 1156049762
-      Data2: 1181550291
-      Data3: 727718804
-      Data4: -2010006183
-    Path: event:/120_Melody
-  - Guid:
-      Data1: 354036155
-      Data2: 1094514998
-      Data3: 988048026
-      Data4: 503746541
-    Path: event:/120_Other
-  sessionNames: []
+  sessionParameterNames:
+  - BassVolume
+  - PianoVolume
+  - BrassVolume
+  - MelodyVolume
+  - OtherVolume
+  sessionNames:
+  - Bass
+  - Piano
+  - Brass
+  - Melody
+  - Other
   availableBpms:
   - 120
   - 125
