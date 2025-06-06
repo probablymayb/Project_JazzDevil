@@ -14,7 +14,7 @@ public class ShopUIManager : Singleton<ShopUIManager>
     [Header("애니메이션 설정")]
     public float appearDelay = 0.1f;
 
-    private PlayerController player;
+    public PlayerController player;
 
     protected override void Awake()
     {
@@ -36,8 +36,8 @@ public class ShopUIManager : Singleton<ShopUIManager>
     {
         foreach (var slotPrefab in itemSlotPrefabs)
         {
-            var toggle = slotPrefab.transform.Find("ItemSlot/Toggle")?.GetComponent<Toggle>();
-            var background = slotPrefab.transform.Find("ItemSlot/Background")?.gameObject; // Background 경로 맞게!
+            var toggle = slotPrefab.transform.Find("ItemSlot")?.GetComponent<Toggle>();
+            var background = slotPrefab.transform.Find("ItemSlot/Background")?.gameObject;
             if (toggle != null && background != null)
             {
                 toggle.isOn = false;
@@ -146,7 +146,7 @@ public class ShopUIManager : Singleton<ShopUIManager>
 
         foreach (var slotPrefab in itemSlotPrefabs)
         {
-            var toggle = slotPrefab.transform.Find("ItemSlot/Toggle")?.GetComponent<Toggle>();
+            var toggle = slotPrefab.transform.Find("ItemSlot")?.GetComponent<Toggle>();
             if (toggle != null && toggle.isOn)
             {
                 // 가격은 추후 동적으로 넣을 수 있도록 구조를 열어둠 (임시로 10)

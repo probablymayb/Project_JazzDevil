@@ -27,7 +27,7 @@ public class ShopManager : MonoBehaviour
     private Vector3 GetRandomSpawnPosition(Vector3 basePosition)
     {
         float minDistance = 4f;
-        float maxDistance = 10f;
+        float maxDistance = 7f;
 
         Vector3 spawnPosition;
         float distance;
