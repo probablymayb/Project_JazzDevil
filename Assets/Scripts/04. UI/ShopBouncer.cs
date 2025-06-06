@@ -15,6 +15,7 @@ public class ShopBouncer : MonoBehaviour
     private void OnDestroy()
     {
         RhythmManager.beatUpdated -= OnBeat;
+        DOTween.Kill(transform);
     }
 
     private void OnBeat()
