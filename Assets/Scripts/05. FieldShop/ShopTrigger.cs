@@ -10,7 +10,7 @@ public class ShopTrigger : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         float distance = Vector3.Distance(transform.position, other.transform.position);
-        if (distance > 1.0f) return; // 너무 멀면 무시
+        if (distance > 2.0f) return; // 너무 멀면 무시
         
         if (other.CompareTag("Player"))
         {
