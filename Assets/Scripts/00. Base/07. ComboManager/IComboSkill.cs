@@ -1,5 +1,5 @@
 using UnityEngine;
-public interface IComboSkills
+public interface IComboSkill
 {
     void OnComboStart(int combo);
     void OnComboIncrease(int combo, JudgementResult judgement);

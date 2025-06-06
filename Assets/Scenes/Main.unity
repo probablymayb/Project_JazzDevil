@@ -1977,6 +1977,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4189296887983080237, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4292812884722927769, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4455763398291031347, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7044473268418818631, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7760721851053994750, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8863555573757993802, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
       propertyPath: m_Name
       value: UI
@@ -2189,6 +2209,30 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4367349855512104, guid: 9f3cd87372c918449a1a783afa88addd, type: 3}
   m_PrefabInstance: {fileID: 1548622658}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1712853055 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 268755444838662572, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+  m_PrefabInstance: {fileID: 5876677027373945846}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1712853059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712853055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2780811d77e2c054f98b38cde0f3a7ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  footstepSound:
+    Guid:
+      Data1: 884995931
+      Data2: 1336011141
+      Data3: 81829001
+      Data4: -598778595
+    Path: event:/footstep
 --- !u!1 &1729370982 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4777567964922956666, guid: 28903700e7449494b8947e5ea43b5e86, type: 3}
@@ -2999,6 +3043,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1639018925888101073, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6946640029276382162}
+    - targetCorrespondingSourceObject: {fileID: 268755444838662572, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1712853059}
   m_SourcePrefab: {fileID: 100100000, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
 --- !u!1001 &6383067659153983669
 PrefabInstance:

@@ -18,7 +18,7 @@ public class ComboManager : Singleton<ComboManager>
     private Coroutine comboResetCoroutine;
 
     // 콤보 효과 시스템들
-    private List<IComboEffect> comboEffects = new List<IComboEffect>();
+    private List<IComboSkill> comboEffects = new List<IComboSkill>();
 
     // 이벤트 시스템
     public event System.Action<int> OnComboChanged;
@@ -38,9 +38,9 @@ public class ComboManager : Singleton<ComboManager>
         base.Awake();
 
         // 기본 콤보 효과들 등록
-        RegisterComboEffect(new DamageComboEffect());
-        RegisterComboEffect(new UIComboEffect());
-        RegisterComboEffect(new AudioComboEffect());
+        //RegisterComboEffect(new DamageComboEffect());
+        //RegisterComboEffect(new UIComboEffect());
+        //RegisterComboEffect(new AudioComboEffect());
     }
 
     private void Start()
@@ -62,7 +62,7 @@ public class ComboManager : Singleton<ComboManager>
     }
 
     // 콤보 효과 등록
-    public void RegisterComboEffect(IComboEffect effect)
+    public void RegisterComboEffect(IComboSkill effect)
     {
         if (!comboEffects.Contains(effect))
         {
@@ -71,7 +71,7 @@ public class ComboManager : Singleton<ComboManager>
     }
 
     // 콤보 효과 해제
-    public void UnregisterComboEffect(IComboEffect effect)
+    public void UnregisterComboEffect(IComboSkill effect)
     {
         comboEffects.Remove(effect);
     }
