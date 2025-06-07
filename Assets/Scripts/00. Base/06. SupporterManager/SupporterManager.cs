@@ -5,8 +5,12 @@ using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SupporterManager : MonoBehaviour
+public class SupporterManager : Singleton<SupporterManager>
 {
+    //Supporter 프리팹들 참조
+    [SerializeField] private GameObject[] supporters;
+
+
     [Header("회전 설정")]
     [SerializeField] private float orbitRadius = 1f;    // 회전 반경
     [SerializeField] private float maxRotSpeed = 100f;   // 회전 최대 속도

@@ -617,24 +617,24 @@ public class RhythmManager : Singleton<RhythmManager>
     //FOR DEBUG
     private void OnGUI()
     {
-        GUILayout.Box($"Current Beat =  {timelineInfo.currentBeat}, Last Marker = {(string)timelineInfo.lastMarker}");
-        GUILayout.Box($"Current BPM: {currentBpm}");
+        //GUILayout.Box($"Current Beat =  {timelineInfo.currentBeat}, Last Marker = {(string)timelineInfo.lastMarker}");
+        //GUILayout.Box($"Current BPM: {currentBpm}");
 
-        // 활성화된 세션 표시
-        if (sessionInstances != null && sessionNames != null)
-        {
-            string activeSessions = "Active Sessions: ";
-            for (int i = 0; i < sessionInstances.Length; i++)
-            {
-                if (i < sessionActive.Length && sessionActive[i])
-                {
-                    string name = i < sessionNames.Length ? sessionNames[i] : $"Session {i + 1}";
-                    activeSessions += name + ", ";
-                }
-            }
+        //// 활성화된 세션 표시
+        //if (sessionInstances != null && sessionNames != null)
+        //{
+        //    string activeSessions = "Active Sessions: ";
+        //    for (int i = 0; i < sessionInstances.Length; i++)
+        //    {
+        //        if (i < sessionActive.Length && sessionActive[i])
+        //        {
+        //            string name = i < sessionNames.Length ? sessionNames[i] : $"Session {i + 1}";
+        //            activeSessions += name + ", ";
+        //        }
+        //    }
 
-            GUILayout.Box(activeSessions);
-        }
+        //    GUILayout.Box(activeSessions);
+        //}
     }
 
     [AOT.MonoPInvokeCallback(typeof(FMOD.Studio.EVENT_CALLBACK))]

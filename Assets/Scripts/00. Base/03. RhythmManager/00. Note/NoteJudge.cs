@@ -12,6 +12,8 @@ public enum JudgementResult
 
 public class NoteJudge : MonoBehaviour
 {
+    public static NoteJudge Instance { get; private set; }
+
     [Header("판정 설정")]
     [SerializeField] private float excellentWindow = 0.1f;  // ±50ms
     [SerializeField] private float solidWindow = 0.2f;      // ±100ms
@@ -48,6 +50,8 @@ public class NoteJudge : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         // RhythmManager 참조 찾기
         rhythmManager = RhythmManager.Instance;
         if (rhythmManager == null)

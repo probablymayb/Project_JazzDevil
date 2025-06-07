@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class NoteSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject notePrefab;
-    [SerializeField] private float noteDuration = 2f;  // 노트가 생성되고 판정점까지 걸리는 시간
-    [SerializeField] private RectTransform spawnPoint; // Canvas의 중앙 지점
+    [SerializeField] private float noteDuration = 2f;  // ��Ʈ�� �����ǰ� ���������� �ɸ��� �ð�
+    [SerializeField] private RectTransform spawnPoint; // Canvas�� �߾� ����
 
     [SerializeField] private int spawnInterval = 1;
     [SerializeField] private int nextSpawn = 0;
@@ -18,8 +18,6 @@ public class NoteSpawner : MonoBehaviour
     private float nextSpawnTime;
     private RhythmManager rhythmManager;
 
-    //for test
-    //private int iCount = 0;
 
     //for beat tracking
     [SerializeField] private bool waitforString = false;
@@ -48,7 +46,6 @@ public class NoteSpawner : MonoBehaviour
         RhythmManager.markerUpdated -= WaitForMarker;
         RhythmManager.beatUpdated -= SpawnNote;
         RhythmManager.beatUpdated -= SpawnMonster;
-
     }
 
     private void Update()
@@ -137,5 +134,10 @@ public class NoteSpawner : MonoBehaviour
     public void RemoveNote(Note note)
     {
         activeNotes.Remove(note);
+    }
+    
+    public void StopSpawningNotes()
+    {
+        RhythmManager.beatUpdated -= SpawnNote;
     }
 }
