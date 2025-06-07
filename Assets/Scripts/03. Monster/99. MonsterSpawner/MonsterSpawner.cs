@@ -67,7 +67,8 @@ public class MonsterSpawner : MonoBehaviour
 
         // 플레이어 기준으로 스폰 위치 설정 (없을 경우 맵 중앙)
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        Vector3 basePosition = player != null ? player.transform.position : Vector3.zero;
+        Vector3 _baseposition = new Vector3(player.transform.position.x, 0.2f, player.transform.position.z);
+        Vector3 basePosition = player != null ?  _baseposition : Vector3.zero;
         Vector3 spawnPosition = GetRandomSpawnPosition(basePosition);
 
         // 풀에서 몬스터 가져오기
