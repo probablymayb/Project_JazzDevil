@@ -6,6 +6,8 @@ using DG.Tweening;
 
 public class ShopUIManager : Singleton<ShopUIManager>
 {
+    [SerializeField] private List<Supporters> supporterTypes;
+
     [Header("UI 참조")]
     public GameObject shopRootUI;
     public List<GameObject> itemSlotPrefabs; // ItemSlotPrefab(0~4)
@@ -143,16 +145,17 @@ public class ShopUIManager : Singleton<ShopUIManager>
     public void OnClickConfirm()
     {
         int total = 0;
+        List<Supporters> selectedSupporters = new List<Supporters>();
 
-        foreach (var slotPrefab in itemSlotPrefabs)
+        for (int i = 0; i < itemSlotPrefabs.Count; i++)
+    {
+        var toggle = itemSlotPrefabs[i].transform.Find("ItemSlot")?.GetComponent<Toggle>();
+        if (toggle != null && toggle.isOn)
         {
-            var toggle = slotPrefab.transform.Find("ItemSlot")?.GetComponent<Toggle>();
-            if (toggle != null && toggle.isOn)
-            {
-                // 가격은 추후 동적으로 넣을 수 있도록 구조를 열어둠 (임시로 10)
-                total += 10;
-            }
+            total += 50;
+            selectedSupporters.Add(supporterTypes[i]);
         }
+    }
 
         if (!player.SpendGold(total))
         {
@@ -161,6 +164,13 @@ public class ShopUIManager : Singleton<ShopUIManager>
         }
 
         Debug.Log("구매 성공!");
+        
+        // 동료들 생성 요청
+        foreach (var supporter in selectedSupporters)
+        {
+            SupporterManager.Instance.AddSup(supporter);
+        }
+
         CloseShop();
     }
 }
