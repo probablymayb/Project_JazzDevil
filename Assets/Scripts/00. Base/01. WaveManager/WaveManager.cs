@@ -47,7 +47,7 @@ public class WaveManager : MonoBehaviour
     {
         if (currentWave >= totalWaves)
         {
-            Debug.Log("[WaveManager] 모든 웨이브 완료!");
+            EndWave(false);
             return;
         }
 
