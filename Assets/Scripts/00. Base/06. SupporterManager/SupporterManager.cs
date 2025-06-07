@@ -1,15 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.InputSystem;
+
+// 동료를 호출하는 등의 연산을 위한 enum 리스트
+public enum Supporters { Trumpet, Piano, Saxophone }
 
 public class SupporterManager : Singleton<SupporterManager>
 {
+
     //Supporter 프리팹들 참조
     [SerializeField] private GameObject[] supporters;
-
 
     [Header("회전 설정")]
     [SerializeField] private float orbitRadius = 1f;    // 회전 반경
@@ -21,8 +22,11 @@ public class SupporterManager : Singleton<SupporterManager>
     private List<GameObject> orbitalSup = new List<GameObject>(); // 회전 동료 목록
     private float currentDeg = 0f; // 현재 회전 각
 
-    private void Awake()
+    protected override void Awake()
     {
+        // Singleton<T>(부모 클래스)의 Awake() 먼저 수행
+        base.Awake();
+
         // "Player" 태그가 있는 오브젝트 찾기
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -85,25 +89,37 @@ public class SupporterManager : Singleton<SupporterManager>
     }
 
     // 프리팹을 받아서 동료를 생성 (풀링 적용)
-    public void AddSup(GameObject prefab)
+    public void AddSup(Supporters enumSup)
     {
-        GameObject sup = PoolManager.Instance.Get(prefab);
-        sup.GetComponent<Supporter>().poolPrefabRef = prefab; // 반환용 참조
+        if (!Enum.IsDefined(typeof(Supporters), enumSup))
+        {
+            Debug.LogError("[SupporterManager][AddSup] 유효하지 않은 enum 값");
+            return;
+        }
+        GameObject getPref = supporters[Convert.ToInt32(enumSup)];
+        GameObject sup = PoolManager.Instance.Get(getPref);
+        sup.GetComponent<Supporter>().poolPrefabRef = getPref; // 반환용 참조
         orbitalSup.Add(sup);
         UpdateSupPos();
     }
 
     // 해당 프리팹의 동료를 제거
-    public void RemoveSup(GameObject prefab)
+    public void RemoveSup(Supporters enumSup)
     {
-        GameObject sup = orbitalSup.Find(obj => obj.GetComponent<Supporter>().poolPrefabRef == prefab);
+        if (!Enum.IsDefined(typeof(Supporters), enumSup))
+        {
+            Debug.LogError("[SupporterManager][RemoveSup] 유효하지 않은 enum 값");
+            return;
+        }
+        GameObject getPref = supporters[Convert.ToInt32(enumSup)];
+        GameObject sup = orbitalSup.Find(obj => obj.GetComponent<Supporter>().poolPrefabRef == getPref);
         if (sup == null)
         {
-            Debug.LogWarning($"{prefab.name}을 SupporterManager에서 찾을 수 없습니다.");
+            Debug.LogWarning($"{getPref.name}을 SupporterManager에서 찾을 수 없습니다.");
         }
         else
         {
-            PoolManager.Instance.Return(prefab, sup);
+            PoolManager.Instance.Return(getPref, sup);
             orbitalSup.Remove(sup);
 
             // 동료 위치 업뎃
