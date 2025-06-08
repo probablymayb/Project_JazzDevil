@@ -197,7 +197,7 @@ public class RhythmManager : Singleton<RhythmManager>
     /// <summary>
     /// 다음 세션을 파라미터로 활성화 (볼륨 0 → 1)
     /// </summary>
-    private void ActivateNextSession()
+    public void ActivateNextSession()
     {
         if (nextSessionToActivate >= sessionParameterNames.Length)
         {

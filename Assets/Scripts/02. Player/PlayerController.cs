@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
     private int currentHealth;
 
     [Header("Combat Settings")]
-    [SerializeField] private EventReference attackSound;
     [SerializeField] private GameObject shockwavePrefab = null;
     [SerializeField] private float attackRange = 2f;
     [SerializeField] private float attackCooldown = 0.5f;
@@ -50,6 +49,10 @@ public class PlayerController : MonoBehaviour
     //Note Timing 판단
     [SerializeField] private NoteJudge noteJudge;
 
+
+    //Ride One sHot Audio
+    [SerializeField]
+    private EventReference rideOneShotSound;
 
     private void Awake()
     {
@@ -206,6 +209,18 @@ public class PlayerController : MonoBehaviour
 
            
         }
+
+        //Ride One sHot Audio
+
+        if (rideOneShotSound.IsNull)
+        {
+            Debug.LogWarning("rideOneShotSound 사운드 이벤트를 찾을 수 없음.");
+        }
+        else
+        {
+            AudioManager.Instance.PlayOneShot(rideOneShotSound, transform.position);
+        }
+        
 
         // 노트 판정 요청
         JudgementResult judgement = JudgementResult.Miss;
