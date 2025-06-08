@@ -361,6 +361,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 783bae25f695e5c4a83182f53de3a76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  introBGM:
+    Guid:
+      Data1: 1440795901
+      Data2: 1197931853
+      Data3: 854026890
+      Data4: 798474403
+    Path: event:/Intro
 --- !u!4 &637924527
 Transform:
   m_ObjectHideFlags: 0

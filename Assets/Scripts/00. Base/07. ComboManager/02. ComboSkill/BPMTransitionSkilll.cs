@@ -1,4 +1,6 @@
 using UnityEngine;
+using FMODUnity;
+
 public class BPMTransitionSkill : IComboSkill
 {
     //BPM 5마다 TEST
@@ -7,6 +9,17 @@ public class BPMTransitionSkill : IComboSkill
     [SerializeField] private float[] targetBPMs = { 120f, 125f, 130f, 135f, 140f, 145f, 150f, 155f, 160f };
     [SerializeField] private bool resetOnComboBreak = true;
     [SerializeField] private bool transitionOnBeat = true;
+
+    [Header("🥁 드럼 필인 설정")]
+    [SerializeField] private string drumFillEventPath = "event:/Percurssion_FillIn";
+    [SerializeField] private bool enableDrumFill = true;
+    [SerializeField] private float drumFillVolume = 0.9f;
+
+    [Header("🎵 불협화음 설정")]
+    [SerializeField] private string dissonanceSFXPath = "event:/Combo_Fail";
+    [SerializeField] private bool enableDissonance = true;
+    [SerializeField] private float dissonanceVolume = 0.7f;
+    [SerializeField] private bool playDissonanceOnMiss = true;
 
     private int lastActivatedBPMIndex = -1;
     private bool bpmTransitionPending = false;
@@ -25,6 +38,12 @@ public class BPMTransitionSkill : IComboSkill
 
     public void OnComboIncrease(int combo, JudgementResult judgement)
     {
+        // 🎵 Miss 판정 시 불협화음 재생
+        if (judgement == JudgementResult.Miss && enableDissonance && playDissonanceOnMiss)
+        {
+            PlayDissonanceSFX("Miss 판정");
+        }
+
         // 콤보 증가 시 BPM 전환 체크
         CheckAndTransitionBPM(combo);
     }
@@ -45,9 +64,16 @@ public class BPMTransitionSkill : IComboSkill
                         RhythmManager.Instance.SetBPM(targetBPMs[0]);
                         lastActivatedBPMIndex = 0;
                     }
+
+                    // 🎵 콤보 브레이크 시 불협화음 재생
+                    if (enableDissonance)
+                    {
+                        PlayDissonanceSFX("콤보 브레이크");
+                    }
+
                     bpmTransitionPending = false;
                     RhythmManager.beatUpdated -= OnNextBeat;
-                    Debug.Log($"💥 콤보 브레이크! BPM {targetBPMs[0]}으로 리셋");
+                    Debug.Log($"💥 콤보 브레이크! BPM {targetBPMs[0]}으로 리셋 + 불협화음");
                 }
 
                 RhythmManager.beatUpdated += OnNextBeat;
@@ -60,7 +86,14 @@ public class BPMTransitionSkill : IComboSkill
                     RhythmManager.Instance.SetBPM(targetBPMs[0]);
                     lastActivatedBPMIndex = 0;
                 }
-                Debug.Log($"💥 콤보 브레이크! BPM {targetBPMs[0]}으로 리셋");
+
+                // 🎵 콤보 브레이크 시 불협화음 재생
+                if (enableDissonance)
+                {
+                    PlayDissonanceSFX("콤보 브레이크");
+                }
+
+                Debug.Log($"💥 콤보 브레이크! BPM {targetBPMs[0]}으로 리셋 + 불협화음");
             }
         }
     }
@@ -122,11 +155,78 @@ public class BPMTransitionSkill : IComboSkill
     {
         if (bpmIndex >= 0 && bpmIndex < targetBPMs.Length)
         {
+            float oldBPM = lastActivatedBPMIndex >= 0 ? targetBPMs[lastActivatedBPMIndex] : targetBPMs[0];
             float newBPM = targetBPMs[bpmIndex];
+
+            // 🥁 BPM 전환 시 드럼 필인 재생 (BPM 변경 전에!)
+            if (enableDrumFill && bpmIndex > 0)
+            {
+                PlayDrumFill(oldBPM, newBPM);
+            }
+
+            // BPM 전환
             RhythmManager.Instance.SetBPM(newBPM);
             lastActivatedBPMIndex = bpmIndex;
 
-            Debug.Log($"🚀 콤보 {combo}로 BPM {newBPM} 전환!");
+            Debug.Log($"🚀 콤보 {combo}로 BPM {oldBPM} → {newBPM} 전환! + 드럼 필인");
+        }
+    }
+
+    /// <summary>
+    /// 🥁 드럼 필인 재생
+    /// </summary>
+    private void PlayDrumFill(float fromBPM, float toBPM)
+    {
+        if (string.IsNullOrEmpty(drumFillEventPath)) return;
+
+        if (AudioManager.Instance != null)
+        {
+            // 독립적인 채널로 재생 (다른 사운드와 겹치지 않게)
+            var instance = AudioManager.Instance.PlayOneShotIndependent(drumFillEventPath);
+            if (instance.isValid())
+            {
+                instance.setVolume(drumFillVolume);
+
+                // 🎵 필요시 BPM 파라미터 설정 (FMOD에서 BPM 파라미터가 있다면)
+                instance.setParameterByName("FromBPM", fromBPM);
+                instance.setParameterByName("ToBPM", toBPM);
+            }
+            Debug.Log($"🥁 드럼 필인 재생: {fromBPM} → {toBPM} BPM");
+        }
+        else
+        {
+            // AudioManager가 없으면 직접 재생
+            RuntimeManager.PlayOneShot(drumFillEventPath);
+            Debug.Log($"🥁 드럼 필인 재생: {fromBPM} → {toBPM} BPM (직접 재생)");
+        }
+    }
+
+    /// <summary>
+    /// 🎵 불협화음 SFX 재생
+    /// </summary>
+    private void PlayDissonanceSFX(string context)
+    {
+        if (string.IsNullOrEmpty(dissonanceSFXPath)) return;
+
+        if (AudioManager.Instance != null)
+        {
+            // 독립적인 채널로 재생
+            var instance = AudioManager.Instance.PlayOneShotIndependent(dissonanceSFXPath);
+            if (instance.isValid())
+            {
+                instance.setVolume(dissonanceVolume);
+
+                // 🎵 현재 BPM에 맞춰 불협화음 조정 (필요시)
+                float currentBPM = RhythmManager.Instance.CurrentBpm;
+                instance.setParameterByName("CurrentBPM", currentBPM);
+            }
+            Debug.Log($"🎵 불협화음 재생: {context} (BPM: {RhythmManager.Instance.CurrentBpm})");
+        }
+        else
+        {
+            // AudioManager가 없으면 직접 재생
+            RuntimeManager.PlayOneShot(dissonanceSFXPath);
+            Debug.Log($"🎵 불협화음 재생: {context} (직접 재생)");
         }
     }
 }

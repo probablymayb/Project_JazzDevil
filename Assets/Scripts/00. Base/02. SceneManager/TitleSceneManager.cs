@@ -1,9 +1,13 @@
 using UnityEngine;
 using System.Collections;
+using FMOD.Studio;
+using FMODUnity;
 
 public class TitleSceneManager : MonoBehaviour
 {
     private ScreenFader fader;
+
+    [SerializeField] private EventReference introBGM;
 
     void Start()
     {
@@ -12,6 +16,8 @@ public class TitleSceneManager : MonoBehaviour
         {
             Debug.LogWarning("ScreenFader가 씬에 없습니다!");
         }
+        AudioManager.Instance.PlayLooping(introBGM, "");
+
     }
 
     void Update()
