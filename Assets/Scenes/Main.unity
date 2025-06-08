@@ -471,6 +471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   masterVolume: 1
   sfxVolume: 1
+  showDebugInfo: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,6 +963,68 @@ Transform:
   - {fileID: 1012040118}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &686260279
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 875019372}
+    m_Modifications:
+    - target: {fileID: 2010350345442736412, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_Name
+      value: ComboManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+--- !u!4 &686260280 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7712070461496874701, guid: 02db9cb17114bf54c8a860e0d270553f, type: 3}
+  m_PrefabInstance: {fileID: 686260279}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &698717634 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4660394932515898, guid: 8320a0af698cdba4f922996c17e3657c, type: 3}
@@ -1091,6 +1154,7 @@ Transform:
   - {fileID: 559004727}
   - {fileID: 1150526407}
   - {fileID: 1760944681}
+  - {fileID: 686260280}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &894155113 stripped
@@ -1757,48 +1821,61 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ff0fe321e7f4c47bb0b8c26255b624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicEventReference:
-    Guid:
+  musicEvents:
+  - Guid:
       Data1: -352017049
       Data2: 1321323867
       Data3: -61040462
       Data4: 1542544846
     Path: event:/120_Drum
-  bpmParameterName: BPM
-  defaultBpm: 120
-  beatsPerBar: 4
-  additionalSessions:
   - Guid:
-      Data1: 823844980
-      Data2: 1250809753
-      Data3: -1346226291
-      Data4: -1550909151
-    Path: event:/120_Bass
+      Data1: -1874485638
+      Data2: 1093443190
+      Data3: 717933210
+      Data4: -290779561
+    Path: event:/125_Drum
   - Guid:
-      Data1: 247122296
-      Data2: 1205687866
-      Data3: 1576075925
-      Data4: 1851816330
-    Path: event:/120_Brass
+      Data1: -2117942192
+      Data2: 1126065487
+      Data3: 332821430
+      Data4: 1813391616
+    Path: event:/130_Drum
   - Guid:
-      Data1: -330406041
-      Data2: 1089316726
-      Data3: -905392228
-      Data4: -1859438733
-    Path: event:/120_Piano
+      Data1: 929480777
+      Data2: 1123686985
+      Data3: 1304292261
+      Data4: -890218842
+    Path: event:/135_Drum
   - Guid:
-      Data1: 1156049762
-      Data2: 1181550291
-      Data3: 727718804
-      Data4: -2010006183
-    Path: event:/120_Melody
+      Data1: -917918704
+      Data2: 1311021834
+      Data3: -565855074
+      Data4: 132978267
+    Path: event:/140_Drum
   - Guid:
-      Data1: 354036155
-      Data2: 1094514998
-      Data3: 988048026
-      Data4: 503746541
-    Path: event:/120_Other
-  sessionNames: []
+      Data1: -2062291328
+      Data2: 1114139480
+      Data3: 899356607
+      Data4: 950264670
+    Path: event:/145_Drum
+  - Guid:
+      Data1: 425492872
+      Data2: 1261561985
+      Data3: -455901310
+      Data4: -20043146
+    Path: event:/150_Drum
+  - Guid:
+      Data1: -338513783
+      Data2: 1264877591
+      Data3: -718024573
+      Data4: 1596938426
+    Path: event:/155_Drum
+  - Guid:
+      Data1: 238432300
+      Data2: 1323801252
+      Data3: 1944144309
+      Data4: 712478553
+    Path: event:/160_Drum
   availableBpms:
   - 120
   - 125
@@ -1809,13 +1886,16 @@ MonoBehaviour:
   - 150
   - 155
   - 160
-  music:
-    Guid:
-      Data1: -352017049
-      Data2: 1321323867
-      Data3: -61040462
-      Data4: 1542544846
-    Path: event:/120_Drum
+  sessionParameterNames:
+  - BassVolume
+  - PianoVolume
+  - BrassVolume
+  - MelodyVolume
+  - OtherVolume
+  sessionNames: []
+  fadeOutDuration: 0.5
+  fadeInDuration: 0.5
+  crossFade: 1
 --- !u!4 &1581588847
 Transform:
   m_ObjectHideFlags: 0
@@ -3384,6 +3464,30 @@ PrefabInstance:
       propertyPath: noteJudge
       value: 
       objectReference: {fileID: 1802017342}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: attackCooldown
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: rideOneShotSound.Path
+      value: event:/percurssion_Ride
+      objectReference: {fileID: 0}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: rideOneShotSound.Guid.Data1
+      value: 1670025413
+      objectReference: {fileID: 0}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: rideOneShotSound.Guid.Data2
+      value: 1323892446
+      objectReference: {fileID: 0}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: rideOneShotSound.Guid.Data3
+      value: -1745891149
+      objectReference: {fileID: 0}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: rideOneShotSound.Guid.Data4
+      value: 872864145
+      objectReference: {fileID: 0}
     - target: {fileID: 7787555141881632627, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 57.88

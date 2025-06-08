@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{d67d67b6-3397-4742-a73e-b5bf2f38ddd7}">
+		<property name="assetPath">
+			<value>125_Piano.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>46.128</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{66cffe2d-72d5-477d-821c-bb40c9771eff}</destination>
+		</relationship>
+	</object>
+</objects>

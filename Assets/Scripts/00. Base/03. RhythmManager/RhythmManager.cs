@@ -10,12 +10,9 @@ using Debug = UnityEngine.Debug;
 
 public class RhythmManager : Singleton<RhythmManager>
 {
-    [Header("FMOD 설정")]
-    [SerializeField] private string bpmParameterName = "BPM";
-
-    [Header("리듬 설정")]
-    [SerializeField] private float defaultBpm = 120f;
-    [SerializeField] private int beatsPerBar = 4;
+    [Header("FMOD 다중 이벤트 설정")]
+    [SerializeField] private EventReference[] musicEvents = new EventReference[9]; // 120, 125, 130, ..., 160
+    [SerializeField] private float[] availableBpms = { 120f, 125f, 130f, 135f, 140f, 145f, 150f, 155f, 160f };
 
     [Header("세션 파라미터")]
     [SerializeField]
@@ -25,7 +22,7 @@ public class RhythmManager : Singleton<RhythmManager>
         "BrassVolume",
         "MelodyVolume",
         "OtherVolume"
-    }; // FMOD Studio에서 생성한 파라미터명과 일치해야 함
+    };
     [SerializeField]
     private string[] sessionNames = {
         "Bass",
@@ -33,11 +30,18 @@ public class RhythmManager : Singleton<RhythmManager>
         "Brass",
         "Melody",
         "Other"
-    }; // 디버그용 이름
+    };
 
-    [Header("BPM 설정")]
-    [SerializeField] private float[] availableBpms = { 120f, 125f, 130f, 135f, 140f, 145f, 150f, 155f, 160f };
+    [Header("전환 설정")]
+    [SerializeField] private float fadeOutDuration = 0.5f;
+    [SerializeField] private float fadeInDuration = 0.5f;
+    [SerializeField] private bool crossFade = true; // 크로스페이드 여부
+
+    // 현재 재생 중인 이벤트
+    private FMOD.Studio.EventInstance currentMusicInstance;
+    private FMOD.Studio.EventInstance nextMusicInstance; // 크로스페이드용
     private int currentBpmIndex = 0;
+    private int targetBpmIndex = 0;
 
     // 세션 상태 관리
     private bool[] sessionActive;
@@ -46,25 +50,9 @@ public class RhythmManager : Singleton<RhythmManager>
     // 리듬 관련 변수
     private float currentBpm;
     private float secPerBeat;
-    private float songPosition;
-    private float nextBeatTime;
-    private int currentBeat = 0;
-    private int currentBar = 0;
-    private double dspStartTime;
+    private bool isTransitioning = false; // BPM 전환 중인지
 
-    // 키 입력 관련
-    private bool keyPressed = false;
-    private float keyPressTime = 0f;
-    private bool bpmIncreaseRequested = false;
-
-    // 이벤트 시스템
-    public event Action<int> OnBeat;
-    public event Action<int> OnBar;
-    public event Action<float> OnBeatProgress;
-
-    // FMOD Timeline Tracker (단일 인스턴스)
-    [SerializeField] private EventReference music; // 120_Drum 이벤트 (모든 트랙 포함)
-    private FMOD.Studio.EventInstance musicInstance;
+    // Timeline Tracker
     public TimelineInfo timelineInfo = null;
     private GCHandle timelineHandle;
     private FMOD.Studio.EVENT_CALLBACK beatCallback;
@@ -86,116 +74,329 @@ public class RhythmManager : Singleton<RhythmManager>
     public static int lastBeat = 0;
     public static string lastMarkerString = null;
 
+    // 이벤트 시스템
+    public event Action<float, float> OnBPMChanged; // (oldBPM, newBPM)
+
     // 접근 프로퍼티
     public float CurrentBpm => currentBpm;
     public float SecPerBeat => secPerBeat;
-    public float SongPosition => songPosition;
-    public int CurrentBeat => currentBeat;
-    public int CurrentBar => currentBar;
-    public bool IsPlaying => musicInstance.isValid();
+    public bool IsPlaying => currentMusicInstance.isValid();
+    public bool IsTransitioning => isTransitioning;
 
     protected override void Awake()
     {
         base.Awake();
 
-        currentBpm = availableBpms[currentBpmIndex];
-        secPerBeat = 60f / currentBpm;
+        // 배열 크기 검증
+        if (musicEvents.Length != availableBpms.Length)
+        {
+            Debug.LogError("음악 이벤트 배열과 BPM 배열의 크기가 일치하지 않습니다!");
+        }
 
-        // 세션 상태 배열 초기화
+        currentBpm = availableBpms[0];
+        secPerBeat = 60f / currentBpm;
         sessionActive = new bool[sessionParameterNames.Length];
 
-        // 단일 음악 이벤트 초기화
-        if (!music.IsNull)
-        {
-            musicInstance = RuntimeManager.CreateInstance(music);
-            InitializeAllSessionsToZero(); // 모든 세션 볼륨을 0으로 초기화
-        }
-        else
-        {
-            Debug.LogWarning("음악 이벤트 레퍼런스가 설정되지 않았습니다.");
-        }
+        // 첫 번째 음악 이벤트로 시작
+        InitializeMusicEvent(0);
+   
     }
 
     /// <summary>
-    /// 모든 세션 파라미터를 0으로 초기화 (비활성화 상태)
+    /// 🆕 특정 BPM 인덱스의 음악 이벤트 초기화
+    /// </summary>
+    private void InitializeMusicEvent(int bpmIndex)
+    {
+        if (bpmIndex < 0 || bpmIndex >= musicEvents.Length || musicEvents[bpmIndex].IsNull)
+        {
+            Debug.LogError($"유효하지 않은 BPM 인덱스 또는 음악 이벤트: {bpmIndex}");
+            return;
+        }
+
+        currentMusicInstance = RuntimeManager.CreateInstance(musicEvents[bpmIndex]);
+        currentBpmIndex = bpmIndex;
+        currentBpm = availableBpms[bpmIndex];
+        secPerBeat = 60f / currentBpm;
+
+        // 모든 세션을 0으로 초기화
+        InitializeAllSessionsToZero();
+
+        Debug.Log($"음악 이벤트 초기화: {availableBpms[bpmIndex]} BPM");
+    }
+
+    /// <summary>
+    /// 모든 세션 파라미터를 0으로 초기화
     /// </summary>
     private void InitializeAllSessionsToZero()
     {
-        if (!musicInstance.isValid()) return;
+        if (!currentMusicInstance.isValid()) return;
 
         for (int i = 0; i < sessionParameterNames.Length; i++)
         {
             if (!string.IsNullOrEmpty(sessionParameterNames[i]))
             {
-                musicInstance.setParameterByName(sessionParameterNames[i], 0f);
+                currentMusicInstance.setParameterByName(sessionParameterNames[i], 0f);
                 sessionActive[i] = false;
-                Debug.Log($"{sessionParameterNames[i]} 파라미터를 0으로 초기화");
             }
         }
     }
 
     private void Start()
     {
-        if (!music.IsNull && musicInstance.isValid())
+        SetupTimelineCallback();
+        StartCurrentMusic();
+    }
+
+    /// <summary>
+    /// 🆕 Timeline Callback 설정
+    /// </summary>
+    private void SetupTimelineCallback()
+    {
+        if (currentMusicInstance.isValid())
         {
             timelineInfo = new TimelineInfo();
             beatCallback = new FMOD.Studio.EVENT_CALLBACK(BeatEventCallback);
             timelineHandle = GCHandle.Alloc(timelineInfo, GCHandleType.Pinned);
 
-            musicInstance.setUserData(GCHandle.ToIntPtr(timelineHandle));
-            musicInstance.setCallback(beatCallback, FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT | FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+            currentMusicInstance.setUserData(GCHandle.ToIntPtr(timelineHandle));
+            currentMusicInstance.setCallback(beatCallback,
+                FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_BEAT |
+                FMOD.Studio.EVENT_CALLBACK_TYPE.TIMELINE_MARKER);
+        }
+    }
 
-            // 음악 시작 (모든 트랙이 포함되어 있지만 볼륨은 0 상태)
-            musicInstance.start();
-            Debug.Log("통합 음악 이벤트 시작됨 (모든 세션 비활성화 상태)");
+    /// <summary>
+    /// 🆕 현재 음악 시작
+    /// </summary>
+    private void StartCurrentMusic()
+    {
+        if (currentMusicInstance.isValid())
+        {
+            currentMusicInstance.start();
+            Debug.Log($"음악 시작: {currentBpm} BPM");
         }
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q) && !keyPressed)
+        // Timeline 마커 처리
+        if (lastMarkerString != timelineInfo?.lastMarker)
         {
-            keyPressed = true;
-            keyPressTime = Time.time;
-            Debug.Log("Q 키 입력 감지: 다음 비트에서 세션 활성화 준비");
-        }
-
-        if (lastMarkerString != timelineInfo.lastMarker)
-        {
-            lastMarkerString = timelineInfo.lastMarker;
+            lastMarkerString = timelineInfo?.lastMarker;
             markerUpdated?.Invoke();
         }
 
-        if (lastBeat != timelineInfo.currentBeat)
+        // Beat 처리
+        if (lastBeat != timelineInfo?.currentBeat)
         {
-            lastBeat = timelineInfo.currentBeat;
+            lastBeat = timelineInfo?.currentBeat ?? 0;
             beatUpdated?.Invoke();
-
-            // 키 입력이 있었고, 다음 비트가 도달했다면 세션 활성화
-            if (keyPressed)
-            {
-                ActivateNextSession();
-                keyPressed = false;
-            }
-
-            // BPM 증가 요청이 있었다면
-            if (bpmIncreaseRequested)
-            {
-                IncreaseBpm();
-                bpmIncreaseRequested = false;
-            }
         }
 
-        // E 키: BPM 증가 요청
-        if (Input.GetKeyDown(KeyCode.E) && !bpmIncreaseRequested)
+        // 테스트 키 입력
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            bpmIncreaseRequested = true;
-            Debug.Log("E 키 입력 감지: 다음 비트에서 BPM 증가 준비");
+            RequestSessionActivation();
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            RequestBPMIncrease();
         }
     }
 
     /// <summary>
-    /// 다음 세션을 파라미터로 활성화 (볼륨 0 → 1)
+    /// 🆕 BPM 변경 요청 (다른 음원으로 전환)
+    /// </summary>
+    public void SetBPM(float targetBPM)
+    {
+        if (isTransitioning)
+        {
+            Debug.LogWarning("이미 BPM 전환 중입니다.");
+            return;
+        }
+
+        int newBpmIndex = GetBPMIndex(targetBPM);
+        if (newBpmIndex == currentBpmIndex || newBpmIndex == -1)
+        {
+            return; // 같은 BPM이거나 유효하지 않은 BPM
+        }
+
+        StartCoroutine(TransitionToBPM(newBpmIndex));
+    }
+
+    /// <summary>
+    /// 🆕 BPM에 해당하는 인덱스 찾기
+    /// </summary>
+    private int GetBPMIndex(float bpm)
+    {
+        for (int i = 0; i < availableBpms.Length; i++)
+        {
+            if (Mathf.Abs(availableBpms[i] - bpm) < 0.1f)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// 🆕 BPM 전환 코루틴 (음원 교체)
+    /// </summary>
+    private IEnumerator TransitionToBPM(int newBpmIndex)
+    {
+        if (newBpmIndex < 0 || newBpmIndex >= musicEvents.Length)
+        {
+            yield break;
+        }
+
+        isTransitioning = true;
+        float oldBPM = currentBpm;
+        float newBPM = availableBpms[newBpmIndex];
+
+        Debug.Log($"🎵 BPM 전환 시작: {oldBPM} → {newBPM}");
+
+        // 새 음악 이벤트 준비
+        if (!musicEvents[newBpmIndex].IsNull)
+        {
+            nextMusicInstance = RuntimeManager.CreateInstance(musicEvents[newBpmIndex]);
+
+            // 현재 세션 상태를 새 인스턴스에 복사
+            CopySessionStates(nextMusicInstance);
+        }
+        else
+        {
+            Debug.LogError($"BPM {newBPM}에 해당하는 음악 이벤트가 없습니다!");
+            isTransitioning = false;
+            yield break;
+        }
+
+        if (crossFade)
+        {
+            // 크로스페이드 전환
+            yield return StartCoroutine(CrossFadeTransition(newBpmIndex, newBPM, oldBPM));
+        }
+        else
+        {
+            // 즉시 전환
+            yield return StartCoroutine(ImmediateTransition(newBpmIndex, newBPM, oldBPM));
+        }
+
+        isTransitioning = false;
+    }
+
+    /// <summary>
+    /// 🆕 크로스페이드 전환
+    /// </summary>
+    private IEnumerator CrossFadeTransition(int newBpmIndex, float newBPM, float oldBPM)
+    {
+        // 새 음악 시작 (볼륨 0에서)
+        nextMusicInstance.setVolume(0f);
+        nextMusicInstance.start();
+
+        float elapsed = 0f;
+        float duration = Mathf.Max(fadeOutDuration, fadeInDuration);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = elapsed / duration;
+
+            // 볼륨 크로스페이드
+            if (elapsed < fadeOutDuration)
+            {
+                currentMusicInstance.setVolume(1f - (elapsed / fadeOutDuration));
+            }
+
+            if (elapsed >= (duration - fadeInDuration))
+            {
+                float fadeInProgress = (elapsed - (duration - fadeInDuration)) / fadeInDuration;
+                nextMusicInstance.setVolume(fadeInProgress);
+            }
+
+            yield return null;
+        }
+
+        // 전환 완료
+        CompleteTransition(newBpmIndex, newBPM, oldBPM);
+    }
+
+    /// <summary>
+    /// 🆕 즉시 전환
+    /// </summary>
+    private IEnumerator ImmediateTransition(int newBpmIndex, float newBPM, float oldBPM)
+    {
+        // 현재 음악 정지
+        if (currentMusicInstance.isValid())
+        {
+            currentMusicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        }
+
+        // 새 음악 시작
+        nextMusicInstance.start();
+
+        yield return null;
+
+        // 전환 완료
+        CompleteTransition(newBpmIndex, newBPM, oldBPM);
+    }
+
+    /// <summary>
+    /// 🆕 전환 완료 처리
+    /// </summary>
+    private void CompleteTransition(int newBpmIndex, float newBPM, float oldBPM)
+    {
+        // 이전 인스턴스 정리
+        if (currentMusicInstance.isValid())
+        {
+            currentMusicInstance.setUserData(IntPtr.Zero);
+            currentMusicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            currentMusicInstance.release();
+        }
+
+        // 새 인스턴스를 현재로 설정
+        currentMusicInstance = nextMusicInstance;
+        nextMusicInstance = default;
+        currentBpmIndex = newBpmIndex;
+        currentBpm = newBPM;
+        secPerBeat = 60f / currentBpm;
+
+        // Timeline Callback 재설정
+        SetupTimelineCallback();
+
+        // 이벤트 발생
+        OnBPMChanged?.Invoke(oldBPM, newBPM);
+
+        Debug.Log($"🎵 BPM 전환 완료: {newBPM}");
+    }
+
+    /// <summary>
+    /// 🆕 세션 상태를 새 인스턴스에 복사
+    /// </summary>
+    private void CopySessionStates(EventInstance newInstance)
+    {
+        if (!newInstance.isValid()) return;
+
+        for (int i = 0; i < sessionParameterNames.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(sessionParameterNames[i]))
+            {
+                float value = sessionActive[i] ? 1f : 0f;
+                newInstance.setParameterByName(sessionParameterNames[i], value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 콤보 시스템에서 호출 - 세션 활성화
+    /// </summary>
+    public void RequestSessionActivation()
+    {
+        ActivateNextSession();
+    }
+
+    /// <summary>
+    /// 다음 세션 활성화
     /// </summary>
     public void ActivateNextSession()
     {
@@ -205,88 +406,31 @@ public class RhythmManager : Singleton<RhythmManager>
             return;
         }
 
-        if (!musicInstance.isValid()) return;
+        if (!currentMusicInstance.isValid()) return;
 
         string paramName = sessionParameterNames[nextSessionToActivate];
         if (!string.IsNullOrEmpty(paramName))
         {
-            // 파라미터 값을 1로 설정하여 세션 활성화
-            musicInstance.setParameterByName(paramName, 1f);
+            currentMusicInstance.setParameterByName(paramName, 1f);
             sessionActive[nextSessionToActivate] = true;
 
             string sessionName = nextSessionToActivate < sessionNames.Length
                 ? sessionNames[nextSessionToActivate]
                 : $"Session {nextSessionToActivate + 1}";
 
-            Debug.Log($"{sessionName} 세션이 파라미터 '{paramName}'를 통해 활성화됨");
+            Debug.Log($"{sessionName} 세션 활성화 ({currentBpm} BPM)");
             nextSessionToActivate++;
         }
     }
 
     /// <summary>
-    /// BPM 증가
+    /// 콤보 시스템에서 호출 - BPM 증가
     /// </summary>
-    private void IncreaseBpm()
+    public void RequestBPMIncrease()
     {
-        if (availableBpms == null || availableBpms.Length == 0)
-            return;
-
-        currentBpmIndex = (currentBpmIndex + 1) % availableBpms.Length;
-        float newBpm = availableBpms[currentBpmIndex];
-
-        SetBPM(newBpm);
-        Debug.Log($"BPM 변경됨: {newBpm}");
-    }
-
-    /// <summary>
-    /// BPM 설정
-    /// </summary>
-    public void SetBPM(float newBpm)
-    {
-        if (newBpm <= 0)
+        if (currentBpmIndex < availableBpms.Length - 1)
         {
-            Debug.LogWarning($"유효하지 않은 BPM 값: {newBpm}");
-            return;
-        }
-
-        currentBpm = newBpm;
-        secPerBeat = 60f / currentBpm;
-
-        // 음악 인스턴스에 BPM 파라미터 설정
-        if (musicInstance.isValid())
-        {
-            musicInstance.setParameterByName(bpmParameterName, newBpm);
-            Debug.Log($"BPM 변경: {newBpm}");
-        }
-    }
-
-    /// <summary>
-    /// 특정 세션 비활성화
-    /// </summary>
-    public void DeactivateSession(int sessionIndex)
-    {
-        if (sessionIndex < 0 || sessionIndex >= sessionParameterNames.Length)
-            return;
-
-        if (!musicInstance.isValid()) return;
-
-        string paramName = sessionParameterNames[sessionIndex];
-        if (!string.IsNullOrEmpty(paramName) && sessionActive[sessionIndex])
-        {
-            musicInstance.setParameterByName(paramName, 0f);
-            sessionActive[sessionIndex] = false;
-
-            // 다음 활성화할 세션 인덱스 업데이트
-            if (sessionIndex < nextSessionToActivate)
-            {
-                nextSessionToActivate = sessionIndex;
-            }
-
-            string sessionName = sessionIndex < sessionNames.Length
-                ? sessionNames[sessionIndex]
-                : $"Session {sessionIndex + 1}";
-
-            Debug.Log($"{sessionName} 세션 비활성화됨");
+            SetBPM(availableBpms[currentBpmIndex + 1]);
         }
     }
 
@@ -295,30 +439,28 @@ public class RhythmManager : Singleton<RhythmManager>
     /// </summary>
     public void DeactivateAllSessions()
     {
-        if (!musicInstance.isValid()) return;
+        if (!currentMusicInstance.isValid()) return;
 
         for (int i = 0; i < sessionParameterNames.Length; i++)
         {
             if (!string.IsNullOrEmpty(sessionParameterNames[i]) && sessionActive[i])
             {
-                musicInstance.setParameterByName(sessionParameterNames[i], 0f);
+                currentMusicInstance.setParameterByName(sessionParameterNames[i], 0f);
                 sessionActive[i] = false;
             }
         }
 
         nextSessionToActivate = 0;
-        Debug.Log("모든 세션이 비활성화되었습니다.");
+        Debug.Log("모든 세션 비활성화");
     }
 
     /// <summary>
-    /// 특정 세션의 파라미터 설정
+    /// 콤보 브레이크 시 호출
     /// </summary>
-    public void SetSessionParameter(int sessionIndex, string paramName, float value)
+    public void ResetSessionsOnComboBreak()
     {
-        if (!musicInstance.isValid()) return;
-
-        musicInstance.setParameterByName(paramName, value);
-        Debug.Log($"세션 {sessionIndex} 파라미터 '{paramName}' = {value}");
+        DeactivateAllSessions();
+        SetBPM(availableBpms[0]); // 120 BPM으로 리셋
     }
 
     /// <summary>
@@ -326,16 +468,10 @@ public class RhythmManager : Singleton<RhythmManager>
     /// </summary>
     public float GetCurrentBeatProgress()
     {
-        if (musicInstance.isValid())
+        if (currentMusicInstance.isValid())
         {
-            FMOD.Studio.PLAYBACK_STATE state;
-            musicInstance.getPlaybackState(out state);
-
-            if (state != FMOD.Studio.PLAYBACK_STATE.PLAYING)
-                return 0.5f;
-
             int timelinePosition = 0;
-            musicInstance.getTimelinePosition(out timelinePosition);
+            currentMusicInstance.getTimelinePosition(out timelinePosition);
 
             float positionInSeconds = timelinePosition / 1000.0f;
             float beatsPerSecond = CurrentBpm / 60.0f;
@@ -350,26 +486,21 @@ public class RhythmManager : Singleton<RhythmManager>
         return 0.5f;
     }
 
-    /// <summary>
-    /// 음악 중지
-    /// </summary>
-    public void StopMusic()
-    {
-        if (musicInstance.isValid())
-        {
-            musicInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-            Debug.Log("음악 재생 중단");
-        }
-    }
-
     private void OnDestroy()
     {
-        // 단일 인스턴스 정리
-        if (musicInstance.isValid())
+        // 현재 인스턴스 정리
+        if (currentMusicInstance.isValid())
         {
-            musicInstance.setUserData(IntPtr.Zero);
-            musicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-            musicInstance.release();
+            currentMusicInstance.setUserData(IntPtr.Zero);
+            currentMusicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            currentMusicInstance.release();
+        }
+
+        // 다음 인스턴스 정리 (전환 중이었다면)
+        if (nextMusicInstance.isValid())
+        {
+            nextMusicInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            nextMusicInstance.release();
         }
 
         if (timelineHandle.IsAllocated)
@@ -382,6 +513,11 @@ public class RhythmManager : Singleton<RhythmManager>
     private void OnGUI()
     {
         GUILayout.Box($"Current Beat = {timelineInfo?.currentBeat}, BPM = {currentBpm}");
+
+        if (isTransitioning)
+        {
+            GUILayout.Box("🔄 BPM 전환 중...");
+        }
 
         string activeSessions = "Active Sessions: ";
         for (int i = 0; i < sessionActive.Length; i++)
@@ -405,7 +541,7 @@ public class RhythmManager : Singleton<RhythmManager>
 
         if (result != FMOD.RESULT.OK)
         {
-            Debug.LogError("timeline callback error :  " + result);
+            Debug.LogError("timeline callback error: " + result);
         }
         else if (timelineInfoPtr != IntPtr.Zero)
         {

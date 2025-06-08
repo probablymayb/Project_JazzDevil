@@ -1,8 +1,9 @@
 using UnityEngine;
 public class SessionAddSkill : IComboSkill
 {
+    //세션 10마다 추가
     [Header("세션 활성화 설정")]
-    [SerializeField] private int[] comboThresholds = { 10, 25, 50, 75, 100 };
+    [SerializeField] private int[] comboThresholds = { 10, 20, 30, 40, 50 };
     [SerializeField] private bool resetOnComboBreak = true;
     [SerializeField] private bool activateOnBeat = true;
 

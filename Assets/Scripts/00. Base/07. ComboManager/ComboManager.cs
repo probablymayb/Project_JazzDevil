@@ -39,6 +39,7 @@ public class ComboManager : Singleton<ComboManager>
 
         // 기본 콤보 효과들 등록
         RegisterComboEffect(new SessionAddSkill());
+        RegisterComboEffect(new BPMTransitionSkill());
         //RegisterComboEffect(new UIComboEffect());
         //RegisterComboEffect(new AudioComboEffect());
     }
