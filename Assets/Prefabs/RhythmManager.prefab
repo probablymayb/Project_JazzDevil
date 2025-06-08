@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6527245024731789862
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8797375424273592723}
+  - component: {fileID: 1046686603029220311}
+  m_Layer: 0
+  m_Name: RhythmManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8797375424273592723
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6527245024731789862}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 12.855292, y: 3.8100114, z: -3.0925183}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1046686603029220311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6527245024731789862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ff0fe321e7f4c47bb0b8c26255b624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bpmParameterName: BPM
+  defaultBpm: 120
+  beatsPerBar: 4
+  sessionParameterNames:
+  - BassVolume
+  - PianoVolume
+  - BrassVolume
+  - MelodyVolume
+  - OtherVolume
+  sessionNames:
+  - Bass
+  - Piano
+  - Brass
+  - Melody
+  - Other
+  availableBpms:
+  - 120
+  - 125
+  - 130
+  - 135
+  - 140
+  - 145
+  - 150
+  - 155
+  - 160
+  music:
+    Guid:
+      Data1: -352017049
+      Data2: 1321323867
+      Data3: -61040462
+      Data4: 1542544846
+    Path: event:/120_Drum

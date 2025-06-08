@@ -2,11 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using FMOD.Studio;
 using FMODUnity;
+using System.Collections;
+
 public class AudioManager : Singleton<AudioManager>
 {
-    //일반 오디오 관리: 일회성 효과음, 환경음 등 재생
-    //FMOD 리소스 관리: 이벤트 인스턴스 생성, 이미터 초기화
-    //볼륨 컨트롤: 전체 음량 및 각 카테고리별 음량 관리
     [Header("볼륨 설정")]
     [Range(0f, 1f)] public float masterVolume = 1f;
     [Range(0f, 1f)] public float sfxVolume = 1f;
@@ -18,38 +17,213 @@ public class AudioManager : Singleton<AudioManager>
     // 재생 중인 루프 사운드 관리를 위한 딕셔너리
     private Dictionary<string, EventInstance> loopingSounds = new Dictionary<string, EventInstance>();
 
+    // 독립적인 원샷 사운드 인스턴스들을 관리하는 리스트
+    private List<EventInstance> independentInstances = new List<EventInstance>();
+
     protected override void Awake()
     {
         base.Awake();
-        // FMOD 버스 초기화
         InitializeBuses();
     }
 
     private void InitializeBuses()
     {
-        // 기본 버스 초기화
         masterBus = RuntimeManager.GetBus("bus:/");
         sfxBus = RuntimeManager.GetBus("bus:/SFX");
     }
 
     private void Update()
     {
-        // 볼륨 적용
         masterBus.setVolume(masterVolume);
         sfxBus.setVolume(sfxVolume);
+
+        // 완료된 독립 인스턴스들 정리
+        CleanupCompletedInstances();
     }
 
     private void OnDestroy()
     {
-        // 앱 종료 시 모든 루프 사운드 정리
         StopAllLoopingSounds();
+        StopAllIndependentInstances();
     }
 
     /// <summary>
-    /// 위치 정보가 있는 원샷 사운드 재생
+    /// 독립적인 채널로 원샷 사운드 재생 (3D 위치)
     /// </summary>
     /// <param name="sound">FMOD 이벤트 레퍼런스</param>
     /// <param name="position">3D 위치</param>
+    /// <returns>생성된 이벤트 인스턴스</returns>
+    public EventInstance PlayOneShotIndependent(EventReference sound, Vector3 position)
+    {
+        if (sound.IsNull)
+        {
+            Debug.LogWarning("AudioManager: 유효하지 않은 이벤트 레퍼런스입니다");
+            return default;
+        }
+
+        // 새로운 독립적인 인스턴스 생성
+        EventInstance instance = RuntimeManager.CreateInstance(sound);
+
+        // 3D 위치 설정
+        instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
+
+        // 즉시 재생
+        instance.start();
+
+        // 독립 인스턴스 목록에 추가
+        independentInstances.Add(instance);
+
+        Debug.Log($"독립 채널로 사운드 재생: {sound.Path} at {position}");
+        return instance;
+    }
+
+    /// <summary>
+    /// 독립적인 채널로 원샷 사운드 재생 (2D)
+    /// </summary>
+    /// <param name="sound">FMOD 이벤트 레퍼런스</param>
+    /// <returns>생성된 이벤트 인스턴스</returns>
+    public EventInstance PlayOneShotIndependent(EventReference sound)
+    {
+        if (sound.IsNull)
+        {
+            Debug.LogWarning("AudioManager: 유효하지 않은 이벤트 레퍼런스입니다");
+            return default;
+        }
+
+        EventInstance instance = RuntimeManager.CreateInstance(sound);
+        instance.start();
+        independentInstances.Add(instance);
+
+        Debug.Log($"독립 채널로 2D 사운드 재생: {sound.Path}");
+        return instance;
+    }
+
+    /// <summary>
+    /// 독립적인 채널로 원샷 사운드 재생 (경로 문자열, 3D)
+    /// </summary>
+    /// <param name="fmodPath">FMOD 이벤트 경로</param>
+    /// <param name="position">3D 위치</param>
+    /// <returns>생성된 이벤트 인스턴스</returns>
+    public EventInstance PlayOneShotIndependent(string fmodPath, Vector3 position)
+    {
+        if (string.IsNullOrEmpty(fmodPath))
+        {
+            Debug.LogWarning("AudioManager: 유효하지 않은 FMOD 경로입니다");
+            return default;
+        }
+
+        EventInstance instance = RuntimeManager.CreateInstance(fmodPath);
+        instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
+        instance.start();
+        independentInstances.Add(instance);
+
+        Debug.Log($"독립 채널로 사운드 재생: {fmodPath} at {position}");
+        return instance;
+    }
+
+    /// <summary>
+    /// 독립적인 채널로 원샷 사운드 재생 (경로 문자열, 2D)
+    /// </summary>
+    /// <param name="fmodPath">FMOD 이벤트 경로</param>
+    /// <returns>생성된 이벤트 인스턴스</returns>
+    public EventInstance PlayOneShotIndependent(string fmodPath)
+    {
+        if (string.IsNullOrEmpty(fmodPath))
+        {
+            Debug.LogWarning("AudioManager: 유효하지 않은 FMOD 경로입니다");
+            return default;
+        }
+
+        EventInstance instance = RuntimeManager.CreateInstance(fmodPath);
+        instance.start();
+        independentInstances.Add(instance);
+
+        Debug.Log($"독립 채널로 2D 사운드 재생: {fmodPath}");
+        return instance;
+    }
+
+    /// <summary>
+    /// 파라미터와 함께 독립적인 채널로 사운드 재생
+    /// </summary>
+    /// <param name="sound">FMOD 이벤트 레퍼런스</param>
+    /// <param name="position">3D 위치</param>
+    /// <param name="parameters">파라미터 딕셔너리</param>
+    /// <returns>생성된 이벤트 인스턴스</returns>
+    public EventInstance PlayOneShotIndependentWithParams(EventReference sound, Vector3 position, Dictionary<string, float> parameters = null)
+    {
+        EventInstance instance = PlayOneShotIndependent(sound, position);
+
+        if (instance.isValid() && parameters != null)
+        {
+            foreach (var param in parameters)
+            {
+                instance.setParameterByName(param.Key, param.Value);
+            }
+        }
+
+        return instance;
+    }
+
+    /// <summary>
+    /// 완료된 독립 인스턴스들 정리
+    /// </summary>
+    private void CleanupCompletedInstances()
+    {
+        for (int i = independentInstances.Count - 1; i >= 0; i--)
+        {
+            if (i >= independentInstances.Count) continue; // 안전 체크
+
+            EventInstance instance = independentInstances[i];
+
+            if (!instance.isValid())
+            {
+                independentInstances.RemoveAt(i);
+                continue;
+            }
+
+            // 재생 상태 확인
+            PLAYBACK_STATE state;
+            FMOD.RESULT result = instance.getPlaybackState(out state);
+
+            if (result != FMOD.RESULT.OK || state == PLAYBACK_STATE.STOPPED)
+            {
+                // 인스턴스 해제 및 목록에서 제거
+                instance.release();
+                independentInstances.RemoveAt(i);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 모든 독립 인스턴스 중지
+    /// </summary>
+    public void StopAllIndependentInstances()
+    {
+        foreach (var instance in independentInstances)
+        {
+            if (instance.isValid())
+            {
+                instance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                instance.release();
+            }
+        }
+        independentInstances.Clear();
+    }
+
+    /// <summary>
+    /// 특정 독립 인스턴스 중지
+    /// </summary>
+    /// <param name="instance">중지할 인스턴스</param>
+    public void StopIndependentInstance(EventInstance instance)
+    {
+        if (instance.isValid())
+        {
+            instance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            independentInstances.Remove(instance);
+        }
+    }
+
+    // 기존 PlayOneShot 메서드들은 그대로 유지...
     public void PlayOneShot(EventReference sound, Vector3 position)
     {
         if (!sound.IsNull)
@@ -62,10 +236,6 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    /// <summary>
-    /// 위치 정보 없이 원샷 사운드 재생 (2D 사운드)
-    /// </summary>
-    /// <param name="sound">FMOD 이벤트 레퍼런스</param>
     public void PlayOneShot(EventReference sound)
     {
         if (!sound.IsNull)
@@ -78,11 +248,6 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    /// <summary>
-    /// 경로 문자열로 원샷 사운드 재생
-    /// </summary>
-    /// <param name="fmodPath">FMOD 이벤트 경로 (예: "event:/SFX/Explosion")</param>
-    /// <param name="position">3D 위치 (선택사항)</param>
     public void PlayOneShot(string fmodPath, Vector3 position = default)
     {
         if (!string.IsNullOrEmpty(fmodPath))
@@ -95,44 +260,22 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    /// <summary>
-    /// 반복 재생되는 사운드 시작 (2D)
-    /// </summary>
-    /// <param name="sound">FMOD 이벤트 레퍼런스</param>
-    /// <param name="key">사운드 식별을 위한 고유 키</param>
-    /// <returns>생성된 이벤트 인스턴스</returns>
+    // 기존 루핑 사운드 메서드들도 그대로 유지...
     public EventInstance PlayLooping(EventReference sound, string key)
     {
         return PlayLooping(sound, key, Vector3.zero, null);
     }
 
-    /// <summary>
-    /// 반복 재생되는 3D 사운드 시작 (위치 정보 포함)
-    /// </summary>
-    /// <param name="sound">FMOD 이벤트 레퍼런스</param>
-    /// <param name="key">사운드 식별을 위한 고유 키</param>
-    /// <param name="position">3D 위치</param>
-    /// <returns>생성된 이벤트 인스턴스</returns>
     public EventInstance PlayLooping(EventReference sound, string key, Vector3 position)
     {
         return PlayLooping(sound, key, position, null);
     }
 
-    /// <summary>
-    /// 반복 재생되는 3D 사운드 시작 (위치 자동 업데이트)
-    /// </summary>
-    /// <param name="sound">FMOD 이벤트 레퍼런스</param>
-    /// <param name="key">사운드 식별을 위한 고유 키</param>
-    /// <param name="followTarget">위치를 따라갈 게임 오브젝트</param>
-    /// <returns>생성된 이벤트 인스턴스</returns>
     public EventInstance PlayLooping(EventReference sound, string key, GameObject followTarget)
     {
         return PlayLooping(sound, key, followTarget.transform.position, followTarget);
     }
 
-    /// <summary>
-    /// 반복 재생되는 3D 사운드 시작 (내부 구현)
-    /// </summary>
     private EventInstance PlayLooping(EventReference sound, string key, Vector3 position, GameObject followTarget)
     {
         if (sound.IsNull)
@@ -141,38 +284,22 @@ public class AudioManager : Singleton<AudioManager>
             return default;
         }
 
-        // 이미 해당 키로 재생 중인 사운드가 있으면 중지
         StopLoopingSound(key);
 
-        // 새 이벤트 인스턴스 생성
         EventInstance instance = RuntimeManager.CreateInstance(sound);
-
-        // 3D 위치 설정
         instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
 
-        // 위치 추적 코루틴 시작 (타겟이 있는 경우)
         if (followTarget != null)
         {
             StartCoroutine(FollowTarget(instance, followTarget));
         }
 
-        // 사운드 시작
         instance.start();
-
-        // 딕셔너리에 추가
         loopingSounds[key] = instance;
 
         return instance;
     }
 
-    /// <summary>
-    /// 경로 문자열로 반복 재생되는 사운드 시작
-    /// </summary>
-    /// <param name="fmodPath">FMOD 이벤트 경로</param>
-    /// <param name="key">사운드 식별을 위한 고유 키</param>
-    /// <param name="position">3D 위치 (선택사항)</param>
-    /// <param name="followTarget">위치를 따라갈 게임 오브젝트 (선택사항)</param>
-    /// <returns>생성된 이벤트 인스턴스</returns>
     public EventInstance PlayLooping(string fmodPath, string key, Vector3 position = default, GameObject followTarget = null)
     {
         if (string.IsNullOrEmpty(fmodPath))
@@ -181,33 +308,22 @@ public class AudioManager : Singleton<AudioManager>
             return default;
         }
 
-        // 이미 해당 키로 재생 중인 사운드가 있으면 중지
         StopLoopingSound(key);
 
-        // 새 이벤트 인스턴스 생성
         EventInstance instance = RuntimeManager.CreateInstance(fmodPath);
-
-        // 3D 위치 설정
         instance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
 
-        // 위치 추적 코루틴 시작 (타겟이 있는 경우)
         if (followTarget != null)
         {
             StartCoroutine(FollowTarget(instance, followTarget));
         }
 
-        // 사운드 시작
         instance.start();
-
-        // 딕셔너리에 추가
         loopingSounds[key] = instance;
 
         return instance;
     }
 
-    /// <summary>
-    /// 특정 대상을 따라가는 3D 사운드를 위한 코루틴
-    /// </summary>
     private System.Collections.IEnumerator FollowTarget(EventInstance instance, GameObject target)
     {
         PLAYBACK_STATE playbackState = PLAYBACK_STATE.PLAYING;
@@ -221,57 +337,38 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    /// <summary>
-    /// 특정 키로 재생 중인 루프 사운드 중지
-    /// </summary>
-    /// <param name="key">중지할 사운드의 키</param>
     public void StopLoopingSound(string key)
     {
         if (loopingSounds.TryGetValue(key, out EventInstance instance))
         {
-            // 재생 중인지 확인
             instance.getPlaybackState(out PLAYBACK_STATE state);
 
             if (state != PLAYBACK_STATE.STOPPED)
             {
-                // 사운드 정지 및 리소스 해제
                 instance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
                 instance.release();
             }
 
-            // 딕셔너리에서 제거
             loopingSounds.Remove(key);
         }
     }
 
-    /// <summary>
-    /// 모든 루프 사운드 중지
-    /// </summary>
     public void StopAllLoopingSounds()
     {
         foreach (var instance in loopingSounds.Values)
         {
-            // 재생 중인지 확인
             instance.getPlaybackState(out PLAYBACK_STATE state);
 
             if (state != PLAYBACK_STATE.STOPPED)
             {
-                // 사운드 정지 및 리소스 해제
                 instance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
                 instance.release();
             }
         }
 
-        // 딕셔너리 비우기
         loopingSounds.Clear();
     }
 
-    /// <summary>
-    /// 특정 키로 재생 중인 루프 사운드의 파라미터 설정
-    /// </summary>
-    /// <param name="key">사운드 키</param>
-    /// <param name="parameterName">파라미터 이름</param>
-    /// <param name="value">파라미터 값</param>
     public void SetLoopingParameter(string key, string parameterName, float value)
     {
         if (loopingSounds.TryGetValue(key, out EventInstance instance))
@@ -280,19 +377,33 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    /// <summary>
-    /// 마스터 볼륨 설정
-    /// </summary>
     public void SetMasterVolume(float volume)
     {
         masterVolume = Mathf.Clamp01(volume);
     }
 
-    /// <summary>
-    /// SFX 볼륨 설정
-    /// </summary>
     public void SetSFXVolume(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
+    }
+
+    // 디버그 정보 표시
+    [Header("디버그 정보")]
+    [SerializeField] private bool showDebugInfo = true;
+
+    private void OnGUI()
+    {
+        if (!showDebugInfo) return;
+
+        GUILayout.BeginArea(new Rect(10, 10, 300, 200));
+        GUILayout.Label($"독립 인스턴스 수: {independentInstances.Count}");
+        GUILayout.Label($"루핑 사운드 수: {loopingSounds.Count}");
+
+        if (GUILayout.Button("모든 독립 인스턴스 중지"))
+        {
+            StopAllIndependentInstances();
+        }
+
+        GUILayout.EndArea();
     }
 }

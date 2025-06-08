@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{f3bb2468-b891-4a1f-af2f-bfcad72985ef}">
+		<property name="name">
+			<value>BrassVolume</value>
+		</property>
+		<relationship name="folder">
+			<destination>{83794aaf-d09e-4cd9-8db3-09149e081481}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{cb8aadbe-3091-4977-af07-fa54aa1b5544}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{cb8aadbe-3091-4977-af07-fa54aa1b5544}">
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
