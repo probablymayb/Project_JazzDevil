@@ -32,7 +32,7 @@ Jazz Devil은 1920년대 금주법 시대를 배경으로 한 리듬 기반 로�
    - 웨이브 클리어마다 상점이 필드에 등장
    - 상점 오브젝트에 접촉하면 UI가 팝업됨
    <img src="https://github.com/user-attachments/assets/674ff31f-8db0-4f14-a039-ca011cdfee97" width="400"/>
-ㄷㄷㄷㄷㄷ
+
 3. **동료 구매**
    - 상점에서 골드를 사용하여 원하는 동료 구매
    <img src="https://github.com/user-attachments/assets/c47b2318-67ba-4b1b-8ab6-2be8a5229fad" width="400"/>
