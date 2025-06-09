@@ -22,7 +22,7 @@
 ### 팀원
 | 이름 | 역할 | GitHub |
 | --- | --- | --- |
-| 이민영 | `팀장`, `코어 시스템 개발` | [probablymayb](https://github.com/probablymayb) |
+| 이민영 | `팀장`, `FMOD 기반 코어 시스템, Player 개발` | [probablymayb](https://github.com/probablymayb) |
 | 박성현 | `팀원`, `적, 동료 시스템 개발` | [ParkSeonghyeon2003](https://github.com/ParkSeonghyeon2003) |
 | 박경준 | `팀원`, `UI, 웨이브 시스템 개발` | [developerPKJ](https://github.com/developerPKJ) |
 
