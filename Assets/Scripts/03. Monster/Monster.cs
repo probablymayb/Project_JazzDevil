@@ -23,6 +23,8 @@ abstract public class Monster : MonoBehaviour
     private Color originalColor;            // 원래의 색상을 저장하는 용도의 변수
 
     [HideInInspector] public GameObject poolPrefabRef; // 풀 반환용 프리팹 참조
+    [Header("피격 이펙트")]
+    [SerializeField] private GameObject damageEffect; // 피격 이펙트
 
     protected virtual void Start()
     {
@@ -119,6 +121,10 @@ abstract public class Monster : MonoBehaviour
     {
         currentHealth -= damage;
         Debug.Log($"Monster took {damage} damage, current HP: {currentHealth}");
+
+        // 피격 이펙트 표시
+        GameObject eff = PoolManager.Instance.Get(damageEffect);
+        eff.transform.position = transform.position;
 
         if (currentHealth <= 0)
         {

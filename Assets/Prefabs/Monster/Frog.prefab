@@ -287,6 +287,7 @@ MonoBehaviour:
   isClone: 0
   fixedPosition: {x: 0, y: 0, z: 0}
   poolPrefabRef: {fileID: 0}
+  damageEffect: {fileID: 2978790852640608304, guid: 725e18ceb4b26124f9413f1db4ea60c6, type: 3}
 --- !u!136 &4557846582026366611
 CapsuleCollider:
   m_ObjectHideFlags: 0
