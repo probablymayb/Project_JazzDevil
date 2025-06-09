@@ -115,3 +115,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   supporterData: {fileID: 11400000, guid: 49c8bba055ae83f408f9cd2814db2115, type: 2}
   poolPrefabRef: {fileID: 0}
+  patternEffect: {fileID: 2547554767219249492, guid: fd02f3325bf28264f890a0f64aa999ad, type: 3}

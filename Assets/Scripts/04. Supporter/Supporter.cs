@@ -15,6 +15,9 @@ abstract public class Supporter : MonoBehaviour
 
     [HideInInspector] public GameObject poolPrefabRef; // 풀 반환용 프리팹 참조
 
+    [Header("패턴 이펙트")]
+    [SerializeField] private GameObject patternEffect; // 해당하는 패턴에 대한 프리팹
+
     protected virtual void Start()
     {
         // "Player" 태그가 있는 오브젝트 찾기
@@ -57,6 +60,8 @@ abstract public class Supporter : MonoBehaviour
             {
                 // 패턴
                 ActPattern?.ActPattern(transform, player, supporterData);
+                GameObject eff = PoolManager.Instance.Get(patternEffect);
+                eff.transform.position = transform.position;
                 timer = 0f; // 타이머 초기화
             }
         }
