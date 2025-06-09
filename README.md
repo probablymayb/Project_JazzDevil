@@ -2,13 +2,15 @@
 
 > **1920년대 러버호스 스타일의 2.5D 리듬 액션 뱀서라이크 Unity 게임**
 
-![Unity](https://img.shields.io/badge/Unity-2023.3-black?logo=unity&logoColor=white)
+![Unity](https://img.shields.io/badge/Unity-6000.0.43f1-black?logo=unity&logoColor=white)
 ![FMOD](https://img.shields.io/badge/FMOD-Audio-red)
 ![C#](https://img.shields.io/badge/C%23-Programming-blue?logo=c-sharp&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Version](https://img.shields.io/badge/Version-v1.0-orange)
 
-<div align="center">  
+<div align="center">
+  <img src="https://via.placeholder.com/800x400/1a1a1a/ffffff?text=🎷+Jazz+Devil+😈+Game+Screenshot" alt="Jazz Devil 게임 스크린샷">
+  
   **[📖 사용자 가이드](USER_GUIDE.md) | [🛠️ 개발자 가이드](DEV_GUIDE.md) | [🎮 플레이 데모](#-플레이-데모) | [📺 개발 과정](#-개발-과정)**
 </div>
 
@@ -36,7 +38,7 @@
 ### 🌟 게임의 특별함
 
 - **🎵 리듬 액션 기반 뱀서라이크**: 뱀파이어 서바이벌의 액션과 리듬 게임의 타이밍이 완벽하게 융합
-- **🎨 러버호스 애니메이션**: 20세기 초반 증기선 윌리, 뽀빠이 스타일의 매력적인 흑백 애니메이션
+- **🎨 러버호스 애니메이션**: 증기선 윌리, 뽀빠이 스타일의 매력적인 흑백 애니메이션
 - **🎺 재즈 시대 몰입**: 빅밴드 재즈와 함께하는 1920년대 LA 센트럴 애비뉴 경험
 - **🤝 동료 연주자 시스템**: 트럼펫, 피아노, 색소폰 연주자들과 함께하는 합주 전투
 
@@ -85,7 +87,7 @@
 [![Jazz Devil Gameplay](https://via.placeholder.com/600x300/ff6b35/ffffff?text=▶️+게임플레이+영상)](https://www.youtube.com/watch?v=your-video-link)
 
 ### 🎮 플레이 가능한 데모
-**[💾 Windows 데모 다운로드](https://github.com/probablymayb/Project_JazzDevil/releases)**
+**[👉 웹 데모 플레이하기](https://your-demo-link.com)** | **[💾 Windows 데모 다운로드](https://github.com/your-repo/releases)**
 
 </div>
 
@@ -104,9 +106,9 @@
 
 | 영역 | 기술 | 버전 |
 |------|------|-------|
-| **게임 엔진** | ![Unity](https://img.shields.io/badge/Unity-2023.3_LTS-black?logo=unity&logoColor=white) | 2023.3 LTS |
+| **게임 엔진** | ![Unity](https://img.shields.io/badge/Unity-6000.0.43f1-black?logo=unity&logoColor=white) | 6000.0.43f1 |
 | **오디오 미들웨어** | ![FMOD](https://img.shields.io/badge/FMOD-Studio-red) | 2.02 |
-| **개발 언어** | ![C#](https://img.shields.io/badge/C%23-Programming-blue?logo=c-sharp&logoColor=white) | .NET Standard 2.1 |
+| **개발 언어** | ![C#](https://img.shields.io/badge/C%23-Programming-blue?logo=c-sharp&logoColor=white) | .NET 6.0 |
 | **렌더링 파이프라인** | ![URP](https://img.shields.io/badge/URP-Universal_Render-purple) | Unity URP |
 | **애니메이션** | ![DOTween](https://img.shields.io/badge/DOTween-Animation-green) | 1.2.765 |
 | **버전 관리** | ![Git](https://img.shields.io/badge/Git-GitHub_Flow-orange?logo=git&logoColor=white) | Git |
@@ -115,9 +117,11 @@
 
 ### 🎨 **특별한 기술적 특징**
 - **2.5D 렌더링**: 2D 스프라이트(빌보드) + 3D 환경의 독특한 조합
+- **Unity 6 최신 기능**: 향상된 렌더링 파이프라인과 성능 최적화
 - **FMOD 통합**: 실시간 BPM 추적 및 동적 음악 레이어링
 - **툰 셰이딩**: 러버호스 스타일을 위한 커스텀 셰이더
 - **오브젝트 풀링**: 최적화된 몬스터 스폰 시스템
+- **GPU Resident Drawer**: Unity 6의 향상된 렌더링 성능
 
 <br>
 
@@ -175,22 +179,22 @@ Assets/
 ## 🚀 실행 방법
 
 ### 📋 **시스템 요구사항**
-- **OS**: Windows 10/11, macOS 10.15+, Linux
-- **Unity**: 2023.3 LTS 이상
-- **RAM**: 8GB 이상 권장
-- **저장공간**: 2GB 이상
+- **OS**: Windows 10/11, macOS 12+, Linux
+- **Unity**: 6000.0.43f1 이상
+- **RAM**: 16GB 이상 권장 (Unity 6 요구사항)
+- **저장공간**: 3GB 이상
 
 ### 🛠️ **개발 환경 설정**
 
 1. **저장소 클론**
    ```bash
-   git clone https://github.com/your-repo/JazzDevil.git
-   cd JazzDevil
+   git clone https://github.com/probablymayb/Project_JazzDevil.git
+   cd Project_JazzDevil
    ```
 
 2. **Unity Hub에서 프로젝트 열기**
    - Unity Hub → Projects → Add → JazzDevil 폴더 선택
-   - Unity 2023.3 LTS로 열기
+   - Unity 6000.0.43f1로 열기
 
 3. **FMOD 설정**
    - `StreamingAssets/JazzDevil_FMOD` 폴더 확인
@@ -263,7 +267,7 @@ Assets/
 ### 🎯 **향후 계획**
 - [ ] 스팀 출시 준비
 - [ ] 추가 웨이브 콘텐츠
-- [ ] 랭크 시스템
+- [ ] 멀티플레이어 모드
 - [ ] 모바일 이식
 
 <br>
@@ -280,10 +284,10 @@ Jazz Devil 프로젝트에 기여하고 싶으신가요? 환영합니다! 🎉
 5. Pull Request를 생성합니다
 
 ### 🐛 **버그 리포트**
-[Issues 페이지](https://github.com/your-repo/JazzDevil/issues)에서 버그를 신고해주세요.
+[Issues 페이지](https://github.com/probablymayb/Project_JazzDevil/issues)에서 버그를 신고해주세요.
 
 ### 💡 **기능 제안**
-새로운 아이디어가 있으시다면 [Discussions](https://github.com/your-repo/JazzDevil/discussions)에서 토론해보세요!
+새로운 아이디어가 있으시다면 [Discussions](https://github.com/probablymayb/Project_JazzDevil/discussions)에서 토론해보세요!
 
 <br>
 
@@ -299,9 +303,9 @@ Jazz Devil 프로젝트에 기여하고 싶으신가요? 환영합니다! 🎉
 
 **[📖 사용자 가이드](USER_GUIDE.md)** • **[🛠️ 개발자 가이드](DEV_GUIDE.md)** • **[🎮 지금 플레이하기](#-플레이-데모)**
 
-[![Stars](https://img.shields.io/github/stars/your-repo/JazzDevil?style=social)](https://github.com/your-repo/JazzDevil)
-[![Forks](https://img.shields.io/github/forks/your-repo/JazzDevil?style=social)](https://github.com/your-repo/JazzDevil)
-[![Issues](https://img.shields.io/github/issues/your-repo/JazzDevil)](https://github.com/your-repo/JazzDevil/issues)
+[![Stars](https://img.shields.io/github/stars/probablymayb/Project_JazzDevil?style=social)](https://github.com/probablymayb/Project_JazzDevil)
+[![Forks](https://img.shields.io/github/forks/probablymayb/Project_JazzDevil?style=social)](https://github.com/probablymayb/Project_JazzDevil)
+[![Issues](https://img.shields.io/github/issues/probablymayb/Project_JazzDevil)](https://github.com/probablymayb/Project_JazzDevil/issues)
 
 **Made with ❤️ by Team Jazz Devil**
 
