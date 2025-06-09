@@ -8,9 +8,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Version](https://img.shields.io/badge/Version-v1.0-orange)
 
-<div align="center">
-  <img src="https://via.placeholder.com/800x400/1a1a1a/ffffff?text=🎷+Jazz+Devil+😈+Game+Screenshot" alt="Jazz Devil 게임 스크린샷">
-  
+<div align="center">  
   **[📖 사용자 가이드](USER_GUIDE.md) | [🛠️ 개발자 가이드](DEV_GUIDE.md) | [🎮 플레이 데모](#-플레이-데모) | [📺 개발 과정](#-개발-과정)**
 </div>
 
@@ -37,8 +35,8 @@
 
 ### 🌟 게임의 특별함
 
-- **🎵 세계 최초 리듬 기반 뱀서라이크**: 뱀파이어 서바이벌의 액션과 리듬 게임의 타이밍이 완벽하게 융합
-- **🎨 러버호스 애니메이션**: 증기선 윌리, 뽀빠이 스타일의 매력적인 흑백 애니메이션
+- **🎵 리듬 액션 기반 뱀서라이크**: 뱀파이어 서바이벌의 액션과 리듬 게임의 타이밍이 완벽하게 융합
+- **🎨 러버호스 애니메이션**: 20세기 초반 증기선 윌리, 뽀빠이 스타일의 매력적인 흑백 애니메이션
 - **🎺 재즈 시대 몰입**: 빅밴드 재즈와 함께하는 1920년대 LA 센트럴 애비뉴 경험
 - **🤝 동료 연주자 시스템**: 트럼펫, 피아노, 색소폰 연주자들과 함께하는 합주 전투
 
@@ -87,7 +85,7 @@
 [![Jazz Devil Gameplay](https://via.placeholder.com/600x300/ff6b35/ffffff?text=▶️+게임플레이+영상)](https://www.youtube.com/watch?v=your-video-link)
 
 ### 🎮 플레이 가능한 데모
-**[👉 웹 데모 플레이하기](https://your-demo-link.com)** | **[💾 Windows 데모 다운로드](https://github.com/your-repo/releases)**
+**[💾 Windows 데모 다운로드](https://github.com/probablymayb/Project_JazzDevil/releases)**
 
 </div>
 
@@ -265,7 +263,7 @@ Assets/
 ### 🎯 **향후 계획**
 - [ ] 스팀 출시 준비
 - [ ] 추가 웨이브 콘텐츠
-- [ ] 멀티플레이어 모드
+- [ ] 랭크 시스템
 - [ ] 모바일 이식
 
 <br>
