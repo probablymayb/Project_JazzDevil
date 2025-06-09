@@ -45,7 +45,7 @@
 <br>
 
 ## 📁 프로젝트 구조
-
+```
 ┌── 📁 Assets (게임의 모든 에셋을 관리) <br>
 │   ├── 📁 Animator (애니메이터 컴포넌트) <br>
 │   │   └── 📁 Enemy <br>
@@ -160,3 +160,4 @@
 ├── 📄 .gitignore <br>
 ├── 📄 .vsconfig (Visual Studio 설정 파일) <br>
 └── 📄 README.md <br>
+```
