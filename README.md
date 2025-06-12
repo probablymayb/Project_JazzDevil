@@ -87,7 +87,7 @@
 [![Jazz Devil Gameplay](https://via.placeholder.com/600x300/ff6b35/ffffff?text=▶️+게임플레이+영상)](https://www.youtube.com/watch?v=your-video-link)
 
 ### 🎮 플레이 가능한 데모
-**[👉 웹 데모 플레이하기](https://your-demo-link.com)** | **[💾 Windows 데모 다운로드](https://github.com/your-repo/releases)**
+**[💾 Windows 데모 다운로드](https://naver.me/Gq9v50Ov)**
 
 </div>
 
