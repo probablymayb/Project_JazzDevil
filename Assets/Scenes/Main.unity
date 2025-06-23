@@ -472,6 +472,38 @@ MonoBehaviour:
   masterVolume: 1
   sfxVolume: 1
   showDebugInfo: 1
+--- !u!1 &337154701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 337154702}
+  m_Layer: 0
+  m_Name: BGM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &337154702
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337154701}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 787.85657, y: 683.33844, z: -1010.66864}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1762464922}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2827,6 +2859,57 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7805081114997376637, guid: 668cb6d7635618b49b7cde049afa9aea, type: 3}
   m_PrefabInstance: {fileID: 1760944680}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1762464921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1762464922}
+  - component: {fileID: 1762464923}
+  m_Layer: 0
+  m_Name: Ambience
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1762464922
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762464921}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 337154702}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1762464923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762464921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e66b5c5f177dff4286c97552e0cdf87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ambienceBGM:
+    Guid:
+      Data1: 1931577856
+      Data2: 1204933807
+      Data3: -2136808528
+      Data4: -1732784369
+    Path: event:/Ambience
 --- !u!1 &1802017340
 GameObject:
   m_ObjectHideFlags: 0
@@ -3175,7 +3258,7 @@ PrefabInstance:
       objectReference: {fileID: 1172939393}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: totalWaves
-      value: 6
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: waveTextUI
@@ -3196,6 +3279,10 @@ PrefabInstance:
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: waveDuration
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
+      propertyPath: maxEnemyThreshold
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: returnToTitleButton
@@ -3847,6 +3934,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 337154702}
   - {fileID: 1666786071}
   - {fileID: 330585546}
   - {fileID: 410087041}

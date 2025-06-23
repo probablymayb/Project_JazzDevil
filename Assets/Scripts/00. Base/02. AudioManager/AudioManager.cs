@@ -73,7 +73,7 @@ public class AudioManager : Singleton<AudioManager>
         // 독립 인스턴스 목록에 추가
         independentInstances.Add(instance);
 
-        Debug.Log($"독립 채널로 사운드 재생: {sound.Path} at {position}");
+        Debug.Log($"독립 채널로 사운드 재생 at {position}");
         return instance;
     }
 
@@ -94,7 +94,7 @@ public class AudioManager : Singleton<AudioManager>
         instance.start();
         independentInstances.Add(instance);
 
-        Debug.Log($"독립 채널로 2D 사운드 재생: {sound.Path}");
+        Debug.Log("독립 채널로 2D 사운드 재생");
         return instance;
     }
 
