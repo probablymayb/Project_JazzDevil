@@ -39,7 +39,7 @@ public class WaveManager : MonoBehaviour
         if (returnToTitleButton != null)
             returnToTitleButton.onClick.AddListener(OnReturnToTitleButtonClicked);
 
-        GameManager.Instance.CurrentGameState = EGameState.Wave;
+        // GameManager.Instance.ChangeState(EGameState.Playing);
         StartNextWave();
     }
 
@@ -110,7 +110,7 @@ public class WaveManager : MonoBehaviour
             Debug.LogError("[WaveManager] 게임 오버!");
             isWaveRunning = false;
 
-            GameManager.Instance.CurrentGameState = EGameState.Finish;
+            GameManager.Instance.ChangeState(EGameState.Finish);
 
             // 몬스터 스폰 중단
             if (spawner != null)
@@ -140,7 +140,7 @@ public class WaveManager : MonoBehaviour
 
     public void OnReturnToTitleButtonClicked()
     {
-        GameManager.Instance.CurrentGameState = EGameState.Title;
+        GameManager.Instance.ChangeState(EGameState.Title);
         SceneLoader.LoadScene(SceneLoader.SceneName.Title);
     }
 }

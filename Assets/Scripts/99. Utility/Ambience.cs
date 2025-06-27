@@ -7,7 +7,7 @@ public class Ambience : MonoBehaviour
     [SerializeField]
     private EventReference ambienceBGM;
 
-    private void Start()
+    private void Awake()
     {
         AudioManager.Instance.PlayLooping(ambienceBGM, "ambience");
     }
