@@ -369,6 +369,38 @@ public class AudioManager : Singleton<AudioManager>
         loopingSounds.Clear();
     }
 
+    /// <summary>
+    /// 모든 루프 사운드 일시정지
+    /// </summary>
+    public void PauseAllLoopingSounds()
+    {
+        foreach (var instance in loopingSounds.Values)
+        {
+            instance.getPaused(out bool isPaused);
+
+            if (!isPaused)
+            {
+                instance.setPaused(true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 일시정지된 모든 루프 사운드 일시정지 해재.
+    /// </summary>
+    public void ResumeAllLoopingSounds()
+    {
+        foreach (var instance in loopingSounds.Values)
+        {
+            instance.getPaused(out bool isPaused);
+
+            if (isPaused)
+            {
+                instance.setPaused(false);
+            }
+        }
+    }
+
     public void SetLoopingParameter(string key, string parameterName, float value)
     {
         if (loopingSounds.TryGetValue(key, out EventInstance instance))
