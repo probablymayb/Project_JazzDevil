@@ -23,6 +23,14 @@ public class WaveManager : MonoBehaviour
     public ShopManager shopManager;            // shopManager 참조
     public NoteSpawner noteSpawner;            // noteSpawner 참조
 
+    [Header("결과창 변수")]
+    public Text txtAccuracy;
+    public Text txtWave;
+    public Text txtKills;
+    public Text txtMaxCombo;
+    public Text txtRank;
+
+
 
     public int currentWave = 0;
     public bool isWaveRunning = false;
@@ -134,8 +142,35 @@ public class WaveManager : MonoBehaviour
     {
         if (resultPopup != null && !resultPopup.activeSelf)
         {
+            // 값 참조
+            float accuracy = NoteJudge.Instance.Accuracy;
+            int wave = currentWave;
+            float surviveTime = Time.timeSinceLevelLoad;
+            int kills = player.killCount;
+            int maxCombo = ComboManager.Instance.MaxComboThisSession;
+
+            // 랭크 계산 (임의 예시)
+            string rank = CalculateRank(accuracy, wave, kills, maxCombo);
+
+            // 텍스트 세팅
+            txtAccuracy.text = $"Accuracy: {accuracy:F1}%";
+            txtWave.text = $"Wave: {wave}";
+            txtKills.text = $"Kills: {kills}";
+            txtMaxCombo.text = $"MaxCombo: {maxCombo}";
+            txtRank.text = $"{rank}";
+
             resultPopup.SetActive(true);
         }
+    }
+
+    string CalculateRank(float accuracy, int wave, int kills, int maxCombo)
+    {
+        float score = accuracy * 0.4f + wave * 10f * 0.2f + kills * 0.2f + maxCombo * 0.2f;
+        if (score >= 90) return "S";
+        if (score >= 80) return "A";
+        if (score >= 65) return "B";
+        if (score >= 50) return "C";
+        return "D";
     }
 
     public void OnReturnToTitleButtonClicked()

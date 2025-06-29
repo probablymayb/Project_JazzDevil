@@ -45,3 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shopTriggerPrefab: {fileID: 5686627687396229340, guid: b2b31b79c41ecc84995ea5f5a525012c, type: 3}
+  arrowIndicatorPrefab: {fileID: 234843665364985918, guid: 3ec88dc59e53ccf499a3555b7b31c5c5, type: 3}
+  hudCanvas: {fileID: 0}
