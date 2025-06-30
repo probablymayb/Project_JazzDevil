@@ -20,6 +20,9 @@ public class TutorialManager : Singleton<TutorialManager>
         {
             // 튜토리얼을 이미 본 상태면 팝업을 띄우지 않는다.
             tutorialPopup.SetActive(false);
+
+            // 게임 상태를 Playing으로 변경
+            GameManager.Instance.ChangeState(EGameState.Playing);
         }
     }
 

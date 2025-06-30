@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
     /// 현재 게임 상태
     /// </summary>
     /// <returns>현재 게임 상태 EGameState Enum 값</returns>
-    public EGameState CurrentGameState { get; private set; } = EGameState.Title;
+    public EGameState CurrentGameState { get; private set; } = EGameState.Playing;
 
     // public static event Action<EGameState> OnGameStateChange;
 
@@ -31,11 +31,6 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
         DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
-    {
-        ChangeState(EGameState.Title);
     }
 
     /// <summary>
