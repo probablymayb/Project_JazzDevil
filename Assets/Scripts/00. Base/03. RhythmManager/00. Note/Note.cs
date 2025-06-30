@@ -35,6 +35,9 @@ public class Note : MonoBehaviour
 
     private void Update()
     {
+        // 게임 상태가 Playing이 아니면 Update 수행하지 않음
+        if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
+
         currentTime += Time.deltaTime;
         float progress = currentTime / shrinkDuration;
 

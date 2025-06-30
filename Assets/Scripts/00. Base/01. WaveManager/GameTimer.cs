@@ -7,6 +7,9 @@ public class GameTimer : MonoBehaviour
 
     void Update()
     {
+        // 게임 상태가 Playing이 아니면 Update 수행하지 않음
+        if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
+
         if (!IsRunning) return;
 
         RemainingTime -= Time.deltaTime;

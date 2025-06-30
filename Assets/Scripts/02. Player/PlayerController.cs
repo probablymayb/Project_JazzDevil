@@ -95,9 +95,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // 게임 상태가 Shop일 땐 입력 무시*****
-        if (GameManager.Instance.CurrentGameState == EGameState.Finish)
-            return;
+        // 게임 상태가 Playing이 아니면 Update 수행하지 않음
+        if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
 
         ProcessInputs();
         UpdateAnimationState();
@@ -112,10 +111,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 게임 상태가 Finish일 땐 입력 무시*****
-        if (GameManager.Instance.CurrentGameState == EGameState.Finish)
-            return;
-
         Move();
     }
 
