@@ -1453,7 +1453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3736548220553827380, guid: b47e09ae18c53ec4d8090380675baab5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8276256750787609871, guid: b47e09ae18c53ec4d8090380675baab5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3495,6 +3495,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4670289310240014440, guid: 181d6a061c08f2241a028658a6c4b7cf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1906531362}
+    - target: {fileID: 4670289310240014440, guid: 181d6a061c08f2241a028658a6c4b7cf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CloseTutorial
+      objectReference: {fileID: 0}
     - target: {fileID: 5208961361953342861, guid: 181d6a061c08f2241a028658a6c4b7cf, type: 3}
       propertyPath: m_Name
       value: TutorialPopup
@@ -3513,6 +3521,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8276256750787609871, guid: b47e09ae18c53ec4d8090380675baab5, type: 3}
   m_PrefabInstance: {fileID: 964406002}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1906531362 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3510443524615315679, guid: b47e09ae18c53ec4d8090380675baab5, type: 3}
+  m_PrefabInstance: {fileID: 964406002}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e53015d2314b6418df309108dfd244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1913304475
 PrefabInstance:
   m_ObjectHideFlags: 0
