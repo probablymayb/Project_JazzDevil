@@ -153,6 +153,7 @@ abstract public class Monster : MonoBehaviour
             if (pc != null)
             {
                 pc.AddGold(goldReward);
+                pc.OnMonsterKilled();
             }
         }
 

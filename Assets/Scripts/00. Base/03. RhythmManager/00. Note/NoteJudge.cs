@@ -13,6 +13,8 @@ public enum JudgementResult
 public class NoteJudge : MonoBehaviour
 {
     public static NoteJudge Instance { get; private set; }
+    public int excellentCount = 0, solidCount = 0, goodCount = 0, missCount = 0;
+    public int TotalJudged => excellentCount + solidCount + goodCount + missCount;
 
     [Header("판정 설정")]
     [SerializeField] private float excellentWindow = 0.1f;  // ±50ms
@@ -71,6 +73,14 @@ public class NoteJudge : MonoBehaviour
         float beatProgress = GetBeatProgress();
         JudgementResult result = GetJudgementFromProgress(beatProgress);
 
+        switch (result)
+        {
+            case JudgementResult.Excellent: excellentCount++; break;
+            case JudgementResult.Solid:     solidCount++;     break;
+            case JudgementResult.Good:      goodCount++;      break;
+            case JudgementResult.Miss:      missCount++;      break;
+        }
+
         if (showDebugInfo)
         {
             Debug.Log($"Beat Progress: {beatProgress:F3}, Judgement: {result}");
@@ -84,6 +94,7 @@ public class NoteJudge : MonoBehaviour
 
         return result;
     }
+    public float Accuracy => TotalJudged > 0 ? (excellentCount + solidCount + goodCount) * 100f / TotalJudged : 0f;
 
     // 현재 비트 진행도 계산 (0~0.5)
     private float GetBeatProgress()

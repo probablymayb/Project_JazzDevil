@@ -34,6 +34,37 @@ public class ShopUIManager : Singleton<ShopUIManager>
             returnButton.onClick.AddListener(OnClickConfirm);
     }
 
+    private void Update()
+    {
+        // 상점이 열려있을 때만 키 입력 받기
+        if (!shopRootUI.activeSelf) return;
+
+        // 숫자 키로 토글 on/off
+        if (Input.GetKeyDown(KeyCode.Alpha1)) ToggleByIndex(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) ToggleByIndex(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) ToggleByIndex(2);
+
+        // F 키로 구매 버튼 누르기
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            OnClickConfirm(); // 기존 함수 호출
+        }
+    }
+
+    private void ToggleByIndex(int index)
+    {
+        if (index < 0 || index >= itemSlotPrefabs.Count) return;
+
+        var toggle = itemSlotPrefabs[index].transform.Find("ItemSlot")?.GetComponent<Toggle>();
+        var background = itemSlotPrefabs[index].transform.Find("ItemSlot/Background")?.gameObject;
+
+        if (toggle != null && background != null)
+        {
+            toggle.isOn = !toggle.isOn;
+            background.SetActive(toggle.isOn);
+        }
+    }
+
     public void OpenShop()
     {
         foreach (var slotPrefab in itemSlotPrefabs)

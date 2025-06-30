@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private int attackDamage = 1;
 
-    //일단 골드 관련 변수*****
+    //골드 관련 변수
     [Header("Inventory")]
     [SerializeField] private int gold = 0;
 
@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     public int MaxHealth => maxHealth;
     public int CurrentHealth => currentHealth;
     public int Gold => gold;
+    public int killCount = 0;
 
 
     [Header("Note Timing Judge")]
@@ -291,6 +292,8 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    
+    public void OnMonsterKilled() { killCount++; }
 
     // 트리거 범위에 들어온 몬스터 추가
     private void OnTriggerEnter(Collider other)
