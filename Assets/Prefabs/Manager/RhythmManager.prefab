@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8304875622711784173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7724501184426628035}
+  - component: {fileID: 6459039145489928738}
+  m_Layer: 0
+  m_Name: RhythmManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7724501184426628035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8304875622711784173}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 12.855292, y: 3.8100114, z: -3.0925183}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6459039145489928738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8304875622711784173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ff0fe321e7f4c47bb0b8c26255b624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicEvents:
+  - Guid:
+      Data1: -352017049
+      Data2: 1321323867
+      Data3: -61040462
+      Data4: 1542544846
+    Path: event:/120_Drum
+  - Guid:
+      Data1: -1874485638
+      Data2: 1093443190
+      Data3: 717933210
+      Data4: -290779561
+    Path: event:/125_Drum
+  - Guid:
+      Data1: -2117942192
+      Data2: 1126065487
+      Data3: 332821430
+      Data4: 1813391616
+    Path: event:/130_Drum
+  - Guid:
+      Data1: 929480777
+      Data2: 1123686985
+      Data3: 1304292261
+      Data4: -890218842
+    Path: event:/135_Drum
+  - Guid:
+      Data1: -917918704
+      Data2: 1311021834
+      Data3: -565855074
+      Data4: 132978267
+    Path: event:/140_Drum
+  - Guid:
+      Data1: -2062291328
+      Data2: 1114139480
+      Data3: 899356607
+      Data4: 950264670
+    Path: event:/145_Drum
+  - Guid:
+      Data1: 425492872
+      Data2: 1261561985
+      Data3: -455901310
+      Data4: -20043146
+    Path: event:/150_Drum
+  - Guid:
+      Data1: -338513783
+      Data2: 1264877591
+      Data3: -718024573
+      Data4: 1596938426
+    Path: event:/155_Drum
+  - Guid:
+      Data1: 238432300
+      Data2: 1323801252
+      Data3: 1944144309
+      Data4: 712478553
+    Path: event:/160_Drum
+  availableBpms:
+  - 120
+  - 125
+  - 130
+  - 135
+  - 140
+  - 145
+  - 150
+  - 155
+  - 160
+  sessionParameterNames:
+  - BassVolume
+  - PianoVolume
+  - BrassVolume
+  - MelodyVolume
+  - OtherVolume
+  sessionNames: []
+  fadeOutDuration: 0.5
+  fadeInDuration: 0.5
+  crossFade: 1
