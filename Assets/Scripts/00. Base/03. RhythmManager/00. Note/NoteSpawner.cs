@@ -70,6 +70,11 @@ public class NoteSpawner : MonoBehaviour
             {
                 // Canvas의 중앙에 노트 생성 (풀에서 Get)
                 GameObject note = PoolManager.Instance.Get(notePrefab);
+
+                // 그룹핑
+                GameObject group = GameObject.Find("Note Group");
+                note.transform.parent = group.transform;
+
                 note.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
 
                 Note noteComp = note.transform.GetChild(0).GetComponent<Note>();
