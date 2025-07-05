@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: KontraBass
   m_EditorClassIdentifier: 
   attackCooldown: 0
-  attackDamage: 0
+  attackDamage: 50
   attackRange: 0
