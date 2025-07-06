@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e869d3925ea6ff4fa84368a75fc739e, type: 3}
-  m_Name: Guitar
+  m_Script: {fileID: 11500000, guid: 0074bffef697a2447a76ab6a8f2b4143, type: 3}
+  m_Name: Guitar Bullet
   m_EditorClassIdentifier: 
-  attackCooldown: 0.5
-  attackDamage: 1
-  attackRange: 9
+  bulletSpeed: 7
+  bulletDamage: 1

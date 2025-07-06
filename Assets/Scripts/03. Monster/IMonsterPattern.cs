@@ -47,6 +47,8 @@ public class RangedPattern : IMonsterPattern
         Vector3 direction = player.position - newBullet.transform.position;
         bulletComp.Direction = new Vector3(direction.x, 0f, direction.z); // 방향 Set
         bulletComp.Direction = bulletComp.Direction.normalized;
+        bulletComp.IsPenetrable = false;
+        bulletComp.Friendly = Bullet.EFriendly.Monster;
 
         newBullet.SetActive(true);                                      // 초기화 완료했으니 다시 활성화
 
