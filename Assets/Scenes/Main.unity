@@ -1363,6 +1363,9 @@ MonoBehaviour:
   supporterData: {fileID: 11400000, guid: 5cd7d8e7fa7174d4498565863993fe65, type: 2}
   poolPrefabRef: {fileID: 0}
   patternEffect: {fileID: 0}
+  currentAngle: 0
+  hitIndicator: {fileID: 0}
+  indicatorShowRange: 45
 --- !u!23 &936767629
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3874,7 +3877,7 @@ PrefabInstance:
       objectReference: {fileID: 266009101}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: totalWaves
-      value: 6
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: waveTextUI
@@ -4170,6 +4173,10 @@ PrefabInstance:
     - target: {fileID: 1967095776610386413, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
+      propertyPath: gold
+      value: 1000000
       objectReference: {fileID: 0}
     - target: {fileID: 6022887412279704646, guid: 06988ee8d7b69d64cadc40a426264adb, type: 3}
       propertyPath: noteJudge

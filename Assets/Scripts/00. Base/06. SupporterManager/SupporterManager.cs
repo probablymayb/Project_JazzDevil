@@ -8,7 +8,6 @@ public enum Supporters { Trumpet, Piano, Saxophone }
 
 public class SupporterManager : Singleton<SupporterManager>
 {
-
     //Supporter 프리팹들 참조
     [SerializeField] private GameObject[] supporters;
 
@@ -17,17 +16,29 @@ public class SupporterManager : Singleton<SupporterManager>
     [SerializeField] private float maxRotSpeed = 100f;   // 회전 최대 속도
     private float rotationSpeed; // 회전 속도
 
-    private Transform playerTransform;
+    [Header("리듬 판정 설정")]
+    [SerializeField] private float hitZoneAngle = 0f;       // 판정 구역 각도 (예: 플레이어 앞쪽 0도)
+    [SerializeField] private float perfectAngleRange = 15f; // Perfect 판정 각도 범위 (±15도)
+    [SerializeField] private float goodAngleRange = 30f;    // Good 판정 각도 범위 (±30도)
+    [SerializeField] private float badAngleRange = 45f;     // Bad 판정 각도 범위 (±45도)
 
+    [Header("비주얼 피드백")]
+    [SerializeField] private LineRenderer hitZoneIndicator; // 판정 구역 표시용
+    [SerializeField] private Color perfectColor = Color.green;
+    [SerializeField] private Color goodColor = Color.yellow;
+    [SerializeField] private Color badColor = Color.red;
+
+    private Transform playerTransform;
     private List<GameObject> orbitalSup = new List<GameObject>(); // 회전 동료 목록
     private float currentDeg = 0f; // 현재 회전 각
 
+    // 리듬 판정 관련
+    public event System.Action<JudgementResult, Supporter> OnRhythmJudged;
+
     protected override void Awake()
     {
-        // Singleton<T>(부모 클래스)의 Awake() 먼저 수행
         base.Awake();
 
-        // "Player" 태그가 있는 오브젝트 찾기
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -35,8 +46,9 @@ public class SupporterManager : Singleton<SupporterManager>
         }
 
         RhythmManager.beatUpdated += OnBeat;
+        rotationSpeed = maxRotSpeed;
 
-        rotationSpeed = maxRotSpeed; // 회전 속도 초기화
+        SetupHitZoneVisual();
     }
 
     private void OnDestroy()
@@ -46,15 +58,13 @@ public class SupporterManager : Singleton<SupporterManager>
 
     private void Update()
     {
-        // 게임 상태가 Playing이 아니면 Update 수행하지 않음
         if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
-        
+
         if (orbitalSup.Count == 0) return;
 
         // 회전 각 업뎃
         currentDeg += rotationSpeed * Time.deltaTime;
 
-        // 360 초과 시 360을 빼기
         if (currentDeg > 360f)
         {
             currentDeg -= 360f;
@@ -62,36 +72,214 @@ public class SupporterManager : Singleton<SupporterManager>
 
         // 동료 위치 업뎃
         UpdateSupPos();
+
+        // 판정 구역 비주얼 업데이트
+        UpdateHitZoneVisual();
+
+        // 스페이스바 입력 처리
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ProcessRhythmInput();
+        }
     }
 
-    // 동료 위치를 업데이트
+    // 기존 동료 위치 업데이트 (그대로 유지)
     private void UpdateSupPos()
     {
         int supCount = orbitalSup.Count;
-        float angleStep = 360f / supCount; // 동료 간 각도 간격
+        float angleStep = 360f / supCount;
 
         for (int i = 0; i < supCount; i++)
         {
             if (orbitalSup[i] != null)
             {
-                // 각 동료의 회전 각 계산
                 float angle = currentDeg + (i * angleStep);
                 float radians = angle * Mathf.Deg2Rad;
 
-                // 새 위치 계산
                 Vector3 newPos = new Vector3(
                     Mathf.Cos(radians) * orbitRadius,
                     0f,
                     Mathf.Sin(radians) * orbitRadius
                 );
 
-                // 플레이어 위치 기준으로 동료 위치 설정
                 orbitalSup[i].transform.position = playerTransform.position + newPos;
+
+                // 동료에게 현재 각도 정보 전달
+                Supporter supporterComponent = orbitalSup[i].GetComponent<Supporter>();
+                if (supporterComponent != null)
+                {
+                    supporterComponent.currentAngle = angle;
+                }
             }
         }
     }
 
-    // 프리팹을 받아서 동료를 생성 (풀링 적용)
+    // 리듬 입력 처리
+    private void ProcessRhythmInput()
+    {
+        if (orbitalSup.Count == 0) return;
+
+        // 판정 구역에 가장 가까운 동료 찾기
+        Supporter closestSupporter = GetClosestSupporterToHitZone();
+
+        if (closestSupporter != null)
+        {
+            float angleDifference = GetAngleDifferenceToHitZone(closestSupporter.currentAngle);
+            JudgementResult result = JudgeHitAccuracy(angleDifference);
+
+            // 판정 결과 처리
+            HandleRhythmJudgement(result, closestSupporter);
+        }
+        else
+        {
+            // 동료가 없으면 Miss
+            HandleRhythmJudgement(JudgementResult.Miss, null);
+        }
+    }
+
+    // 판정 구역에 가장 가까운 동료 찾기
+    private Supporter GetClosestSupporterToHitZone()
+    {
+        Supporter closest = null;
+        float minAngleDiff = float.MaxValue;
+
+        foreach (GameObject supObj in orbitalSup)
+        {
+            if (supObj != null)
+            {
+                Supporter supporter = supObj.GetComponent<Supporter>();
+                if (supporter != null)
+                {
+                    float angleDiff = GetAngleDifferenceToHitZone(supporter.currentAngle);
+
+                    if (angleDiff < minAngleDiff && angleDiff <= badAngleRange)
+                    {
+                        minAngleDiff = angleDiff;
+                        closest = supporter;
+                    }
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    // 판정 구역과의 각도 차이 계산
+    private float GetAngleDifferenceToHitZone(float supporterAngle)
+    {
+        float diff = Mathf.Abs(Mathf.DeltaAngle(supporterAngle, hitZoneAngle));
+        return diff;
+    }
+
+    // 각도 차이에 따른 판정
+    private JudgementResult JudgeHitAccuracy(float angleDifference)
+    {
+        if (angleDifference <= perfectAngleRange)
+            return JudgementResult.Excellent;
+        else if (angleDifference <= goodAngleRange)
+            return JudgementResult.Solid;
+        else if (angleDifference <= badAngleRange)
+            return JudgementResult.Good;
+        else
+            return JudgementResult.Miss;
+    }
+
+    // 리듬 판정 결과 처리
+    private void HandleRhythmJudgement(JudgementResult result, Supporter supporter)
+    {
+        Debug.Log($"리듬 판정: {result}");
+
+        // 이벤트 발생
+        OnRhythmJudged?.Invoke(result, supporter);
+
+        // 판정에 따른 처리
+        switch (result)
+        {
+            case JudgementResult.Excellent:
+                if (supporter != null)
+                {
+                    // 동료 특수 능력 발동 (100% 효과)
+                    TriggerSupporterAbility(supporter, 1.0f);
+                    PlayHitEffect(supporter.transform.position, perfectColor);
+                }
+                break;
+
+            case JudgementResult.Solid:
+                if (supporter != null)
+                {
+                    // 동료 특수 능력 발동 (80% 효과)
+                    TriggerSupporterAbility(supporter, 0.8f);
+                    PlayHitEffect(supporter.transform.position, goodColor);
+                }
+                break;
+
+            case JudgementResult.Good:
+                if (supporter != null)
+                {
+                    // 동료 특수 능력 발동 (60% 효과)
+                    TriggerSupporterAbility(supporter, 0.6f);
+                    PlayHitEffect(supporter.transform.position, badColor);
+                }
+                break;
+
+            case JudgementResult.Miss:
+                Debug.Log("Miss! 동료가 판정 구역에 없거나 타이밍이 맞지 않음");
+                break;
+        }
+    }
+
+    // 동료 특수 능력 발동
+    private void TriggerSupporterAbility(Supporter supporter, float effectiveness)
+    {
+        // 기존 ActPattern 실행하되 효과는 effectiveness에 따라 조정
+        //if (supporter.ActPattern != null)
+        //{
+        //    supporter.ActPattern.ActPattern(supporter.transform, playerTransform, supporter.supporterData);
+        //}
+
+        // 추가로 effectiveness에 따른 보너스 효과 적용 가능
+        // 예: 데미지 배율, 특수 효과 등
+    }
+
+    // 히트 이펙트 재생
+    private void PlayHitEffect(Vector3 position, Color color)
+    {
+        // 이펙트 재생 로직
+        // 예: 파티클, 사운드 등
+    }
+
+    // 판정 구역 비주얼 설정
+    private void SetupHitZoneVisual()
+    {
+        if (hitZoneIndicator == null) return;
+
+        hitZoneIndicator.positionCount = 3;
+        hitZoneIndicator.startWidth = 0.1f;
+        hitZoneIndicator.endWidth = 0.1f;
+        hitZoneIndicator.material.color = Color.white;
+    }
+
+    // 판정 구역 비주얼 업데이트
+    private void UpdateHitZoneVisual()
+    {
+        if (hitZoneIndicator == null || playerTransform == null) return;
+
+        Vector3 playerPos = playerTransform.position;
+        float radians = hitZoneAngle * Mathf.Deg2Rad;
+
+        Vector3 hitZoneDirection = new Vector3(
+            Mathf.Cos(radians),
+            0f,
+            Mathf.Sin(radians)
+        );
+
+        // 판정 구역 라인 그리기
+        hitZoneIndicator.SetPosition(0, playerPos);
+        hitZoneIndicator.SetPosition(1, playerPos + hitZoneDirection * orbitRadius * 0.8f);
+        hitZoneIndicator.SetPosition(2, playerPos + hitZoneDirection * orbitRadius * 1.2f);
+    }
+
+    // 기존 AddSup, RemoveSup 메서드는 그대로 유지
     public void AddSup(Supporters enumSup)
     {
         if (!Enum.IsDefined(typeof(Supporters), enumSup))
@@ -101,12 +289,11 @@ public class SupporterManager : Singleton<SupporterManager>
         }
         GameObject getPref = supporters[Convert.ToInt32(enumSup)];
         GameObject sup = PoolManager.Instance.Get(getPref);
-        sup.GetComponent<Supporter>().poolPrefabRef = getPref; // 반환용 참조
+        sup.GetComponent<Supporter>().poolPrefabRef = getPref;
         orbitalSup.Add(sup);
         UpdateSupPos();
     }
 
-    // 해당 프리팹의 동료를 제거
     public void RemoveSup(Supporters enumSup)
     {
         if (!Enum.IsDefined(typeof(Supporters), enumSup))
@@ -125,7 +312,6 @@ public class SupporterManager : Singleton<SupporterManager>
             PoolManager.Instance.Return(getPref, sup);
             orbitalSup.Remove(sup);
 
-            // 동료 위치 업뎃
             if (orbitalSup.Count > 0)
             {
                 UpdateSupPos();
@@ -133,36 +319,25 @@ public class SupporterManager : Singleton<SupporterManager>
         }
     }
 
-    // 박자에 맞춰 코루틴을 실행
+    // 기존 OnBeat, PulsateAnimation은 그대로 유지
     private void OnBeat()
     {
         if (!isActiveAndEnabled) return;
         StartCoroutine(PulsateAnimation());
     }
 
-    // 박자에 맞춰 동료를 움직이는 코루틴 (Monster.cs에서 가져옴)
-    // 추후 동료 애니메이션 구현 시 주석 처리된 코드 사용할 예정임
     private IEnumerator PulsateAnimation()
     {
         float timer = 0f;
         float duration = 60f / RhythmManager.Instance.CurrentBpm;
 
-        //if (animator == null) yield break;
-
-        //animator.speed = startSpeed;
-
         while (timer < duration)
         {
-            if (this == null/* || animator == null*/) yield break;
+            if (this == null) yield break;
 
             timer += Time.deltaTime;
-            //animator.speed = Mathf.Lerp(maxRotSpeed, 0f, timer / duration);
             rotationSpeed = Mathf.Lerp(maxRotSpeed, 0f, timer / duration);
             yield return null;
         }
-
-        //if (animator != null)
-        //    animator.speed = 0.1f;
     }
-
 }

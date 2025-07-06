@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FMODUnity;
 using FMOD.Studio;
 
-
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -19,14 +18,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private int attackDamage = 1;
 
-    //골드 관련 변수
     [Header("Inventory")]
     [SerializeField] private int gold = 0;
 
+    [Header("Rhythm System")]
+    [SerializeField] private bool useRhythmSystem = true; // 리듬 시스템 사용 여부
+    [SerializeField] private float rhythmDamageMultiplier = 2f; // 리듬 성공 시 데미지 배율
+
     //Animator
     private Rigidbody rb;
-    private Animator upperBodyAnimator;  // 상체 애니메이터
-    private Animator lowerBodyAnimator;  // 하체 애니메이터
+    private Animator upperBodyAnimator;
+    private Animator lowerBodyAnimator;
     private SphereCollider detectionCollider;
     private int attackCounter = 0;
 
@@ -38,22 +40,20 @@ public class PlayerController : MonoBehaviour
     private float nextAttackTime;
     private List<Monster> monstersInRange = new List<Monster>();
 
-    // 외부(UI)에서 접근 가능한 변수*****
+    // 외부(UI)에서 접근 가능한 변수
     public int MaxHealth => maxHealth;
     public int CurrentHealth => currentHealth;
     public int Gold => gold;
     public int killCount = 0;
 
-
     [Header("Note Timing Judge")]
-
-    //Note Timing 판단
     [SerializeField] private NoteJudge noteJudge;
 
+    [Header("Audio")]
+    [SerializeField] private EventReference rideOneShotSound;
 
-    //Ride One sHot Audio
-    [SerializeField]
-    private EventReference rideOneShotSound;
+    // 리듬 시스템 관련
+    private SupporterManager supporterManager;
 
     private void Awake()
     {
@@ -65,6 +65,9 @@ public class PlayerController : MonoBehaviour
         // NoteJudge 참조 찾기
         if (noteJudge == null)
             noteJudge = FindFirstObjectByType<NoteJudge>();
+
+        // SupporterManager 참조 찾기
+        supporterManager = SupporterManager.Instance;
     }
 
     private void Start()
@@ -91,11 +94,25 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationX |
                          RigidbodyConstraints.FreezeRotationY |
                          RigidbodyConstraints.FreezeRotationZ;
+
+        // 리듬 시스템 이벤트 구독
+        if (supporterManager != null)
+        {
+            supporterManager.OnRhythmJudged += OnRhythmJudged;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 이벤트 구독 해제
+        if (supporterManager != null)
+        {
+            supporterManager.OnRhythmJudged -= OnRhythmJudged;
+        }
     }
 
     private void Update()
     {
-        // 게임 상태가 Playing이 아니면 Update 수행하지 않음
         if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
 
         ProcessInputs();
@@ -104,8 +121,19 @@ public class PlayerController : MonoBehaviour
         // 공격 입력 처리
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= nextAttackTime)
         {
-            Attack();
-            nextAttackTime = Time.time + attackCooldown;
+            if (useRhythmSystem)
+            {
+                // 리듬 시스템 사용 시 SupporterManager에서 처리
+                // (SupporterManager.Update()에서 Space 키 입력을 이미 처리함)
+                // 여기서는 쿨타임만 체크
+                nextAttackTime = Time.time + attackCooldown;
+            }
+            else
+            {
+                // 기존 시스템 사용
+                Attack();
+                nextAttackTime = Time.time + attackCooldown;
+            }
         }
     }
 
@@ -133,7 +161,6 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimationState()
     {
-        // 하체 애니메이션만 이동 상태에 따라 업데이트
         if (lowerBodyAnimator != null)
         {
             bool isMoving = Mathf.Abs(horizontalInput) > 0.1f || Mathf.Abs(verticalInput) > 0.1f;
@@ -141,84 +168,88 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage)
+    /// <summary>
+    /// 리듬 판정 결과 처리
+    /// </summary>
+    private void OnRhythmJudged(JudgementResult result, Supporter supporter)
     {
-        currentHealth -= damage;
-        Debug.Log("Player Health: " + currentHealth);
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    }
+        float damageMultiplier = GetRhythmDamageMultiplier(result);
 
-    private void Die()
-    {
-        Debug.Log("Player is Dead!");
-        // 여기에 사망 처리 추가
-    }
-
-    public void Heal(int amount)
-    {
-        currentHealth += amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        Debug.Log("Player Healed: " + currentHealth);
-    }
-
-    //골드 추가 ******
-    public void AddGold(int amount)
-    {
-        gold += amount;
-        Debug.Log($"[Player] 골드 획득: +{amount} → 총 골드: {gold}");
-    }
-
-    //골드 소모 ****** (상점 기능에 따라 변경 예정)
-    public bool SpendGold(int amount)
-    {
-        if (gold >= amount)
-        {
-            gold -= amount;
-            Debug.Log($"[Player] 골드 사용: -{amount} → 남은 골드: {gold}");
-            return true;
-        }
-        else
-        {
-            Debug.LogWarning("[Player] 골드 부족! 구매 실패");
-            return false;
-        }
-    }
-
-    private void Attack()
-    {
         // 상체 공격 애니메이션 트리거
         if (upperBodyAnimator != null)
         {
             attackCounter++;
-            Debug.Log($"🎯 attackCounter % 2 = {attackCounter % 2}");
-            Debug.Log($"🎯 SetInteger AttackCounter = {attackCounter % 2}");
-
             upperBodyAnimator.SetBool("isAttack", true);
             upperBodyAnimator.SetInteger("AttackCounter", attackCounter % 2);
-
-            // 🔍 실제 Animator Parameter 값 확인
-            int currentAttackCounter = upperBodyAnimator.GetInteger("AttackCounter");
-            Debug.Log($"🎯 [ANIMATOR] 실제 AttackCounter 값 = {currentAttackCounter}");
-
-           
         }
 
-        //Ride One sHot Audio
+        // 사운드 재생
+        PlayAttackSound();
 
-        if (rideOneShotSound.IsNull)
+        // 데미지 계산 및 공격
+        int finalDamage = Mathf.RoundToInt(attackDamage * damageMultiplier);
+        AttackNearestMonster(finalDamage);
+
+        // 동료 능력 발동 (리듬 판정 성공 시)
+        if (supporter != null && result != JudgementResult.Miss)
         {
-            Debug.LogWarning("rideOneShotSound 사운드 이벤트를 찾을 수 없음.");
+            float effectiveness = GetEffectivenessFromJudgement(result);
+            supporter.ActivateRhythmAbility(effectiveness);
         }
-        else
-        {
-            AudioManager.Instance.PlayOneShot(rideOneShotSound, transform.position);
-        }
-        
 
-        // 노트 판정 요청
+        Debug.Log($"리듬 공격! 판정: {result}, 데미지 배율: {damageMultiplier:F1}x, 최종 데미지: {finalDamage}");
+    }
+
+    /// <summary>
+    /// 판정에 따른 데미지 배율 반환
+    /// </summary>
+    private float GetRhythmDamageMultiplier(JudgementResult result)
+    {
+        switch (result)
+        {
+            case JudgementResult.Excellent:
+                return rhythmDamageMultiplier; // 2.0x
+            case JudgementResult.Solid:
+                return rhythmDamageMultiplier * 0.8f; // 1.6x
+            case JudgementResult.Good:
+                return rhythmDamageMultiplier * 0.6f; // 1.2x
+            case JudgementResult.Miss:
+                return 0.3f; // 0.3x (페널티)
+            default:
+                return 1.0f;
+        }
+    }
+
+    /// <summary>
+    /// 판정에 따른 동료 능력 효과 반환
+    /// </summary>
+    private float GetEffectivenessFromJudgement(JudgementResult result)
+    {
+        switch (result)
+        {
+            case JudgementResult.Excellent: return 1.0f;
+            case JudgementResult.Solid: return 0.8f;
+            case JudgementResult.Good: return 0.6f;
+            case JudgementResult.Miss: return 0.0f;
+            default: return 0.5f;
+        }
+    }
+
+    /// <summary>
+    /// 기존 공격 시스템 (리듬 시스템 미사용 시)
+    /// </summary>
+    private void Attack()
+    {
+        if (upperBodyAnimator != null)
+        {
+            attackCounter++;
+            upperBodyAnimator.SetBool("isAttack", true);
+            upperBodyAnimator.SetInteger("AttackCounter", attackCounter % 2);
+        }
+
+        PlayAttackSound();
+
+        // 노트 판정 (기존 시스템)
         JudgementResult judgement = JudgementResult.Miss;
         float damageMultiplier = 1.0f;
 
@@ -228,11 +259,23 @@ public class PlayerController : MonoBehaviour
             damageMultiplier = noteJudge.GetDamageMultiplier(judgement);
         }
 
-        // 판정에 따른 데미지 계산
         int finalDamage = Mathf.RoundToInt(attackDamage * damageMultiplier);
-
-        // 가장 가까운 몬스터 공격
         AttackNearestMonster(finalDamage);
+    }
+
+    /// <summary>
+    /// 공격 사운드 재생
+    /// </summary>
+    private void PlayAttackSound()
+    {
+        if (rideOneShotSound.IsNull)
+        {
+            Debug.LogWarning("rideOneShotSound 사운드 이벤트를 찾을 수 없음.");
+        }
+        else
+        {
+            AudioManager.Instance.PlayOneShot(rideOneShotSound, transform.position);
+        }
     }
 
     private void AttackNearestMonster(int damage)
@@ -268,17 +311,10 @@ public class PlayerController : MonoBehaviour
             if (shockwavePrefab != null)
             {
                 GameObject shockwave = Instantiate(shockwavePrefab, nearestMonster.transform.position, Quaternion.identity);
-
-                // Shockwave 컴포넌트가 있다면 초기화
                 Shockwave shockwaveComponent = shockwave.GetComponent<Shockwave>();
                 if (shockwaveComponent != null)
                 {
                     shockwaveComponent.Initialize(damage);
-                }
-                else
-                {
-                    // Shockwave 컴포넌트가 없는 경우 직접 데미지 처리
-                    nearestMonster.TakeDamage(damage);
                 }
             }
             else
@@ -287,10 +323,78 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    
+
+    // 기존 메서드들은 그대로 유지
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        Debug.Log("Player Health: " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player is Dead!");
+    }
+
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log("Player Healed: " + currentHealth);
+    }
+
+    public void AddGold(int amount)
+    {
+        gold += amount;
+        Debug.Log($"[Player] 골드 획득: +{amount} → 총 골드: {gold}");
+    }
+
+    public bool SpendGold(int amount)
+    {
+        if (gold >= amount)
+        {
+            gold -= amount;
+            Debug.Log($"[Player] 골드 사용: -{amount} → 남은 골드: {gold}");
+            return true;
+        }
+        else
+        {
+            Debug.LogWarning("[Player] 골드 부족! 구매 실패");
+            return false;
+        }
+    }
+
     public void OnMonsterKilled() { killCount++; }
 
-    // 트리거 범위에 들어온 몬스터 추가
+    public void UpgradeDamage(int upgradedDamage)
+    {
+        attackDamage = upgradedDamage;
+    }
+
+    public void OnAttackStart()
+    {
+        Debug.Log("[PlayerController] Attack Start Event - 0% 지점");
+
+        if (upperBodyAnimator != null)
+        {
+            AnimatorStateInfo stateInfo = upperBodyAnimator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.speed < 0 || stateInfo.speedMultiplier < 0)
+            {
+                upperBodyAnimator.SetBool("isAttack", false);
+                Debug.Log("[PlayerController] 역방향 공격 완료!");
+            }
+            else
+            {
+                Debug.Log("[PlayerController] 정방향 공격 시작!");
+            }
+        }
+    }
+
+    // 트리거 관련 메서드들
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
@@ -303,7 +407,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 트리거 범위에서 나간 몬스터 제거
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
@@ -316,40 +419,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 공격 범위 표시 (디버깅용)
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-    }
-
-    // 데미지 업그레이드
-    public void UpgradeDamage(int upgradedDamage)
-    {
-        attackDamage = upgradedDamage;
-    }
-
-    //UpperBody Animation
-    public void OnAttackStart()
-    {
-        Debug.Log("[PlayerController] Attack Start Event - 0% 지점");
-
-        // 역방향 완료 시 isAttack을 false로 설정
-        if (upperBodyAnimator != null)
-        {
-            AnimatorStateInfo stateInfo = upperBodyAnimator.GetCurrentAnimatorStateInfo(0);
-            // 현재 상태의 속도가 음수면 역방향
-            Debug.Log(stateInfo.GetType());
-            if (stateInfo.speed < 0 || stateInfo.speedMultiplier < 0)
-            {
-                upperBodyAnimator.SetBool("isAttack", false);
-                Debug.Log("[PlayerController] 역방향 공격 완료!");
-            }
-            else
-            {
-                Debug.Log("[PlayerController] 정방향 공격 시작!");
-
-            }
-        }
     }
 }
