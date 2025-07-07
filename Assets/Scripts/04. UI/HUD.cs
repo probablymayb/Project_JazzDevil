@@ -15,6 +15,7 @@ public class HUD : MonoBehaviour
     [Header("게임 참조")]
     public PlayerController player;
     public GameTimer timer;
+    public WaveManager waveManager;
 
     void LateUpdate()
     {
@@ -49,8 +50,8 @@ public class HUD : MonoBehaviour
                     }
                     else if (myImage != null && myImage.type == Image.Type.Filled)
                     {
-                        //float ratio = timer.ElapsedTime / timer.MaxTime;
-                        //myImage.fillAmount = ratio;
+                        float ratio = (timer.RemainingTime > 0f) ? (timer.RemainingTime / waveManager.waveDuration) : 0f;
+                        myImage.fillAmount = Mathf.Clamp01(ratio);
                     }
                 }
                 break;
