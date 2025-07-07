@@ -48,5 +48,7 @@ MonoBehaviour:
   - {fileID: 546918062162575414, guid: e94c2f21e9ce93b4782584baf5f7e953, type: 3}
   - {fileID: 6137391624781698791, guid: 031e902883c18e241b38f079aa02093c, type: 3}
   - {fileID: 4789323099877440944, guid: 2de14bd2c2377c24ca77cd1c1526062e, type: 3}
+  - {fileID: 4789323099877440944, guid: b64f548ac8376c94d924252db9611f6b, type: 3}
+  - {fileID: 546918062162575414, guid: 3e60d9c212acf7842b061f1d0629ac95, type: 3}
   orbitRadius: 1
   maxRotSpeed: 100

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 동료를 호출하는 등의 연산을 위한 enum 리스트
-public enum Supporters { Trumpet, Piano, Saxophone }
+public enum Supporters { Trumpet, Piano, Saxophone, KontraBass, Guitar }
 
 public class SupporterManager : Singleton<SupporterManager>
 {

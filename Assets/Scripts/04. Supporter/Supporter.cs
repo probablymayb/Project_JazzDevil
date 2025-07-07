@@ -60,8 +60,11 @@ abstract public class Supporter : MonoBehaviour
             {
                 // 패턴
                 ActPattern?.ActPattern(transform, player, supporterData);
-                GameObject eff = PoolManager.Instance.Get(patternEffect);
-                eff.transform.position = transform.position;
+                if (patternEffect != null)
+                {
+                    GameObject eff = PoolManager.Instance.Get(patternEffect);
+                    eff.transform.position = transform.position;
+                }
                 timer = 0f; // 타이머 초기화
             }
         }

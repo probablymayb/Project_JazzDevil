@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e869d3925ea6ff4fa84368a75fc739e, type: 3}
   m_Name: Guitar
   m_EditorClassIdentifier: 
-  attackCooldown: 2
+  attackCooldown: 0.5
   attackDamage: 1
   attackRange: 9
