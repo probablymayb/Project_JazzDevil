@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -10,23 +11,37 @@ public class TrumpetPattern : ISupporterPattern
 {
     public void ActPattern(Transform transform, Transform player, SupporterSO supporterData)
     {
-        GameObject[] activatingMonsters = GameObject.FindGameObjectsWithTag("Monster");
-        float angleRange = 90f;     // ���հ�
+        // 공격 범위 내 콜라이더 가져오기
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, supporterData.attackRange);
+        float angleRange = 90f; // 부채꼴 각
 
-        foreach (GameObject monster in activatingMonsters)
+        Vector3 flatForwardDirection = transform.forward;
+        flatForwardDirection.y = 0f;
+        flatForwardDirection.Normalize();
+
+        foreach (Collider hitCollider in hitColliders)
         {
-            Vector3 interV = monster.transform.position - transform.position;
-
-            if (interV.magnitude <= supporterData.attackRange)
+            if (hitCollider.gameObject.layer != LayerMask.NameToLayer("Enemy"))
             {
-                float dot = Vector2.Dot(interV.normalized, transform.forward);
-                float theta = Mathf.Acos(dot);
-                float degree = Mathf.Rad2Deg * theta;
+                continue;
+            }
 
-                if (degree <= angleRange / 2f)
-                {
-                    monster.GetComponent<Monster>().TakeDamage(supporterData.attackDamage);
-                }
+            Monster monsterComp = hitCollider.GetComponentInParent<Monster>();
+            if (monsterComp == null)
+            {
+                continue;
+            }
+
+            Vector3 directionToMonster = (monsterComp.transform.position - transform.position);
+            directionToMonster.y = 0f;
+            directionToMonster.Normalize();
+
+            // 부채꼴 내에 존재하는지 확인
+            float dotProdict = Vector3.Dot(flatForwardDirection, directionToMonster);
+
+            if (dotProdict >= Mathf.Cos(angleRange / 2f * Mathf.Deg2Rad))
+            {
+                monsterComp.TakeDamage(supporterData.attackDamage);
             }
         }
     }

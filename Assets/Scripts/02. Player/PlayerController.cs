@@ -295,7 +295,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            Monster monster = other.GetComponent<Monster>();
+            Monster monster = other.GetComponentInParent<Monster>();
             if (monster != null && !monstersInRange.Contains(monster))
             {
                 monstersInRange.Add(monster);
@@ -308,7 +308,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            Monster monster = other.GetComponent<Monster>();
+            Monster monster = other.GetComponentInParent<Monster>();
             if (monster != null)
             {
                 monstersInRange.Remove(monster);
