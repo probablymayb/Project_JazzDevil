@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -12,41 +13,49 @@ public class Bullet : MonoBehaviour
     public bool IsPenetrable { get; set; }      // 관통 가능 여부
     public EFriendly Friendly { get; set; }
 
+    // 레이어 인덱스 캐싱
+    private int playerLayer;
+    private int enemyLayer;
+
+    private void Awake()
+    {
+        playerLayer = LayerMask.NameToLayer("Player");
+        enemyLayer = LayerMask.NameToLayer("Enemy");
+    }
+
     private void FixedUpdate()
     {
         transform.position += Direction * BulletSpeed * Time.deltaTime;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!collision.gameObject.CompareTag("Player") && Friendly == EFriendly.Monster)
-        {
-            return;
-        }
-        if (!collision.gameObject.CompareTag("Monster") && Friendly == EFriendly.Player)
-        {
-            return;
-        }
+        bool hitHostileObject = false;
 
-        if (Friendly == EFriendly.Monster)
+        // 플레이어 공격
+        if (other.gameObject.layer == playerLayer && other.name == "Capsule" && Friendly == EFriendly.Monster)
         {
-            PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+            PlayerController playerController = other.gameObject.GetComponentInParent<PlayerController>();
             if (playerController != null)
             {
                 playerController.TakeDamage(Damage); // 플레이어 체력 감소
-            }
-        }
-        if (Friendly == EFriendly.Player)
-        {
-            Debug.Log("test");
-            Monster monsterComp = collision.gameObject.GetComponentInParent<Monster>();
-            if (monsterComp != null)
-            {
-                monsterComp.TakeDamage(Damage);
+                hitHostileObject = true;
             }
         }
 
-        if (!IsPenetrable)
+        // 적 공격
+        else if (other.gameObject.layer == enemyLayer && Friendly == EFriendly.Player)
+        {
+            Monster monsterComp = other.gameObject.GetComponentInParent<Monster>();
+            if (monsterComp != null)
+            {
+                monsterComp.TakeDamage(Damage);
+                hitHostileObject = true;
+            }
+        }
+
+        // 비관통 탄환은 풀로 반환
+        if (hitHostileObject && !IsPenetrable)
         {
             PoolManager.Instance.Return(PoolPrefRef, gameObject); // 풀로 반환
         }

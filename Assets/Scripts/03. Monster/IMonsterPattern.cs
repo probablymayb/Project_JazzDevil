@@ -39,13 +39,13 @@ public class RangedPattern : IMonsterPattern
 
         newBullet.SetActive(false);                                     // 잠시 비활성화
 
-        newBullet.transform.position = transform.position;              // 위치 설정
-        Bullet bulletComp = newBullet.GetComponent<Bullet>();           // 컴포넌트 가져오기
-        bulletComp.PoolPrefRef = bulletPref;                            // 풀 반환용 프리팹 Set
-        bulletComp.BulletSpeed = bulletSO.bulletSpeed;                  // 탄속 Set
-        bulletComp.Damage = bulletSO.bulletDamage;                      // 공격력 Set
+        newBullet.transform.position = transform.position + new Vector3(0f, 0.5f, 0f);  // 위치 설정
+        Bullet bulletComp = newBullet.GetComponent<Bullet>();                           // 컴포넌트 가져오기
+        bulletComp.PoolPrefRef = bulletPref;                                            // 풀 반환용 프리팹 Set
+        bulletComp.BulletSpeed = bulletSO.bulletSpeed;                                  // 탄속 Set
+        bulletComp.Damage = bulletSO.bulletDamage;                                      // 공격력 Set
         Vector3 direction = player.position - newBullet.transform.position;
-        bulletComp.Direction = new Vector3(direction.x, 0f, direction.z); // 방향 Set
+        bulletComp.Direction = new Vector3(direction.x, 0f, direction.z);               // 방향 Set
         bulletComp.Direction = bulletComp.Direction.normalized;
         bulletComp.IsPenetrable = false;
         bulletComp.Friendly = Bullet.EFriendly.Monster;
