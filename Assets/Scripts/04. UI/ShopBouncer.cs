@@ -20,30 +20,16 @@ public class ShopBouncer : MonoBehaviour
 
     private void OnBeat()
     {
-        beatCount++;
+        transform.DOKill();
 
-        // DOTween 애니메이션 설정
-        transform.DOKill(); // 기존 Tween 중복 방지
+        // z는 원래 값, x/y만 1.2배로
+        Vector3 targetScale = new Vector3(originalScale.x * 1.2f, originalScale.y * 1.2f, originalScale.z);
 
-        if (beatCount % 2 == 0)
-        {
-            // 위로 늘어났다 돌아오기 (Y축)
-            transform.DOScale(new Vector3(originalScale.x, originalScale.y * 1.2f, originalScale.z), 0.1f)
-                     .SetEase(Ease.OutQuad)
-                     .OnComplete(() =>
-                     {
-                         transform.DOScale(originalScale, 0.2f).SetEase(Ease.InOutQuad);
-                     });
-        }
-        else
-        {
-            // 옆으로 늘어났다 돌아오기 (X축)
-            transform.DOScale(new Vector3(originalScale.x * 1.2f, originalScale.y, originalScale.z), 0.1f)
-                     .SetEase(Ease.OutQuad)
-                     .OnComplete(() =>
-                     {
-                         transform.DOScale(originalScale, 0.2f).SetEase(Ease.InOutQuad);
-                     });
-        }
+        transform.DOScale(targetScale, 0.1f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() =>
+            {
+                transform.DOScale(originalScale, 0.2f).SetEase(Ease.InOutQuad);
+            });
     }
 }

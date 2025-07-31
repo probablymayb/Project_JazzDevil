@@ -17,6 +17,10 @@ public class HUD : MonoBehaviour
     public GameTimer timer;
     public WaveManager waveManager;
 
+    //몬스터 수 깜빡임
+    private Coroutine blinkCoroutine;
+    private bool isBlinking = false;
+
     void LateUpdate()
     {
         if (player == null) return;
@@ -57,7 +61,7 @@ public class HUD : MonoBehaviour
                 break;
 
             case InfoType.MonsterCount:
-                if (myText != null)
+                if (myText != null && waveManager != null)
                 {
                     int cloneCount = 0;
                     var monsters = FindObjectsByType<Monster>(FindObjectsSortMode.None);
@@ -65,9 +69,50 @@ public class HUD : MonoBehaviour
                     {
                         if (monster.isClone) cloneCount++;
                     }
-                    myText.text = $"{cloneCount}";
+                    // 최대치 표시
+                    int maxCount = waveManager.maxEnemyThreshold;
+                    myText.text = $"{cloneCount}ㅡ{maxCount}";
+
+                    // 깜빡임 여부 판정
+                    float ratio = cloneCount / (float)maxCount;
+                    if (ratio >= 0.8f)
+                    {
+                        if (!isBlinking)
+                        {
+                            blinkCoroutine = StartCoroutine(BlinkText());
+                            isBlinking = true;
+                        }
+                    }
+                    else
+                    {
+                        if (isBlinking)
+                        {
+                            StopCoroutine(blinkCoroutine);
+                            isBlinking = false;
+                            // 원래 알파로 복구
+                            var c = myText.color;
+                            c.a = 1f;
+                            myText.color = c;
+                        }
+                    }
                 }
                 break;
+        }
+    }
+
+    // 1초 간격으로 깜빡이는 코루틴
+    private System.Collections.IEnumerator BlinkText()
+    {
+        while (true)
+        {
+            var c = myText.color;
+            // 투명→불투명→투명 반복
+            c.a = 0.2f;
+            myText.color = c;
+            yield return new WaitForSeconds(0.5f);
+            c.a = 1f;
+            myText.color = c;
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }

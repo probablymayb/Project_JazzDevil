@@ -1,8 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 abstract public class Monster : MonoBehaviour
 {
+     [Header("HP Bar")]
+    public Image hpBarImage;
+    [SerializeField] private Transform hpBarTransform; // HpBar 오브젝트를 드래그
 
     public MonsterSO monsterData;               // ��ũ���ͺ� ������Ʈ ����
     protected Transform player;                   // �÷��̾�
@@ -49,6 +53,7 @@ abstract public class Monster : MonoBehaviour
             attackDamage = monsterData.attackDamage;
             maxSpeed = monsterData.speed;
             curSpeed = maxSpeed;
+            UpdateHpBar();
         }
         else
         {
@@ -124,6 +129,8 @@ abstract public class Monster : MonoBehaviour
         currentHealth -= damage;
         Debug.Log($"Monster took {damage} damage, current HP: {currentHealth}");
 
+        UpdateHpBar();      //체력바 수정
+
         // 피격 이펙트 표시
         GameObject eff = PoolManager.Instance.Get(damageEffect);
         eff.transform.position = transform.position;
@@ -137,6 +144,18 @@ abstract public class Monster : MonoBehaviour
             // 피격 데미지
             StartCoroutine(DamageCoroutine());
         }
+    }
+
+    private void UpdateHpBar()
+    {
+        if (hpBarImage != null && monsterData != null)
+            hpBarImage.fillAmount = currentHealth / (float)monsterData.maxHealth;
+    }
+    
+    void LateUpdate()
+    {
+        if (hpBarTransform != null)
+            hpBarTransform.LookAt(Camera.main.transform);
     }
 
     // ���� ���� (������Ʈ Ǯ�� ��ȯ)
