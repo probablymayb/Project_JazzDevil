@@ -2606,6 +2606,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+--- !u!1 &1664729660 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 689851284138962412, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+  m_PrefabInstance: {fileID: 1664729659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1666786069
 GameObject:
   m_ObjectHideFlags: 0
@@ -3537,7 +3542,7 @@ PrefabInstance:
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: clearTextObj
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1664729660}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: waveDuration
       value: 4
@@ -3545,7 +3550,7 @@ PrefabInstance:
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: gameOverTextObj
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1664729660}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: maxEnemyThreshold
       value: 50
