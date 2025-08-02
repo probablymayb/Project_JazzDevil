@@ -1238,6 +1238,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4367349855512104, guid: 9f3cd87372c918449a1a783afa88addd, type: 3}
   m_PrefabInstance: {fileID: 477517292}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &828402532 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6275250693066760142, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+  m_PrefabInstance: {fileID: 1664729659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3550,7 +3555,7 @@ PrefabInstance:
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: gameOverTextObj
       value: 
-      objectReference: {fileID: 1664729660}
+      objectReference: {fileID: 828402532}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: maxEnemyThreshold
       value: 50
