@@ -1,207 +1,80 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 
 public class ShopUIManager : Singleton<ShopUIManager>
 {
-    [SerializeField] private List<Supporters> supporterTypes;
+    private List<SupporterSO> selectedSupSo;
 
-    [Header("UI 참조")]
-    public GameObject shopRootUI;
-    public List<GameObject> itemSlotPrefabs; // ItemSlotPrefab(0~4)
-    public Button returnButton;
+    [SerializeField] private GameObject shopObj;
+    [SerializeField] private List<GameObject> items;
 
-    [Header("애니메이션 설정")]
-    public float appearDelay = 0.1f;
-
-    public PlayerController player;
+    private RectTransform itemsRectTransform;
+    private Vector2 startPosition = new Vector2(0, -1800);
+    private Vector2 endPosition = new Vector2(0, 0);
+    private float animationDuration = 0.25f;
+    private Ease easeType = Ease.OutCubic;
 
     protected override void Awake()
     {
         base.Awake();
-        shopRootUI.SetActive(false);
-        if (returnButton != null)
-            returnButton.gameObject.SetActive(false);
+        itemsRectTransform = shopObj.transform.Find("Items Layout Group").GetComponent<RectTransform>();
     }
 
-    private void Start()
+    public void ShopOpen()
     {
-        player = FindFirstObjectByType<PlayerController>();
-
-        if (returnButton != null)
-            returnButton.onClick.AddListener(OnClickConfirm);
+        shopObj.SetActive(true);
+        itemsRectTransform.anchoredPosition = startPosition;
+        itemsRectTransform.DOAnchorPos(endPosition, animationDuration)
+            .SetUpdate(true)
+            .SetEase(easeType)
+            .OnComplete(() => Debug.Log("Shop UI 애니메이션 완료."));
+        SetSupporters();
+        GameManager.Instance.ChangeState(EGameState.Paused);
     }
 
-    private void Update()
+    public void ShopClose()
     {
-        // 상점이 열려있을 때만 키 입력 받기
-        if (!shopRootUI.activeSelf) return;
+        shopObj.SetActive(false);
+        GameManager.Instance.ChangeState(EGameState.Playing);
+    }
 
-        // 숫자 키로 토글 on/off
-        if (Input.GetKeyDown(KeyCode.Alpha1)) ToggleByIndex(0);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) ToggleByIndex(1);
-        if (Input.GetKeyDown(KeyCode.Alpha3)) ToggleByIndex(2);
-
-        // F 키로 구매 버튼 누르기
-        if (Input.GetKeyDown(KeyCode.F))
+    /// <summary>
+    /// 상점에 중복없는 무작위 동료 3개를 세팅.
+    /// </summary>
+    private void SetSupporters()
+    {
+        selectedSupSo = SupporterManager.Instance.SupporterSos.OrderBy(x => Guid.NewGuid()).Take(3).ToList();
+        for (int i = 0; i < 3; ++i)
         {
-            OnClickConfirm(); // 기존 함수 호출
-        }
-    }
+            GameObject itemObj = items[i];
+            SupporterSO currentSupporter = selectedSupSo[i];
 
-    private void ToggleByIndex(int index)
-    {
-        if (index < 0 || index >= itemSlotPrefabs.Count) return;
-
-        var toggle = itemSlotPrefabs[index].transform.Find("ItemSlot")?.GetComponent<Toggle>();
-        var background = itemSlotPrefabs[index].transform.Find("ItemSlot/Background")?.gameObject;
-
-        if (toggle != null && background != null)
-        {
-            toggle.isOn = !toggle.isOn;
-            background.SetActive(toggle.isOn);
-        }
-    }
-
-    public void OpenShop()
-    {
-        foreach (var slotPrefab in itemSlotPrefabs)
-        {
-            var toggle = slotPrefab.transform.Find("ItemSlot")?.GetComponent<Toggle>();
-            var background = slotPrefab.transform.Find("ItemSlot/Background")?.gameObject;
-            if (toggle != null && background != null)
+            CardUIEventHandler itemEventHandler = itemObj.GetComponent<CardUIEventHandler>();
+            if (itemEventHandler == null)
             {
-                toggle.isOn = false;
-                background.SetActive(false); // 초기화
-
-                toggle.onValueChanged.RemoveAllListeners(); // 중복 방지
-                toggle.onValueChanged.AddListener((isOn) =>
-                {
-                    Debug.Log($"[DEBUG] {slotPrefab.name} 클릭됨 - 토글 상태: {isOn}");
-                    background.SetActive(isOn);
-                });
+                Debug.LogError($"item {i}에 CardUIEventHandler 컴포넌트가 없음");
+                continue;
             }
-        }
+            itemEventHandler.CurrentSupporterData = currentSupporter;
 
-        shopRootUI.SetActive(true);
-        StartCoroutine(PlayOpenAnimation());
+            itemObj.transform.Find("Item Image").GetComponent<Image>().sprite = currentSupporter.sprite;
+            itemObj.transform.Find("Name Text").GetComponent<Text>().text = currentSupporter.name;
+            itemObj.transform.Find("Desc Text").GetComponent<Text>().text = currentSupporter.desc;
+            itemObj.transform.Find("NEW!").gameObject.SetActive(!SupporterManager.Instance.IsSupporterOwned(currentSupporter.supporterType));
 
-        if (returnButton != null)
-            returnButton.gameObject.SetActive(true);
-        returnButton.interactable = true;
-    }
-
-    public void CloseShop()
-    {
-        returnButton.interactable = false;
-        if (returnButton != null)
-            returnButton.gameObject.SetActive(false);
-
-        StartCoroutine(PlayCloseAnimation());
-        shopRootUI.SetActive(false);
-    }
-
-    private IEnumerator PlayOpenAnimation()
-    {
-        foreach (var slotPrefab in itemSlotPrefabs)
-        {
-            var blackCircle = slotPrefab.transform.Find("blackCircle")?.GetComponent<RectTransform>();
-            var itemSlot = slotPrefab.transform.Find("ItemSlot")?.gameObject;
-
-            if (blackCircle == null || itemSlot == null) continue;
-
-            itemSlot.SetActive(false);
-            blackCircle.localScale = Vector3.zero;
-            blackCircle.gameObject.SetActive(true);
-        }
-
-        yield return null;
-
-        foreach (var slotPrefab in itemSlotPrefabs)
-        {
-            var blackCircle = slotPrefab.transform.Find("blackCircle")?.GetComponent<RectTransform>();
-            var itemSlot = slotPrefab.transform.Find("ItemSlot")?.gameObject;
-
-            if (blackCircle == null || itemSlot == null) continue;
-
-            blackCircle
-                .DOScale(1f, 0.3f)
-                .SetEase(Ease.OutBack)
-                .OnComplete(() =>
-                {
-                    blackCircle.gameObject.SetActive(false);
-                    itemSlot.SetActive(true);
-                });
-
-            yield return new WaitForSeconds(appearDelay);
-        }
-
-        returnButton.interactable = true;
-    }
-
-    private IEnumerator PlayCloseAnimation()
-    {
-        foreach (var slotPrefab in itemSlotPrefabs)
-        {
-            var blackCircle = slotPrefab.transform.Find("blackCircle")?.GetComponent<RectTransform>();
-            var itemSlot = slotPrefab.transform.Find("ItemSlot")?.gameObject;
-
-            if (blackCircle == null || itemSlot == null) continue;
-
-            itemSlot.SetActive(false);
-            blackCircle.localScale = Vector3.one;
-            blackCircle.gameObject.SetActive(true);
-        }
-
-        yield return null;
-
-        foreach (var slotPrefab in itemSlotPrefabs)
-        {
-            var blackCircle = slotPrefab.transform.Find("blackCircle")?.GetComponent<RectTransform>();
-
-            if (blackCircle == null) continue;
-
-            blackCircle
-                .DOScale(0f, 0.3f)
-                .SetEase(Ease.InBack);
-
-            yield return new WaitForSeconds(appearDelay);
-        }
-
-        shopRootUI.SetActive(false);
-    }
-
-    public void OnClickConfirm()
-    {
-        int total = 0;
-        List<Supporters> selectedSupporters = new List<Supporters>();
-
-        for (int i = 0; i < itemSlotPrefabs.Count; i++)
-    {
-        var toggle = itemSlotPrefabs[i].transform.Find("ItemSlot")?.GetComponent<Toggle>();
-        if (toggle != null && toggle.isOn)
-        {
-            total += 50;
-            selectedSupporters.Add(supporterTypes[i]);
+            itemEventHandler.OnItemClicked -= HandleSupporterItemClick;
+            itemEventHandler.OnItemClicked += HandleSupporterItemClick;
         }
     }
 
-        if (!player.SpendGold(total))
-        {
-            Debug.Log("골드 부족!");
-            return;
-        }
-
-        Debug.Log("구매 성공!");
-        
-        // 동료들 생성 요청
-        foreach (var supporter in selectedSupporters)
-        {
-            SupporterManager.Instance.AddSup(supporter);
-        }
-
-        CloseShop();
+    private void HandleSupporterItemClick(SupporterSO clickedSupporter)
+    {
+        Debug.Log($"상점에서 {clickedSupporter.name} 동료가 클릭되었음");
+        SupporterManager.Instance.AddSup(clickedSupporter.supporterType);
+        ShopClose();
     }
 }

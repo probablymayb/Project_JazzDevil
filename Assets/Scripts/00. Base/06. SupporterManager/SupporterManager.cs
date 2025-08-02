@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 동료를 호출하는 등의 연산을 위한 enum 리스트
-public enum Supporters { Trumpet, Piano, Saxophone, KontraBass, Guitar }
+public enum ESupporters { Trumpet, Piano, Saxophone, KontraBass, Guitar }
 
 public class SupporterManager : Singleton<SupporterManager>
 {
 
     //Supporter 프리팹들 참조
-    [SerializeField] private GameObject[] supporters;
+    [field: SerializeField] public GameObject[] SupporterPrefs { get; private set; }
+    //Supporter 스크립터블 오브젝트
+    [field: SerializeField] public SupporterSO[] SupporterSos { get; private set; }
 
     [Header("회전 설정")]
     [SerializeField] private float orbitRadius = 1f;    // 회전 반경
@@ -19,7 +21,8 @@ public class SupporterManager : Singleton<SupporterManager>
 
     private Transform playerTransform;
 
-    private List<GameObject> orbitalSup = new List<GameObject>(); // 회전 동료 목록
+    public List<GameObject> OrbitalSup { get; private set; } = new List<GameObject>(); // 회전 동료 오브젝트 목록
+    public HashSet<ESupporters> OwnedSupporters = new HashSet<ESupporters>();   // 보유 동료 리스트
     private float currentDeg = 0f; // 현재 회전 각
 
     protected override void Awake()
@@ -48,8 +51,8 @@ public class SupporterManager : Singleton<SupporterManager>
     {
         // 게임 상태가 Playing이 아니면 Update 수행하지 않음
         if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
-        
-        if (orbitalSup.Count == 0) return;
+
+        if (OrbitalSup.Count == 0) return;
 
         // 회전 각 업뎃
         currentDeg += rotationSpeed * Time.deltaTime;
@@ -67,12 +70,12 @@ public class SupporterManager : Singleton<SupporterManager>
     // 동료 위치를 업데이트
     private void UpdateSupPos()
     {
-        int supCount = orbitalSup.Count;
+        int supCount = OrbitalSup.Count;
         float angleStep = 360f / supCount; // 동료 간 각도 간격
 
         for (int i = 0; i < supCount; i++)
         {
-            if (orbitalSup[i] != null)
+            if (OrbitalSup[i] != null)
             {
                 // 각 동료의 회전 각 계산
                 float angle = currentDeg + (i * angleStep);
@@ -86,36 +89,37 @@ public class SupporterManager : Singleton<SupporterManager>
                 );
 
                 // 플레이어 위치 기준으로 동료 위치 설정
-                orbitalSup[i].transform.position = playerTransform.position + newPos;
+                OrbitalSup[i].transform.position = playerTransform.position + newPos;
             }
         }
     }
 
     // 프리팹을 받아서 동료를 생성 (풀링 적용)
-    public void AddSup(Supporters enumSup)
+    public void AddSup(ESupporters enumSup)
     {
-        if (!Enum.IsDefined(typeof(Supporters), enumSup))
+        if (!Enum.IsDefined(typeof(ESupporters), enumSup))
         {
             Debug.LogError("[SupporterManager][AddSup] 유효하지 않은 enum 값");
             return;
         }
-        GameObject getPref = supporters[Convert.ToInt32(enumSup)];
+        GameObject getPref = SupporterPrefs[Convert.ToInt32(enumSup)];
         GameObject sup = PoolManager.Instance.Get(getPref);
         sup.GetComponent<Supporter>().poolPrefabRef = getPref; // 반환용 참조
-        orbitalSup.Add(sup);
+        OrbitalSup.Add(sup);
+        AddOwnedSupporter(enumSup);
         UpdateSupPos();
     }
 
     // 해당 프리팹의 동료를 제거
-    public void RemoveSup(Supporters enumSup)
+    public void RemoveSup(ESupporters enumSup)
     {
-        if (!Enum.IsDefined(typeof(Supporters), enumSup))
+        if (!Enum.IsDefined(typeof(ESupporters), enumSup))
         {
             Debug.LogError("[SupporterManager][RemoveSup] 유효하지 않은 enum 값");
             return;
         }
-        GameObject getPref = supporters[Convert.ToInt32(enumSup)];
-        GameObject sup = orbitalSup.Find(obj => obj.GetComponent<Supporter>().poolPrefabRef == getPref);
+        GameObject getPref = SupporterPrefs[Convert.ToInt32(enumSup)];
+        GameObject sup = OrbitalSup.Find(obj => obj.GetComponent<Supporter>().poolPrefabRef == getPref);
         if (sup == null)
         {
             Debug.LogWarning($"{getPref.name}을 SupporterManager에서 찾을 수 없습니다.");
@@ -123,10 +127,11 @@ public class SupporterManager : Singleton<SupporterManager>
         else
         {
             PoolManager.Instance.Return(getPref, sup);
-            orbitalSup.Remove(sup);
+            OrbitalSup.Remove(sup);
+            RemoveOwnedSupporter(enumSup);
 
             // 동료 위치 업뎃
-            if (orbitalSup.Count > 0)
+            if (OrbitalSup.Count > 0)
             {
                 UpdateSupPos();
             }
@@ -165,4 +170,45 @@ public class SupporterManager : Singleton<SupporterManager>
         //    animator.speed = 0.1f;
     }
 
+    /// <summary>
+    /// 동료를 보유하고 있는지 확인
+    /// </summary>
+    /// <param name="supporterType"></param>
+    /// <returns></returns>
+    public bool IsSupporterOwned(ESupporters supporterType)
+    {
+        return OwnedSupporters.Contains(supporterType);
+    }
+
+    /// <summary>
+    /// 동료 보유 해쉬 집합에 파라미터의 동료 타입을 추가한다.
+    /// </summary>
+    /// <param name="supporterType"></param>
+    public void AddOwnedSupporter(ESupporters supporterType)
+    {
+        if (OwnedSupporters.Add(supporterType))
+        {
+            Debug.Log($"Supporter {supporterType} 획득");
+        }
+        else
+        {
+            Debug.LogWarning($"Supporter {supporterType}는 이미 소유 중");
+        }
+    }
+
+    /// <summary>
+    /// 동료 보유 해쉬 집합에 파라미터의 동료 타입을 삭제한다.
+    /// </summary>
+    /// <param name="supporterType"></param>
+    public void RemoveOwnedSupporter(ESupporters supporterType)
+    {
+        if (OwnedSupporters.Remove(supporterType))
+        {
+            Debug.Log($"Supporter {supporterType} 제거");
+        }
+        else
+        {
+            Debug.LogWarning($"Supporter {supporterType}는 소유 중이지 않음");
+        }
+    }
 }

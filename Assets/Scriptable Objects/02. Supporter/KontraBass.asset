@@ -15,3 +15,7 @@ MonoBehaviour:
   attackCooldown: 0
   attackDamage: 50
   attackRange: 0
+  sprite: {fileID: 21300000, guid: 56c5a29613b8ada4ab6fb4049237b368, type: 3}
+  desc: "[\uB514\uBC84\uD504]\n\uADFC\uCC98 \uC801\uB4E4\uC758 \uC774\uB3D9\uC18D\uB3C4\uB97C
+    \uAC10\uC18D\uC2DC\uD0B5\uB2C8\uB2E4.\n\uAC10\uC18D : -50%"
+  supporterType: 3
