@@ -1,14 +1,19 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 abstract public class Monster : MonoBehaviour
 {
+     [Header("HP Bar")]
+    public Image hpBarImage;
+    [SerializeField] private Transform hpBarTransform; // HpBar 오브젝트를 드래그
 
     public MonsterSO monsterData;               // ��ũ���ͺ� ������Ʈ ����
     protected Transform player;                   // �÷��̾�
     private float currentHealth;                // ���� ü��
     protected int windupTimer = 0;                // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
-    private float speed;                        //instance monster speed*****
+    private float curSpeed;                        //instance monster speed*****
+    private float maxSpeed;
     private float damageEffectDuration = 0.5f;  // isDamaged 유지 시간
 
     protected IMonsterPattern AttackPattern = null;
@@ -46,7 +51,9 @@ abstract public class Monster : MonoBehaviour
         {
             currentHealth = monsterData.maxHealth;
             attackDamage = monsterData.attackDamage;
-            speed = monsterData.speed;
+            maxSpeed = monsterData.speed;
+            curSpeed = maxSpeed;
+            UpdateHpBar();
         }
         else
         {
@@ -81,7 +88,7 @@ abstract public class Monster : MonoBehaviour
         // TODO : ��Ʈ�� ���� �̵��ϵ��� ���� �ʿ�.
             // �÷��̾ ���� �̵�
             Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * speed * Time.fixedDeltaTime;
+        transform.position += direction * curSpeed * Time.fixedDeltaTime;
 
         // ���Ͱ� �÷��̾ �ٶ󺸰� ȸ��
         transform.LookAt(player);
@@ -122,6 +129,8 @@ abstract public class Monster : MonoBehaviour
         currentHealth -= damage;
         Debug.Log($"Monster took {damage} damage, current HP: {currentHealth}");
 
+        UpdateHpBar();      //체력바 수정
+
         // 피격 이펙트 표시
         GameObject eff = PoolManager.Instance.Get(damageEffect);
         eff.transform.position = transform.position;
@@ -135,6 +144,18 @@ abstract public class Monster : MonoBehaviour
             // 피격 데미지
             StartCoroutine(DamageCoroutine());
         }
+    }
+
+    private void UpdateHpBar()
+    {
+        if (hpBarImage != null && monsterData != null)
+            hpBarImage.fillAmount = currentHealth / (float)monsterData.maxHealth;
+    }
+    
+    void LateUpdate()
+    {
+        if (hpBarTransform != null)
+            hpBarTransform.LookAt(Camera.main.transform);
     }
 
     // ���� ���� (������Ʈ Ǯ�� ��ȯ)
@@ -166,19 +187,20 @@ abstract public class Monster : MonoBehaviour
     {
         currentHealth = maxHp;
         attackDamage = atk;
-        speed = spd;
+        maxSpeed = spd;
+        curSpeed = maxSpeed;
     }
 
     // �̵� �ӵ��� factor�� ���ؼ� �����ϴ� �޼���
     public void AdjustSpeed(float factor)
     {
-        speed *= factor;
+        maxSpeed *= factor;
     }
     
     // �̵� �ӵ� ���� ����
     public void ResetSpeed()
     {
-        speed = monsterData.speed;
+        maxSpeed = monsterData.speed;
     }
 
     // beatUpdate 이벤트 발생 시 마다 함수 실행
@@ -206,7 +228,7 @@ abstract public class Monster : MonoBehaviour
             if (this == null || animator == null) yield break;
 
             timer += Time.deltaTime;
-            speed = Mathf.Lerp(monsterData.speed, 0f, timer / duration);
+            curSpeed = Mathf.Lerp(maxSpeed, 0f, timer / duration);
             animator.speed = Mathf.Lerp(startAnimSpeed, 0f, timer / duration);
             yield return null;
         }

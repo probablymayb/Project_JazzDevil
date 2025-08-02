@@ -3,7 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SupporterSO", menuName = "Scriptable Objects/SupporterSO")]
 public class SupporterSO : ScriptableObject
 {
-    public float attackCooldown;    // °ø°İ ÄğÅ¸ÀÓ (0ÀÌ¸é »ó½Ã ¹ßµ¿)
-    public int attackDamage;        // µ¥¹ÌÁö È¤Àº È¸º¹·Â
-    public float attackRange;       // °ø°İ ¹üÀ§
+    public float attackCooldown;    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ (0ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ßµï¿½)
+    public int attackDamage;        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¤ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
+    public float attackRange;       // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+    public Sprite sprite;            // ìŠ¤í”„ë¼ì´íŠ¸ ì´ë¯¸ì§€
+    [TextArea] public string desc;   // ì„¤ëª…
+
+    public ESupporters supporterType;   // Supporter íƒ€ì… Enum ê°’
 }

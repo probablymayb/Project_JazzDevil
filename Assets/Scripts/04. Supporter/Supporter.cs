@@ -85,6 +85,7 @@ abstract public class Supporter : MonoBehaviour
                 // 일반 패턴은 SupporterManager의 리듬 시스템에 의해 제어되므로
                 // 여기서는 실행하지 않음
                 timer = 0f;
+
             }
         }
 

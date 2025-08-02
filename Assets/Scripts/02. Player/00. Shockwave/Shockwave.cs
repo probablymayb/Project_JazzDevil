@@ -107,7 +107,7 @@ public class Shockwave : MonoBehaviour
         if (((1 << other.gameObject.layer) & enemyLayer.value) != 0)
         {
             Debug.Log("sw Enemy Detected");
-            Monster monster = other.GetComponent<Monster>();
+            Monster monster = other.GetComponentInParent<Monster>();
             if (monster != null)
             {
                 int monsterId = monster.GetInstanceID();

@@ -10,7 +10,7 @@
             {
                 if (instance == null)
                 {
-                    instance = FindObjectOfType<T>();
+                    instance = FindFirstObjectByType<T>();
                     if (instance == null)
                     {
                         GameObject obj = new GameObject(nameof(T) + "_AutoCreated");

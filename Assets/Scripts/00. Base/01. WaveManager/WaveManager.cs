@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using DG.Tweening;
 
 /// <summary>
 /// 몬스터 스폰, 웨이브 타이머, 승패 판정 등을 담당하는 매니저
@@ -7,12 +9,17 @@ using UnityEngine.UI;
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] private GameObject resultPopup;
+    [SerializeField] private GameObject darkOverlay;
     [SerializeField] private Button returnToTitleButton;
+    [SerializeField] private GameObject gameOverTextObj;
+    [SerializeField] private GameObject clearTextObj;
+    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private float delayBeforeResult = 1f;
 
     [Header("웨이브 설정")]
     public int totalWaves = 6;                 // 총 웨이브 수
     public float waveDuration = 20f;           // 각 웨이브 유지 시간
-    public int maxEnemyThreshold = 20;         // 실패 조건: 몬스터 수 초과 시 패배
+    public int maxEnemyThreshold = 50;         // 실패 조건: 몬스터 수 초과 시 패배
     public float checkInterval = 1f;           // 상태 체크 주기
     
     [Header("참조")]
@@ -107,11 +114,15 @@ public class WaveManager : MonoBehaviour
         {
             Debug.Log("[WaveManager] 웨이브 성공");
             currentWave++;
-            if (shopManager != null)
-            {
-                shopManager.SpawnShopTrigger();
+            if (currentWave >= totalWaves) {
+                // 모든 웨이브 클리어 → 클리어 연출!
+                GameManager.Instance.ChangeState(EGameState.Finish);
+                ShowClearAndResult();
+            } else {
+                if (shopManager != null)
+                    shopManager.SpawnShopTrigger();
+                StartNextWave();
             }
-            StartNextWave();
         }
         else
         {
@@ -134,8 +145,105 @@ public class WaveManager : MonoBehaviour
             if (noteSpawner != null)
                 noteSpawner.StopSpawningNotes();
 
-            ShowResultPopup();
+            ShowGameOverAndResult();
         }
+    }
+
+    private void ShowClearAndResult()
+    {
+        StartCoroutine(ClearRoutine());
+    }
+
+    private IEnumerator ClearRoutine()
+    {
+        if (darkOverlay != null)
+        {
+            darkOverlay.SetActive(true);
+            var overlayImage = darkOverlay.GetComponent<Image>();
+            if (overlayImage != null)
+            {
+                var color = overlayImage.color;
+                color.a = 0f;
+                overlayImage.color = color;
+                overlayImage.DOFade(0.8f, 0.4f);
+            }
+        }
+
+        if (clearTextObj != null)
+        {
+            clearTextObj.SetActive(true);
+            var text = clearTextObj.GetComponent<Text>();
+            var color = text.color;
+            color.a = 0;
+            text.color = color;
+
+            Tween fadeIn = text.DOFade(1f, fadeDuration);
+            yield return fadeIn.WaitForCompletion();
+
+            yield return new WaitForSeconds(0.6f);
+
+            Tween fadeOut = text.DOFade(0f, fadeDuration);
+            yield return fadeOut.WaitForCompletion();
+
+            clearTextObj.SetActive(false);
+        }
+
+        yield return new WaitForSeconds(0.3f);
+        ShowResultPopup();
+    }
+
+    private void ShowGameOverAndResult()
+    {
+        StartCoroutine(GameOverRoutine());
+    }
+
+    private IEnumerator GameOverRoutine()
+    {
+        if (darkOverlay != null)
+        {
+            darkOverlay.SetActive(true);
+
+            // Image 컴포넌트 가져오기
+            var overlayImage = darkOverlay.GetComponent<Image>();
+            if (overlayImage != null)
+            {
+                // 알파 0으로 초기화
+                var color = overlayImage.color;
+                color.a = 0f;
+                overlayImage.color = color;
+
+                // DOTween으로 알파값 0 → 0.7로
+                overlayImage.DOFade(0.8f, 0.4f);
+            }
+        }
+
+        if (gameOverTextObj != null)
+        {
+            gameOverTextObj.SetActive(true);
+            var text = gameOverTextObj.GetComponent<Text>();
+
+            // 1. 알파 0으로 초기화
+            var color = text.color;
+            color.a = 0;
+            text.color = color;
+
+            // 2. 페이드인
+            Tween fadeIn = text.DOFade(1f, fadeDuration);
+            yield return fadeIn.WaitForCompletion();
+
+            yield return new WaitForSeconds(0.6f); // 잠깐 멈춤
+
+            // 3. 페이드아웃
+            Tween fadeOut = text.DOFade(0f, fadeDuration);
+            yield return fadeOut.WaitForCompletion();
+
+            gameOverTextObj.SetActive(false);
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        // 4. 결과 팝업 띄우기
+        ShowResultPopup();
     }
 
     private void ShowResultPopup()
@@ -175,6 +283,11 @@ public class WaveManager : MonoBehaviour
 
     public void OnReturnToTitleButtonClicked()
     {
+        if (darkOverlay != null)
+        darkOverlay.SetActive(false);
+        gameOverTextObj.SetActive(false);
+        clearTextObj.SetActive(false);
+
         GameManager.Instance.ChangeState(EGameState.Title);
         SceneLoader.LoadScene(SceneLoader.SceneName.Title);
     }
