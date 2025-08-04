@@ -6,6 +6,7 @@ public static class SceneLoader
     public enum SceneName
     {
         Title,
+        Intro,
         Main,
         Result,
         // 이후 확장 가능
