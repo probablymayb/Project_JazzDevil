@@ -35,6 +35,6 @@ public class TitleSceneManager : MonoBehaviour
             yield return fader.FadeOut();
         }
 
-        SceneLoader.LoadScene(SceneLoader.SceneName.Main);
+        SceneLoader.LoadScene(SceneLoader.SceneName.Intro);
     }
 }
