@@ -126,7 +126,7 @@ public class WaveManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[WaveManager] 게임 오버!");
+           // Debug.LogError("[WaveManager] 게임 오버!");
             isWaveRunning = false;
 
             GameManager.Instance.ChangeState(EGameState.Finish);
