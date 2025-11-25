@@ -17,3 +17,7 @@ MonoBehaviour:
   attackWindup: 1
   attackRange: 4
   attackDamage: 0
+  useWaveScaling: 1
+  healthPerWave: 1
+  attackPerWave: 0
+  speedRatePerWave: 0

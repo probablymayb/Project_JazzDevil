@@ -4,24 +4,28 @@ using UnityEngine.UI;
 
 abstract public class Monster : MonoBehaviour
 {
-     [Header("HP Bar")]
+    [Header("HP Bar")]
     public Image hpBarImage;
     [SerializeField] private Transform hpBarTransform; // HpBar 오브젝트를 드래그
 
-    public MonsterSO monsterData;               // ��ũ���ͺ� ������Ʈ ����
-    protected Transform player;                   // �÷��̾�
-    private float currentHealth;                // ���� ü��
-    protected int windupTimer = 0;                // 준비 동작으로 부터 얼만큼 흘렀는지를 나타내는 타이머
-    private float curSpeed;                        //instance monster speed*****
+    public MonsterSO monsterData;
+    protected Transform player;
+    
+    // 인스턴스 스탯 (웨이브에 따라 달라짐)
+    private int scaledMaxHealth;
+    private int currentHealth;
+    private int attackDamage;
     private float maxSpeed;
-    private float damageEffectDuration = 0.5f;  // isDamaged 유지 시간
+    private float curSpeed; // 추가
+    protected int windupTimer = 0; // 추가
+    
+    private float damageEffectDuration = 0.5f;
 
     protected IMonsterPattern AttackPattern = null;
 
-    [SerializeField] private int attackDamage = 1;
-    [SerializeField] private int goldReward = 10; // ??몬스?��? 처치?�면 주는 골드
-    [HideInInspector] public bool isClone = false; // 복제??몬스???��?
-    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f); // ?�본 몬스???�치 고정
+    [SerializeField] private int goldReward = 10;
+    [HideInInspector] public bool isClone = false;
+    public Vector3 fixedPosition = new Vector3(0f, 0f, 0f);
 
     protected Animator animator;
     private SpriteRenderer spriteRenderer;
@@ -29,35 +33,41 @@ abstract public class Monster : MonoBehaviour
 
     [HideInInspector] public GameObject poolPrefabRef; // 풀 반환용 프리팹 참조
     [Header("피격 이펙트")]
-    [SerializeField] private GameObject damageEffect; // 피격 이펙트
+    [SerializeField] private GameObject damageEffect;
+
+    // 외부에서 공격력 참조용 (추가)
+    public int AttackDamage => attackDamage;
 
     protected virtual void Start()
     {
         animator = GetComponentInChildren<Animator>();
-        spriteRenderer = transform.Find("Sprite").GetComponent<SpriteRenderer>();
+        spriteRenderer = transform.Find("Sprite")?.GetComponent<SpriteRenderer>();
 
-        // 원래 색상 저장
-        originalColor = spriteRenderer.color;
+        //원래 색상 저장
+        if (spriteRenderer != null)
+            originalColor = spriteRenderer.color;
 
         // "Player" 찾기
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
-        {
             player = playerObj.transform;
-        }
 
-        //복제되지 않는 기본 몬스터는 so기준 초기화
-        if (monsterData != null)
+        // 클론이 아닌 경우만 기본 값으로 초기화 (프리팹 원본)
+        if (!isClone && monsterData != null)
         {
-            currentHealth = monsterData.maxHealth;
-            attackDamage = monsterData.attackDamage;
-            maxSpeed = monsterData.speed;
+            monsterData.CacheBase(); // 원본 캐시
+            
+            int hp, atk;
+            float spd;
+            monsterData.GetStatsForWave(1, out hp, out atk, out spd);
+            
+            scaledMaxHealth = hp;
+            currentHealth = hp;
+            attackDamage = atk;
+            maxSpeed = spd;
             curSpeed = maxSpeed;
+            
             UpdateHpBar();
-        }
-        else
-        {
-            Debug.LogError("EnemySO ������ �Ҵ���� ����.");
         }
     }
 
@@ -76,7 +86,6 @@ abstract public class Monster : MonoBehaviour
         Move();
     }
 
-    // ������
     private void Move()
     {
         if (player == null)
@@ -85,12 +94,8 @@ abstract public class Monster : MonoBehaviour
             return;
         }
 
-        // TODO : ��Ʈ�� ���� �̵��ϵ��� ���� �ʿ�.
-            // �÷��̾ ���� �̵�
-            Vector3 direction = (player.position - transform.position).normalized;
+        Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * curSpeed * Time.fixedDeltaTime;
-
-        // ���Ͱ� �÷��̾ �ٶ󺸰� ȸ��
         transform.LookAt(player);
     }
 
@@ -111,8 +116,9 @@ abstract public class Monster : MonoBehaviour
 
             if (windupTimer > monsterData.attackWindup)
             {
+                // 패턴에 Monster 인스턴스 전달하도록 수정 필요
                 AttackPattern?.AttackPattern(transform, player, animator, monsterData);
-                windupTimer = 0; // 공격 후 타이머 초기화
+                windupTimer = 0;
             }
         }
         else
@@ -123,7 +129,6 @@ abstract public class Monster : MonoBehaviour
         }
     }
 
-    // ���� ü�� ����
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -131,9 +136,11 @@ abstract public class Monster : MonoBehaviour
 
         UpdateHpBar();      //체력바 수정
 
-        // 피격 이펙트 표시
-        GameObject eff = PoolManager.Instance.Get(damageEffect);
-        eff.transform.position = transform.position;
+        if (damageEffect != null)
+        {
+            GameObject eff = PoolManager.Instance.Get(damageEffect);
+            eff.transform.position = transform.position;
+        }
 
         if (currentHealth <= 0)
         {
@@ -148,8 +155,8 @@ abstract public class Monster : MonoBehaviour
 
     private void UpdateHpBar()
     {
-        if (hpBarImage != null && monsterData != null)
-            hpBarImage.fillAmount = currentHealth / (float)monsterData.maxHealth;
+        if (hpBarImage != null && scaledMaxHealth > 0)
+            hpBarImage.fillAmount = (float)currentHealth / scaledMaxHealth;
     }
     
     void LateUpdate()
@@ -158,7 +165,6 @@ abstract public class Monster : MonoBehaviour
             hpBarTransform.LookAt(Camera.main.transform);
     }
 
-    // ���� ���� (������Ʈ Ǯ�� ��ȯ)
     private void Die()
     {
         Debug.Log("Monster is Dead!");
@@ -182,28 +188,40 @@ abstract public class Monster : MonoBehaviour
         PoolManager.Instance.Return(poolPrefabRef, gameObject);
     }
 
-    //clone 몬스터 스텟 초기화*****
-    public void Initialize(int maxHp, int atk, float spd)
+    /// <summary>
+    /// 웨이브 스폰 시 호출: 웨이브별 스탯 설정
+    /// </summary>
+    public void Initialize(int hp, int atk, float spd)
     {
-        currentHealth = maxHp;
+        isClone = true;
+        scaledMaxHealth = hp;
+        currentHealth = hp;
         attackDamage = atk;
         maxSpeed = spd;
         curSpeed = maxSpeed;
+        
+        UpdateHpBar();
+        
+        Debug.Log($"[Monster.Initialize] HP:{hp}, ATK:{atk}, SPD:{spd}");
     }
 
-    // �̵� �ӵ��� factor�� ���ؼ� �����ϴ� �޼���
     public void AdjustSpeed(float factor)
     {
         maxSpeed *= factor;
     }
     
-    // �̵� �ӵ� ���� ����
     public void ResetSpeed()
     {
-        maxSpeed = monsterData.speed;
+        // 클론은 Initialize된 maxSpeed 유지
+        if (!isClone && monsterData != null)
+        {
+            int hp, atk;
+            float spd;
+            monsterData.GetStatsForWave(1, out hp, out atk, out spd);
+            maxSpeed = spd;
+        }
     }
 
-    // beatUpdate 이벤트 발생 시 마다 함수 실행
     private void OnBeat()
     {
         if (!isActiveAndEnabled) return;
@@ -212,7 +230,6 @@ abstract public class Monster : MonoBehaviour
         StartCoroutine(PulsateAnimation());
     }
 
-    // 비트에 맞춰 애니메이션 재생하는 코루틴
     private IEnumerator PulsateAnimation()
     {
         float startAnimSpeed = 2f;

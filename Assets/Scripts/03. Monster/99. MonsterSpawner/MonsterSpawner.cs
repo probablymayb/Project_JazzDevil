@@ -18,42 +18,55 @@ public class WaveMonsterConfiguration
 
 public class MonsterSpawner : MonoBehaviour
 {
+    [Header("매니저 참조")]
+    [SerializeField] private WaveManager waveManager;
+
     [Header("웨이브별 몬스터 설정")]
-    [Tooltip("각 웨이브에서 등장할 몬스터 조합을 설정하세요")]
     public List<WaveMonsterConfiguration> waveConfigurations = new List<WaveMonsterConfiguration>();
     
-    [Header("기본 몬스터 설정 (웨이브 설정이 없을 때 사용)")]
-    [Tooltip("설정되지 않은 웨이브에서 사용할 기본 몬스터들")]
+    [Header("기본 몬스터 설정")]
     public List<GameObject> defaultMonsterPrefabs = new List<GameObject>();
 
     [Header("스폰 거리 설정")]
-    public float minDistance = 3f;   // 플레이어와 최소 거리
-    public float maxDistance = 10f;  // 플레이어와 최대 거리
+    public float minDistance = 3f;
+    public float maxDistance = 10f;
 
     [Header("스폰 속도 설정")]
-    public float baseSpawnInterval = 1f;         // 기본 스폰 간격
-    public float spawnIntervalReduction = 0.1f;  // 웨이브당 간격 감소
-    public float minSpawnInterval = 0.3f;        // 최소 간격 보정값
+    public float baseSpawnInterval = 1f;
+    public float spawnIntervalReduction = 0.1f;
+    public float minSpawnInterval = 0.3f;
 
-    [Header("몬스터 능력치 설정")]
-    public int baseHealth = 3;           // 기본 체력
-    public int healthPerWave = 0;        // 웨이브당 체력 증가
-    public int baseDamage = 1;           // 기본 공격력
-    public int damagePerWave = 1;        // 웨이브당 공격력 증가
-    public float fixedSpeed = 1.0f;      // 속도는 고정
+    // ❌ 삭제: 이제 MonsterSO에서 관리
+    // public int baseHealth = 3;
+    // public int healthPerWave = 0;
+    // public int baseDamage = 1;
+    // public int damagePerWave = 1;
+    // public float fixedSpeed = 1.0f;
 
-    private Coroutine spawnCoroutine;    // 현재 웨이브 스폰 상태 저장용
-    
-    // 웨이브별 설정을 캐시하는 딕셔너리
+    private Coroutine spawnCoroutine;
     private Dictionary<int, WaveMonsterConfiguration> waveConfigCache;
+    private HashSet<MonsterSO> cachedMonsterSOs = new HashSet<MonsterSO>();
 
     private void Start()
     {
-        // 웨이브 설정 캐시 초기화
+        if (waveManager == null)
+        {
+            waveManager = FindObjectOfType<WaveManager>();
+            if (waveManager == null)
+                Debug.LogError("[MonsterSpawner] WaveManager를 찾을 수 없습니다!");
+        }
+
         InitializeWaveConfigCache();
-        
-        // 모든 몬스터 프리팹에 대해 오브젝트 풀 생성
         CreatePoolsForAllMonsters();
+        CacheAllMonsterSOs();
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var so in cachedMonsterSOs)
+        {
+            so.ResetToBase();
+        }
     }
 
     /// <summary>
@@ -113,10 +126,49 @@ public class MonsterSpawner : MonoBehaviour
         Debug.Log($"[MonsterSpawner] {allPrefabs.Count}개의 몬스터 프리팹에 대한 풀이 생성되었습니다.");
     }
 
+    private void CacheAllMonsterSOs()
+    {
+        cachedMonsterSOs.Clear();
+        HashSet<GameObject> allPrefabs = new HashSet<GameObject>();
+        
+        foreach (var config in waveConfigurations)
+        {
+            if (config.monsterPrefabs != null)
+            {
+                foreach (var prefab in config.monsterPrefabs)
+                {
+                    if (prefab != null)
+                        allPrefabs.Add(prefab);
+                }
+            }
+        }
+        
+        if (defaultMonsterPrefabs != null)
+        {
+            foreach (var prefab in defaultMonsterPrefabs)
+            {
+                if (prefab != null)
+                    allPrefabs.Add(prefab);
+            }
+        }
+
+        foreach (var prefab in allPrefabs)
+        {
+            Monster m = prefab.GetComponent<Monster>();
+            if (m != null && m.monsterData != null)
+            {
+                cachedMonsterSOs.Add(m.monsterData);
+                m.monsterData.CacheBase();
+            }
+        }
+        
+        Debug.Log($"[MonsterSpawner] {cachedMonsterSOs.Count}개 MonsterSO 캐시 완료");
+    }
+
     /// <summary>
     /// WaveManager에서 호출: 일정 시간동안 몬스터를 계속 스폰
     /// </summary>
-    public void SpawnWave(int waveIndex, float duration)
+    public void SpawnWave(float duration)
     {
         // 이전 웨이브가 진행 중이면 중단
         if (spawnCoroutine != null)
@@ -126,7 +178,7 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         // 새 웨이브 시작 (웨이브 인덱스를 1부터 시작하도록 조정)
-        int waveNumber = waveIndex + 1;
+        int waveNumber = waveManager != null ? waveManager.currentWave + 1 : 1;
         Debug.Log($"[MonsterSpawner] 웨이브 {waveNumber} 스폰 시작 (지속시간: {duration}초)");
         
         spawnCoroutine = StartCoroutine(SpawnMonstersOverTime(waveNumber, duration));
@@ -144,22 +196,12 @@ public class MonsterSpawner : MonoBehaviour
 
         while (elapsed < duration)
         {
-            // 첫 번째 스폰은 즉시 실행
-            if (elapsed == 0f)
-            {
-                SpawnMonster(waveNumber);
-                elapsed += 0.1f; // 작은 값으로 초기화
-            }
-            else
-            {
-                SpawnMonster(waveNumber);
-            }
-            
+            SpawnMonster(waveNumber);
             yield return new WaitForSeconds(spawnInterval);
             elapsed += spawnInterval;
         }
 
-        Debug.Log($"[MonsterSpawner] 웨이브 {waveNumber} 스폰 완료 (총 소요시간: {elapsed}초)");
+        Debug.Log($"[MonsterSpawner] 웨이브 {waveNumber} 스폰 완료");
         spawnCoroutine = null;
     }
 
@@ -172,21 +214,22 @@ public class MonsterSpawner : MonoBehaviour
         
         if (prefabToSpawn == null)
         {
-            Debug.LogWarning($"[MonsterSpawner] 웨이브 {waveNumber}에 스폰할 몬스터가 없습니다!");
+            Debug.LogWarning($"[MonsterSpawner] 웨이브 {waveNumber} 스폰할 몬스터 없음");
             return;
         }
 
         // 플레이어 기준으로 스폰 위치 설정 (없을 경우 맵 중앙)
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        Vector3 _baseposition = new Vector3(player.transform.position.x, 0.2f, player.transform.position.z);
-        Vector3 basePosition = player != null ?  _baseposition : Vector3.zero;
+        Vector3 basePosition = player != null 
+            ? new Vector3(player.transform.position.x, 0.2f, player.transform.position.z) 
+            : Vector3.zero;
         Vector3 spawnPosition = GetRandomSpawnPosition(basePosition);
 
         // 풀에서 몬스터 가져오기
         GameObject newMonster = PoolManager.Instance.Get(prefabToSpawn);
         if (newMonster == null)
         {
-            Debug.LogError($"[MonsterSpawner] 풀에서 {prefabToSpawn.name} 몬스터를 가져올 수 없습니다!");
+            Debug.LogError($"[MonsterSpawner] 풀 반환 실패: {prefabToSpawn.name}");
             return;
         }
 
@@ -194,31 +237,22 @@ public class MonsterSpawner : MonoBehaviour
         newMonster.transform.rotation = Quaternion.identity;
         newMonster.layer = LayerMask.NameToLayer("Enemy");
 
-        Debug.Log($"[MonsterSpawner] 웨이브 {waveNumber}에서 {prefabToSpawn.name} 소환 (위치: {spawnPosition})");
-
-        // 클론으로 설정
         Monster monsterAI = newMonster.GetComponent<Monster>();
-
-        if (monsterAI != null)
+        if (monsterAI != null && monsterAI.monsterData != null)
         {
-            monsterAI.isClone = true;
+            // ✅ MonsterSO에서 웨이브별 스탯 가져오기
+            int hp, atk;
+            float spd;
+            monsterAI.monsterData.GetStatsForWave(waveNumber, out hp, out atk, out spd);
             
-            // 웨이브에 따라 능력치 계산
-            int maxHp = baseHealth + ((waveNumber - 1) * healthPerWave);
-            int atk = baseDamage + ((waveNumber - 1) * damagePerWave);
-            float spd = fixedSpeed;
-
-            // 능력치 초기화
-            monsterAI.Initialize(maxHp, atk, spd);
-
-            // 반환용 참조 설정
+            monsterAI.Initialize(hp, atk, spd);
             monsterAI.poolPrefabRef = prefabToSpawn;
             
-            Debug.Log($"[MonsterSpawner] 몬스터 능력치 - HP: {maxHp}, ATK: {atk}, SPD: {spd}");
+            Debug.Log($"[MonsterSpawner] Wave {waveNumber} {prefabToSpawn.name} | HP:{hp}, ATK:{atk}, SPD:{spd:F2}");
         }
         else
         {
-            Debug.LogError($"[MonsterSpawner] {newMonster.name}에서 Monster 컴포넌트를 찾을 수 없습니다!");
+            Debug.LogError($"[MonsterSpawner] Monster 또는 MonsterSO 없음: {newMonster.name}");
         }
     }
 

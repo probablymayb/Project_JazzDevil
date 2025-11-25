@@ -3928,7 +3928,7 @@ PrefabInstance:
       objectReference: {fileID: 266009101}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: totalWaves
-      value: 30
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: waveTextUI
@@ -3964,7 +3964,7 @@ PrefabInstance:
       objectReference: {fileID: 1664729660}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: waveDuration
-      value: 4
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7949397239319729855, guid: 4fb70c27934dfbd439bed9d3a6cbb088, type: 3}
       propertyPath: gameOverTextObj
@@ -4174,6 +4174,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2078663007845287601, guid: 4d5a54043aee96c41873996076fbeb66, type: 3}
       propertyPath: damagePerWave
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2078663007845287601, guid: 4d5a54043aee96c41873996076fbeb66, type: 3}
+      propertyPath: healthPerWave
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2078663007845287601, guid: 4d5a54043aee96c41873996076fbeb66, type: 3}

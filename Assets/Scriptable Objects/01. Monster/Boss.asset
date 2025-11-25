@@ -17,3 +17,6 @@ MonoBehaviour:
   attackWindup: 3
   attackRange: 4
   attackDamage: 5
+  baseSpeed: 0
+  baseMaxHealth: 0
+  baseAttackDamage: 0

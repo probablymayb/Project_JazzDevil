@@ -18,7 +18,7 @@ public class WaveManager : MonoBehaviour
 
     [Header("웨이브 설정")]
     public int totalWaves = 6;                 // 총 웨이브 수
-    public float waveDuration = 20f;           // 각 웨이브 유지 시간
+    public float waveDuration = 30f;           // 각 웨이브 유지 시간
     public int maxEnemyThreshold = 50;         // 실패 조건: 몬스터 수 초과 시 패배
     public float checkInterval = 1f;           // 상태 체크 주기
     
@@ -37,10 +37,8 @@ public class WaveManager : MonoBehaviour
     public Text txtMaxCombo;
     public Text txtRank;
 
-
-
-    public int currentWave = 0;
-    public bool isWaveRunning = false;
+    public int currentWave { get; private set; } = 0; // ✅ 프로퍼티로 변경 (외부 읽기 가능)
+    public bool isWaveRunning { get; private set; } = false;
 
     void Start()
     {
@@ -54,25 +52,28 @@ public class WaveManager : MonoBehaviour
         if (returnToTitleButton != null)
             returnToTitleButton.onClick.AddListener(OnReturnToTitleButtonClicked);
 
-        // GameManager.Instance.ChangeState(EGameState.Playing);
         StartNextWave();
     }
 
     void StartNextWave()
     {
-        if (currentWave >= totalWaves)
+        currentWave++; // ✅ 웨이브 증가 (1부터 시작)
+        
+        if (currentWave > totalWaves)
         {
-            EndWave(false);
+            // 모든 웨이브 클리어
+            GameManager.Instance.ChangeState(EGameState.Finish);
+            ShowClearAndResult();
             return;
         }
 
-        Debug.Log($"[WaveManager] 웨이브 {currentWave + 1} 시작!");
+        Debug.Log($"[WaveManager] 웨이브 {currentWave} 시작!");
 
         if (waveTextUI != null)
-            waveTextUI.text = $"{currentWave + 1}";
+            waveTextUI.text = $"{currentWave}";
 
         timer.StartTimer(waveDuration);
-        spawner.SpawnWave(currentWave, waveDuration);
+        spawner.SpawnWave(waveDuration); // ✅ duration만 전달 (spawner가 currentWave 직접 참조)
 
         isWaveRunning = true;
         InvokeRepeating(nameof(CheckWaveState), 1f, checkInterval);
@@ -109,16 +110,21 @@ public class WaveManager : MonoBehaviour
     void EndWave(bool success)
     {
         CancelInvoke(nameof(CheckWaveState));
+        isWaveRunning = false;
 
         if (success)
         {
-            Debug.Log("[WaveManager] 웨이브 성공");
-            currentWave++;
-            if (currentWave >= totalWaves) {
-                // 모든 웨이브 클리어 → 클리어 연출!
+            Debug.Log($"[WaveManager] 웨이브 {currentWave} 성공");
+            
+            if (currentWave >= totalWaves)
+            {
+                // 모든 웨이브 클리어
                 GameManager.Instance.ChangeState(EGameState.Finish);
                 ShowClearAndResult();
-            } else {
+            }
+            else
+            {
+                // 다음 웨이브로
                 if (shopManager != null)
                     shopManager.SpawnShopTrigger();
                 StartNextWave();
@@ -126,14 +132,13 @@ public class WaveManager : MonoBehaviour
         }
         else
         {
-           // Debug.LogError("[WaveManager] 게임 오버!");
-            isWaveRunning = false;
-
+            Debug.LogError("[WaveManager] 게임 오버!");
             GameManager.Instance.ChangeState(EGameState.Finish);
 
             // 몬스터 스폰 중단
             if (spawner != null)
                 spawner.StopCurrentWave();
+                
             // 생성되어 있는 몬스터 제거
             var monsters = FindObjectsByType<Monster>(FindObjectsSortMode.None);
             foreach (var monster in monsters)
@@ -141,7 +146,8 @@ public class WaveManager : MonoBehaviour
                 if (monster.isClone)
                     Destroy(monster.gameObject);
             }
-            //노트 생성 중단
+            
+            // 노트 생성 중단
             if (noteSpawner != null)
                 noteSpawner.StopSpawningNotes();
 
@@ -203,16 +209,12 @@ public class WaveManager : MonoBehaviour
         {
             darkOverlay.SetActive(true);
 
-            // Image 컴포넌트 가져오기
             var overlayImage = darkOverlay.GetComponent<Image>();
             if (overlayImage != null)
             {
-                // 알파 0으로 초기화
                 var color = overlayImage.color;
                 color.a = 0f;
                 overlayImage.color = color;
-
-                // DOTween으로 알파값 0 → 0.7로
                 overlayImage.DOFade(0.8f, 0.4f);
             }
         }
@@ -222,18 +224,15 @@ public class WaveManager : MonoBehaviour
             gameOverTextObj.SetActive(true);
             var text = gameOverTextObj.GetComponent<Text>();
 
-            // 1. 알파 0으로 초기화
             var color = text.color;
             color.a = 0;
             text.color = color;
 
-            // 2. 페이드인
             Tween fadeIn = text.DOFade(1f, fadeDuration);
             yield return fadeIn.WaitForCompletion();
 
-            yield return new WaitForSeconds(0.6f); // 잠깐 멈춤
+            yield return new WaitForSeconds(0.6f);
 
-            // 3. 페이드아웃
             Tween fadeOut = text.DOFade(0f, fadeDuration);
             yield return fadeOut.WaitForCompletion();
 
@@ -241,8 +240,6 @@ public class WaveManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.3f);
-
-        // 4. 결과 팝업 띄우기
         ShowResultPopup();
     }
 
@@ -250,17 +247,13 @@ public class WaveManager : MonoBehaviour
     {
         if (resultPopup != null && !resultPopup.activeSelf)
         {
-            // 값 참조
             float accuracy = NoteJudge.Instance.Accuracy;
             int wave = currentWave;
-            float surviveTime = Time.timeSinceLevelLoad;
             int kills = player.killCount;
             int maxCombo = ComboManager.Instance.MaxComboThisSession;
 
-            // 랭크 계산 (임의 예시)
             string rank = CalculateRank(accuracy, wave, kills, maxCombo);
 
-            // 텍스트 세팅
             txtAccuracy.text = $"Accuracy: {accuracy:F1}%";
             txtWave.text = $"Wave: {wave}";
             txtKills.text = $"Kills: {kills}";
@@ -284,9 +277,11 @@ public class WaveManager : MonoBehaviour
     public void OnReturnToTitleButtonClicked()
     {
         if (darkOverlay != null)
-        darkOverlay.SetActive(false);
-        gameOverTextObj.SetActive(false);
-        clearTextObj.SetActive(false);
+            darkOverlay.SetActive(false);
+        if (gameOverTextObj != null)
+            gameOverTextObj.SetActive(false);
+        if (clearTextObj != null)
+            clearTextObj.SetActive(false);
 
         GameManager.Instance.ChangeState(EGameState.Title);
         SceneLoader.LoadScene(SceneLoader.SceneName.Title);

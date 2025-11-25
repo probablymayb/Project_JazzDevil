@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf19f387dc877644385a77575f1a7f6c, type: 3}
   m_Name: Pig
   m_EditorClassIdentifier: 
-  speed: 0.7
-  maxHealth: 3
+  speed: 1
+  maxHealth: 4
   attackWindup: 2
   attackRange: 2
   attackDamage: 3
+  useWaveScaling: 1
+  healthPerWave: 1
+  attackPerWave: 1
+  speedRatePerWave: 0
