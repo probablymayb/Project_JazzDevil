@@ -16,7 +16,9 @@ MonoBehaviour:
   attackDamage: 5
   attackRange: 0
   sprite: {fileID: 21300000, guid: 2cc42dfc0ce98a841a272d335cc04b9a, type: 3}
-  desc: "[\uBC84\uD504]\n5\uCD08 \uAC04\uACA9\uC73C\uB85C \uD50C\uB808\uC774\uC5B4\uC758
-    \uCCB4\uB825\uC744 \uD68C\uBCF5\uC2DC\uCF1C\uC90D\uB2C8\uB2E4.\n\uD68C\uBCF5\uB7C9
-    : 5\n"
+  desc: "[\uBC84\uD504]\n{cooldown} \uAC04\uACA9\uC73C\uB85C \uD50C\uB808\uC774\uC5B4
+    \uCCB4\uB825 \uD68C\uBCF5\n\uD68C\uBCF5\uB7C9 : {damage}"
   supporterType: 1
+  baseAttackCooldown: 5
+  baseAttackDamage: 5
+  baseAttackRange: 0

@@ -18,6 +18,9 @@ abstract public class Supporter : MonoBehaviour
     [Header("패턴 이펙트")]
     [SerializeField] private GameObject patternEffect; // 해당하는 패턴에 대한 프리팹
 
+    // 런타임 스탯 캐시
+    private SupporterManager.RuntimeStats runtimeStats;
+
     protected virtual void Start()
     {
         // "Player" 태그가 있는 오브젝트 찾기
@@ -27,10 +30,23 @@ abstract public class Supporter : MonoBehaviour
             player = playerObj.transform;
         }
 
-        // 상시 발동 시 ActPattern 발동
-        if (supporterData.attackCooldown == 0f)
+        // 런타임 스탯 가져오기
+        runtimeStats = SupporterManager.Instance.GetRuntimeStats(supporterData.supporterType);
+        if (runtimeStats == null)
         {
-            ActPattern?.ActPattern(transform, player, supporterData);
+            Debug.LogWarning($"[Supporter] {supporterData.supporterType} 런타임 스탯 없음, SO 원본 값으로 폴백");
+            runtimeStats = new SupporterManager.RuntimeStats
+            {
+                attackCooldown = supporterData.attackCooldown,
+                attackDamage = supporterData.attackDamage,
+                attackRange = supporterData.attackRange
+            };
+        }
+
+        // 상시 발동 시 ActPattern 발동
+        if (runtimeStats.attackCooldown == 0f)
+        {
+            ActPattern?.ActPattern(transform, player, runtimeStats);
         }
 
         // 플레이어와의 offset 초기화
@@ -51,15 +67,19 @@ abstract public class Supporter : MonoBehaviour
             }
         }
 
+        // 런타임 스탯 동기화 (업그레이드 반영)
+        runtimeStats = SupporterManager.Instance.GetRuntimeStats(supporterData.supporterType);
+        if (runtimeStats == null) return;
+
         // 상시 발동이 아니면 타이머를 잰다.
-        if (supporterData.attackCooldown != 0f)
+        if (runtimeStats.attackCooldown != 0f)
         {
             timer += Time.deltaTime;
             // 만약 쿨 타임이 차면
-            if (timer > supporterData.attackCooldown)
+            if (timer > runtimeStats.attackCooldown)
             {
                 // 패턴
-                ActPattern?.ActPattern(transform, player, supporterData);
+                ActPattern?.ActPattern(transform, player, runtimeStats);
                 if (patternEffect != null)
                 {
                     GameObject eff = PoolManager.Instance.Get(patternEffect);

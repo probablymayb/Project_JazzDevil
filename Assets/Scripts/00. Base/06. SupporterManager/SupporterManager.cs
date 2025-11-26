@@ -8,6 +8,8 @@ public enum ESupporters { Trumpet, Piano, Saxophone, KontraBass, Guitar }
 
 public class SupporterManager : Singleton<SupporterManager>
 {
+    // 업그레이드 배율 상수
+    private const float UPGRADE_MULTIPLIER = 1.5f;
 
     //Supporter 프리팹들 참조
     [field: SerializeField] public GameObject[] SupporterPrefs { get; private set; }
@@ -23,6 +25,19 @@ public class SupporterManager : Singleton<SupporterManager>
 
     public List<GameObject> OrbitalSup { get; private set; } = new List<GameObject>(); // 회전 동료 오브젝트 목록
     public HashSet<ESupporters> OwnedSupporters = new HashSet<ESupporters>();   // 보유 동료 리스트
+    // 레벨 추적 (최초 획득 시 1, 업그레이드할 때마다 +1)
+    public Dictionary<ESupporters, int> SupporterLevels = new Dictionary<ESupporters, int>();
+    
+    // 런타임 스탯 관리 (SO는 읽기 전용 유지)
+    [System.Serializable]
+    public class RuntimeStats
+    {
+        public float attackCooldown;
+        public int attackDamage;
+        public float attackRange;
+    }
+    public Dictionary<ESupporters, RuntimeStats> SupporterStats = new Dictionary<ESupporters, RuntimeStats>();
+    
     private float currentDeg = 0f; // 현재 회전 각
 
     protected override void Awake()
@@ -94,7 +109,7 @@ public class SupporterManager : Singleton<SupporterManager>
         }
     }
 
-    // 프리팹을 받아서 동료를 생성 (풀링 적용)
+    // 프리팹을 받아서 동료를 생성 (풀링 적용) 또는 이미 존재하면 업그레이드
     public void AddSup(ESupporters enumSup)
     {
         if (!Enum.IsDefined(typeof(ESupporters), enumSup))
@@ -102,12 +117,66 @@ public class SupporterManager : Singleton<SupporterManager>
             Debug.LogError("[SupporterManager][AddSup] 유효하지 않은 enum 값");
             return;
         }
+
+        // 이미 소유 중이면 업그레이드만 수행
+        if (IsSupporterOwned(enumSup))
+        {
+            UpgradeSupporter(enumSup);
+            return;
+        }
+
         GameObject getPref = SupporterPrefs[Convert.ToInt32(enumSup)];
         GameObject sup = PoolManager.Instance.Get(getPref);
         sup.GetComponent<Supporter>().poolPrefabRef = getPref; // 반환용 참조
         OrbitalSup.Add(sup);
         AddOwnedSupporter(enumSup);
+        // 최초 레벨 1 설정
+        SupporterLevels[enumSup] = 1;
+        
+        // 런타임 스탯 초기화 (SO 원본값 복사)
+        SupporterSO so = SupporterSos[Convert.ToInt32(enumSup)];
+        SupporterStats[enumSup] = new RuntimeStats
+        {
+            attackCooldown = so.attackCooldown,
+            attackDamage = so.attackDamage,
+            attackRange = so.attackRange
+        };
+        
         UpdateSupPos();
+    }
+
+    // 이미 존재하는 Supporter 능력치 1.5배 강화
+    private void UpgradeSupporter(ESupporters enumSup)
+    {
+        GameObject sup = OrbitalSup.Find(obj => obj.GetComponent<Supporter>().supporterData.supporterType == enumSup);
+        if (sup == null)
+        {
+            Debug.LogWarning($"[SupporterManager][UpgradeSupporter] {enumSup} 인스턴스를 찾을 수 없음");
+            return;
+        }
+
+        // 런타임 스탯 업그레이드 (SO는 변경하지 않음)
+        if (!SupporterStats.ContainsKey(enumSup))
+        {
+            Debug.LogError($"[SupporterManager][UpgradeSupporter] {enumSup} 런타임 스탯 없음");
+            return;
+        }
+
+        RuntimeStats stats = SupporterStats[enumSup];
+        stats.attackDamage = Mathf.CeilToInt(stats.attackDamage * UPGRADE_MULTIPLIER);
+        stats.attackRange *= UPGRADE_MULTIPLIER;
+        if (stats.attackCooldown > 0f)
+        {
+            stats.attackCooldown /= UPGRADE_MULTIPLIER;
+        }
+
+        // 레벨 증가 (기존 없으면 1에서 시작 후 2로 증가)
+        if (SupporterLevels.ContainsKey(enumSup))
+            SupporterLevels[enumSup]++;
+        else
+            SupporterLevels[enumSup] = 2;
+
+        Debug.Log($"Supporter {enumSup} 업그레이드 적용 => 공격력:{stats.attackDamage}, 범위:{stats.attackRange}, 쿨타임:{stats.attackCooldown}");
     }
 
     // 해당 프리팹의 동료를 제거
@@ -205,10 +274,34 @@ public class SupporterManager : Singleton<SupporterManager>
         if (OwnedSupporters.Remove(supporterType))
         {
             Debug.Log($"Supporter {supporterType} 제거");
+            // 레벨 정보도 제거
+            if (SupporterLevels.ContainsKey(supporterType))
+                SupporterLevels.Remove(supporterType);
+            // 런타임 스탯도 제거
+            if (SupporterStats.ContainsKey(supporterType))
+                SupporterStats.Remove(supporterType);
         }
         else
         {
             Debug.LogWarning($"Supporter {supporterType}는 소유 중이지 않음");
         }
+    }
+
+    /// <summary>
+    /// Supporter 레벨 반환 (없으면 0)
+    /// </summary>
+    public int GetSupporterLevel(ESupporters supporterType)
+    {
+        if (SupporterLevels.TryGetValue(supporterType, out int lvl)) return lvl;
+        return 0;
+    }
+
+    /// <summary>
+    /// 런타임 스탯 조회 (없으면 null)
+    /// </summary>
+    public RuntimeStats GetRuntimeStats(ESupporters supporterType)
+    {
+        if (SupporterStats.TryGetValue(supporterType, out RuntimeStats stats)) return stats;
+        return null;
     }
 }
