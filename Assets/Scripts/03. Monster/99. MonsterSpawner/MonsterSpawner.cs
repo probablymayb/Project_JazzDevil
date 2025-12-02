@@ -36,16 +36,10 @@ public class MonsterSpawner : MonoBehaviour
     public float spawnIntervalReduction = 0.1f;
     public float minSpawnInterval = 0.3f;
 
-    // ❌ 삭제: 이제 MonsterSO에서 관리
-    // public int baseHealth = 3;
-    // public int healthPerWave = 0;
-    // public int baseDamage = 1;
-    // public int damagePerWave = 1;
-    // public float fixedSpeed = 1.0f;
-
     private Coroutine spawnCoroutine;
     private Dictionary<int, WaveMonsterConfiguration> waveConfigCache;
     private HashSet<MonsterSO> cachedMonsterSOs = new HashSet<MonsterSO>();
+    private HashSet<BulletSO> cachedBulletSOs = new HashSet<BulletSO>();
 
     private void Start()
     {
@@ -59,6 +53,7 @@ public class MonsterSpawner : MonoBehaviour
         InitializeWaveConfigCache();
         CreatePoolsForAllMonsters();
         CacheAllMonsterSOs();
+        CacheAllBulletSOs();
     }
 
     private void OnDestroy()
@@ -66,6 +61,11 @@ public class MonsterSpawner : MonoBehaviour
         foreach (var so in cachedMonsterSOs)
         {
             so.ResetToBase();
+        }
+        
+        foreach (var bulletSO in cachedBulletSOs)
+        {
+            bulletSO.ResetToBase();
         }
     }
 
@@ -163,6 +163,28 @@ public class MonsterSpawner : MonoBehaviour
         }
         
         Debug.Log($"[MonsterSpawner] {cachedMonsterSOs.Count}개 MonsterSO 캐시 완료");
+    }
+
+    /// <summary>
+    /// 모든 BulletSO 캐시 (Resources 폴더에서 자동 검색)
+    /// </summary>
+    private void CacheAllBulletSOs()
+    {
+        cachedBulletSOs.Clear();
+        
+        // Resources 폴더에서 모든 BulletSO 로드
+        BulletSO[] allBulletSOs = Resources.LoadAll<BulletSO>("");
+        
+        foreach (var bulletSO in allBulletSOs)
+        {
+            if (bulletSO != null)
+            {
+                cachedBulletSOs.Add(bulletSO);
+                bulletSO.CacheBase();
+            }
+        }
+        
+        Debug.Log($"[MonsterSpawner] {cachedBulletSOs.Count}개 BulletSO 캐시 완료");
     }
 
     /// <summary>

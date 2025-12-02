@@ -17,7 +17,7 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private float delayBeforeResult = 1f;
 
     [Header("웨이브 설정")]
-    public int totalWaves = 6;                 // 총 웨이브 수
+    public int totalWaves = 12;                // 총 웨이브 수
     public float waveDuration = 30f;           // 각 웨이브 유지 시간
     public int maxEnemyThreshold = 50;         // 실패 조건: 몬스터 수 초과 시 패배
     public float checkInterval = 1f;           // 상태 체크 주기
