@@ -43,6 +43,12 @@ public class RangedPattern : IMonsterPattern
         Bullet bulletComp = newBullet.GetComponent<Bullet>();                           // 컴포넌트 가져오기
         bulletComp.PoolPrefRef = bulletPref;                                            // 풀 반환용 프리팹 Set
         bulletComp.BulletSpeed = bulletSO.bulletSpeed;                                  // 탄속 Set
+
+        // 웨이브별 총알 데미지 계산
+        WaveManager waveManager = Object.FindFirstObjectByType<WaveManager>();
+        int currentWave = waveManager != null ? waveManager.currentWave : 1;
+        bulletComp.Damage = bulletSO.GetDamageForWave(currentWave);
+        
         bulletComp.Damage = bulletSO.bulletDamage;                                      // 공격력 Set
         Vector3 direction = player.position - newBullet.transform.position;
         bulletComp.Direction = new Vector3(direction.x, 0f, direction.z);               // 방향 Set
@@ -102,6 +108,7 @@ public class BossPattern : IMonsterPattern
 
         // 콜라이더를 잠깐 키고 꺼서 플레이어와 닿아있으면 데미지를 줌
         col.enabled = true;
+
         if (col.isTrigger)
         {
             PlayerController playerController = player.GetComponent<PlayerController>();
@@ -113,6 +120,7 @@ public class BossPattern : IMonsterPattern
                 animator.SetBool("isAttack", true);
             }
         }
+
         col.enabled = false;
     }
 }
