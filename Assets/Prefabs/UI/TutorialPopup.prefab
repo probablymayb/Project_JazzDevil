@@ -66,11 +66,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 8c3d070183a1bf346809d060e236ed08, type: 3}
-    m_FontSize: 50
+    m_Font: {fileID: 12800000, guid: 4e356b8dc46739d4b8bb73b6a9367d4b, type: 3}
+    m_FontSize: 55
     m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 0
     m_MaxSize: 107
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -78,19 +78,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '1. BPM is the music''s speed! Stack your combo to go faster!
-
-
-    2.
-    Keep hitting notes to build your combo!
-
-
-    3. When a shop appears, just follow
-    the arrow.
-
-
-    4. Get help from supporters! Recruit them for Attack, Heal,
-    or Debuff abilities.'
+  m_Text: "1. \uB178\uD2B8\uB97C \uC5F0\uC18D\uC73C\uB85C \uB9DE\uCD94\uBA74, \uCF64\uBCF4\uAC00
+    \uC313\uC785\uB2C8\uB2E4.\n\n2. \uCF64\uBCF4\uAC00 \uC313\uC77C \uC218\uB85D
+    \uACE1\uC758 \uB9AC\uB4EC\uC774 \uBE68\uB77C\uC9D1\uB2C8\uB2E4.\n\n3. \uC0C1\uC810\uC774
+    \uB098\uD0C0\uB0A0 \uB54C, \uD654\uC0B4\uD45C\uAC00 \uC0C1\uC810\uC758 \uBC29\uD5A5\uC744
+    \uC548\uB0B4\uD574\uC90D\uB2C8\uB2E4.\n\n4. \uC0C1\uC810\uC5D0\uC11C \uACF5\uACA9,
+    \uD68C\uBCF5, \uB514\uBC84\uD504 \uB4F1 \uB2E4\uC591\uD55C \uB2A5\uB825\uC744
+    \uAC00\uC9C4 \uB3D9\uB8CC\uB4E4\uC744 \uC601\uC785\uD558\uACE0, \uC131\uC7A5\uC2DC\uD0A4\uC138\uC694."
 --- !u!1 &4521724037859741431
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,7 +232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &964817241783211417
 RectTransform:
   m_ObjectHideFlags: 0
