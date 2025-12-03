@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class NoteSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject notePrefab;
-    [SerializeField] private float noteDuration = 2f;  // ��Ʈ�� �����ǰ� ���������� �ɸ��� �ð�
-    [SerializeField] private RectTransform spawnPoint; // Canvas�� �߾� ����
+    [SerializeField] private float noteDuration = 2f;
+    [SerializeField] private RectTransform spawnPoint;
 
     [SerializeField] private int spawnInterval = 1;
     [SerializeField] private int nextSpawn = 0;
@@ -14,12 +14,9 @@ public class NoteSpawner : MonoBehaviour
     private float lastSpawnTime = 0f;
     private List<Note> activeNotes = new List<Note>();
 
-
     private float nextSpawnTime;
     private RhythmManager rhythmManager;
 
-
-    //for beat tracking
     [SerializeField] private bool waitforString = false;
     [SerializeField] private string stringToWaitFor = "MusicBody";
 
@@ -28,7 +25,6 @@ public class NoteSpawner : MonoBehaviour
         nextSpawn = spawnInterval;
         rhythmManager = RhythmManager.Instance;
 
-        //RhythmManager Subscribe.
         RhythmManager.markerUpdated += WaitForMarker;
         RhythmManager.beatUpdated += SpawnNote;
         RhythmManager.beatUpdated += SpawnMonster;
@@ -36,13 +32,11 @@ public class NoteSpawner : MonoBehaviour
 
     private void Start()
     {
-        PoolManager.Instance.CreatePool(notePrefab, 10); // 노트 10개 풀 미리 생성
+        PoolManager.Instance.CreatePool(notePrefab, 10);
     }
 
     private void OnDestroy()
     {
-
-        //RhythmManager unSubscribe.
         RhythmManager.markerUpdated -= WaitForMarker;
         RhythmManager.beatUpdated -= SpawnNote;
         RhythmManager.beatUpdated -= SpawnMonster;
@@ -50,12 +44,8 @@ public class NoteSpawner : MonoBehaviour
 
     private void Update()
     {
-        // BPM에 맞춰 노트 생성
-        //if (rhythmManager.SongPosition >= nextSpawnTime)
-        //{
-        //    SpawnNote();
-        //    nextSpawnTime += rhythmManager.SecPerBeat;
-        //}
+        // 비활성화된 노트 리스트에서 제거
+        CleanupInactiveNotes();
     }
 
     private void SpawnNote()
@@ -66,12 +56,10 @@ public class NoteSpawner : MonoBehaviour
             {
                 nextSpawn--;
             }
-            else 
+            else
             {
-                // Canvas의 중앙에 노트 생성 (풀에서 Get)
                 GameObject note = PoolManager.Instance.Get(notePrefab);
 
-                // 그룹핑
                 GameObject group = GameObject.Find("Note Group");
                 note.transform.parent = group.transform;
 
@@ -80,21 +68,22 @@ public class NoteSpawner : MonoBehaviour
                 Note noteComp = note.transform.GetChild(0).GetComponent<Note>();
                 if (noteComp != null)
                 {
-                    noteComp.poolPrefabRef = notePrefab; // 반환용 참조
+                    noteComp.poolPrefabRef = notePrefab;
+
+                    // activeNotes에 추가
+                    activeNotes.Add(noteComp);
                 }
 
                 nextSpawn = spawnInterval - 1;
             }
         }
-      
     }
 
     private void SpawnMonster()
     {
-        //test
-        //iCount++;
-        //Debug.Log("hi" + iCount);
+        // 기존 코드 유지
     }
+
     private void WaitForMarker()
     {
         if (RhythmManager.Instance.timelineInfo.lastMarker == stringToWaitFor)
@@ -103,44 +92,40 @@ public class NoteSpawner : MonoBehaviour
         }
     }
 
-    //private void UpdateNotes(float currentTime)
-    //{
-    //    foreach (Note note in activeNotes.ToList())
-    //    {
-    //        if (note == null) continue;
-
-    //        // 노트 크기 업데이트
-    //        note.UpdateScale(currentTime);
-
-    //        // 미스 체크 (너무 작아졌을 때)
-    //        if (note.transform.localScale.x < 0.05f && !note.isHit)
-    //        {
-    //            Debug.Log("Miss!");
-    //            activeNotes.Remove(note);
-    //            Destroy(note.gameObject);
-    //        }
-    //    }
-    //}
-
-    private void MoveNotes()
+    /// <summary>
+    /// 비활성화된 노트 정리
+    /// </summary>
+    private void CleanupInactiveNotes()
     {
-        foreach (Note note in activeNotes.ToList())
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
         {
-            if (note == null) continue;
-           // note.transform.position += Vector3.down * scrollSpeed * Time.deltaTime;
+            if (activeNotes[i] == null || !activeNotes[i].gameObject.activeInHierarchy)
+            {
+                activeNotes.RemoveAt(i);
+            }
         }
     }
 
+    /// <summary>
+    /// 가장 오래된(먼저 생성된) 노트 반환
+    /// </summary>
     public Note GetClosestNote()
     {
+        CleanupInactiveNotes();
         return activeNotes.Count > 0 ? activeNotes[0] : null;
     }
 
+    /// <summary>
+    /// 노트 리스트에서 제거
+    /// </summary>
     public void RemoveNote(Note note)
     {
-        activeNotes.Remove(note);
+        if (note != null)
+        {
+            activeNotes.Remove(note);
+        }
     }
-    
+
     public void StopSpawningNotes()
     {
         RhythmManager.beatUpdated -= SpawnNote;
