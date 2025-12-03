@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using FMODUnity;
 using FMOD.Studio;
+using System.Collections;
 
 
 public class PlayerController : MonoBehaviour
@@ -148,6 +149,10 @@ public class PlayerController : MonoBehaviour
         if (currentHealth <= 0)
         {
             Die();
+        }
+        else
+        {
+            StartCoroutine(DamageCoroutine());
         }
     }
 
@@ -350,6 +355,32 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("[PlayerController] 정방향 공격 시작!");
 
             }
+        }
+    }
+
+    // 데미지 효과 코루틴
+    private IEnumerator DamageCoroutine()
+    {
+        SpriteRenderer[] spriteRenderer =
+        {
+            transform.Find("UpperBody").GetComponent<SpriteRenderer>(),
+            transform.Find("LowerBody").GetComponent<SpriteRenderer>()
+        };
+        Color originalColor = spriteRenderer[0].color;
+        float damageEffectDuration = 0.5f;
+        
+        // 빨간색으로 변경
+        foreach (var sr in spriteRenderer)
+        {
+            sr.color = Color.red;
+        }
+        // 대기
+        yield return new WaitForSeconds(damageEffectDuration);
+        
+        // 원래 색상으로 복원
+        foreach (var sr in spriteRenderer)
+        {
+            sr.color = originalColor;
         }
     }
 }
