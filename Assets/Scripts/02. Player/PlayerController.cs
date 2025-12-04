@@ -31,6 +31,13 @@ public class PlayerController : MonoBehaviour
     private SphereCollider detectionCollider;
     private int attackCounter = 0;
 
+    [Header("피격 이펙트")]
+    [SerializeField] private float blinkDuration = 1f;
+    [SerializeField] private float blinkInterval = 0.1f;
+    private SpriteRenderer[] spriteRenderers;
+    private bool isBlinking = false;
+
+
     // 입력 변수
     private float horizontalInput;
     private float verticalInput;
@@ -83,6 +90,9 @@ public class PlayerController : MonoBehaviour
             lowerBodyAnimator = lowerBodyTransform.GetComponent<Animator>();
         else
             Debug.LogWarning("[PlayerController] LowerBody를 찾을 수 없습니다!");
+
+        // UpperBody, LowerBody의 모든 SpriteRenderer 캐싱
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
         currentHealth = maxHealth;
 
@@ -151,6 +161,11 @@ public class PlayerController : MonoBehaviour
     {
         currentHealth -= damage;
         Debug.Log("Player Health: " + currentHealth);
+
+        // 깜빡임 중이 아닐 때만 실행
+        if (!isBlinking)
+            StartCoroutine(BlinkEffect());
+
         if (currentHealth <= 0)
         {
             Die();
@@ -394,5 +409,28 @@ public class PlayerController : MonoBehaviour
         {
             sr.color = originalColor;
         }
+    }
+
+    // 깜빡임 코루틴 추가
+    private IEnumerator BlinkEffect()
+    {
+        isBlinking = true;
+        float elapsed = 0f;
+
+        while (elapsed < blinkDuration)
+        {
+            // 스프라이트 껐다 켰다
+            foreach (var sr in spriteRenderers)
+                sr.enabled = !sr.enabled;
+
+            yield return new WaitForSeconds(blinkInterval);
+            elapsed += blinkInterval;
+        }
+
+        // 원상 복구
+        foreach (var sr in spriteRenderers)
+            sr.enabled = true;
+
+        isBlinking = false;
     }
 }
