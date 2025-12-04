@@ -17,9 +17,9 @@ public class NoteJudge : MonoBehaviour
     public int TotalJudged => excellentCount + solidCount + goodCount + missCount;
 
     [Header("판정 설정")]
-    [SerializeField] private float excellentWindow = 0.1f;
-    [SerializeField] private float solidWindow = 0.2f;
-    [SerializeField] private float goodWindow = 0.3f;
+    [SerializeField] private float excellentWindow = 0.2f;
+    [SerializeField] private float solidWindow = 0.35f;
+    [SerializeField] private float goodWindow = 0.5f;
 
     [Header("참조")]
     [SerializeField] private NoteSpawner noteSpawner;
@@ -53,18 +53,24 @@ public class NoteJudge : MonoBehaviour
             Debug.LogError("NoteJudge: RhythmManager를 찾을 수 없습니다!");
     }
 
+ 
     public JudgementResult Judge()
     {
-        if (rhythmManager == null) return JudgementResult.Miss;
-
-        // 가장 가까운 노트 가져오기
         Note closestNote = noteSpawner.GetClosestNote();
 
-        // 비트 진행도로 판정
-        float beatProgress = GetBeatProgress();
-        JudgementResult result = GetJudgementFromProgress(beatProgress);
+        // 노트가 없으면 Miss
+        if (closestNote == null)
+        {
+            missCount++;
+            OnJudgement?.Invoke(JudgementResult.Miss);
+            PlayJudgementSound(JudgementResult.Miss);
+            return JudgementResult.Miss;
+        }
 
-        // 카운트 증가
+        // 노트의 타이밍 오차로 판정
+        float timingError = closestNote.GetTimingError();
+        JudgementResult result = GetJudgementFromError(timingError);
+
         switch (result)
         {
             case JudgementResult.Excellent: excellentCount++; break;
@@ -74,30 +80,31 @@ public class NoteJudge : MonoBehaviour
         }
 
         if (showDebugInfo)
-            Debug.Log($"Beat Progress: {beatProgress:F3}, Judgement: {result}");
+            Debug.Log($"Timing Error: {timingError:F3}s, Judgement: {result}");
 
-        // 노트에 판정 결과 전달 (색상 변경 + 사라짐 처리)
-        if (closestNote != null)
-        {
-            closestNote.Hit(result);
+        closestNote.Hit(result);
 
-            // Miss가 아니면 리스트에서 제거
-            if (result != JudgementResult.Miss)
-            {
-                noteSpawner.RemoveNote(closestNote);
-            }
-        }
+        if (result != JudgementResult.Miss)
+            noteSpawner.RemoveNote(closestNote);
 
-        // 이벤트 발생
         OnJudgement?.Invoke(result);
-
-        // 피드백
         PlayJudgementSound(result);
         ShowJudgementFeedback(result);
 
         return result;
     }
 
+    private JudgementResult GetJudgementFromError(float error)
+    {
+        if (error <= excellentWindow)
+            return JudgementResult.Excellent;
+        else if (error <= solidWindow)
+            return JudgementResult.Solid;
+        else if (error <= goodWindow)
+            return JudgementResult.Good;
+        else
+            return JudgementResult.Miss;
+    }
     public float Accuracy => TotalJudged > 0 ? (excellentCount + solidCount + goodCount) * 100f / TotalJudged : 0f;
 
     private float GetBeatProgress()

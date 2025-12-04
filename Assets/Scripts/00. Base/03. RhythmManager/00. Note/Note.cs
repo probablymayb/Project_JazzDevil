@@ -8,7 +8,7 @@ public class Note : MonoBehaviour
     [SerializeField] private Image approachCircle;
     [SerializeField] private Image targetCircle;
 
-    [Header("타이밍 설정")]
+    [Header("타이밍 설정 (Initialize로 덮어씌워짐)")]
     [SerializeField] private float shrinkDuration = 1f;
     [SerializeField] private float startScale = 3f;
     [SerializeField] private float targetScale = 1f;
@@ -24,9 +24,13 @@ public class Note : MonoBehaviour
 
     [Header("히트 이펙트")]
     [SerializeField] private float hitFadeDuration = 0.15f;
-    [SerializeField] private float hitDelay = 0.2f;  // 색상 유지 시간
+    [SerializeField] private float hitDelay = 0.2f;
+
+    [Header("Miss 허용 시간")]
+    [SerializeField] private float missWindow = 0.3f;  // 타겟 지난 후 Miss 판정 시간
 
     private float currentTime = 0f;
+    private float perfectTime;  // 정확한 판정 타이밍
     private RectTransform approachRect;
     private bool isHit = false;
     private float hitFadeTimer = 0f;
@@ -44,11 +48,11 @@ public class Note : MonoBehaviour
         if (approachCircle != null)
         {
             approachRect = approachCircle.GetComponent<RectTransform>();
-            approachDefaultColor = approachCircle.color;  // 기본 색상 저장
+            approachDefaultColor = approachCircle.color;
         }
         if (targetCircle != null)
         {
-            targetDefaultColor = targetCircle.color;  // 기본 색상 저장
+            targetDefaultColor = targetCircle.color;
         }
     }
 
@@ -58,7 +62,6 @@ public class Note : MonoBehaviour
         isHit = false;
         hitFadeTimer = 0f;
 
-        // 어프로치 서클 초기화 (색상 + 알파 + 크기)
         if (approachCircle != null)
         {
             Color c = approachDefaultColor;
@@ -67,7 +70,6 @@ public class Note : MonoBehaviour
             approachRect.localScale = Vector3.one * startScale;
         }
 
-        // 타겟 서클 초기화 (색상 + 알파 + 크기)
         if (targetCircle != null)
         {
             Color c = targetDefaultColor;
@@ -75,6 +77,15 @@ public class Note : MonoBehaviour
             targetCircle.color = c;
             targetCircle.rectTransform.localScale = Vector3.one * targetScale;
         }
+    }
+
+    /// <summary>
+    /// 정확한 도달 시간으로 초기화
+    /// </summary>
+    public void Initialize(float approachTime)
+    {
+        shrinkDuration = approachTime;
+        perfectTime = approachTime;
     }
 
     private void Update()
@@ -107,38 +118,55 @@ public class Note : MonoBehaviour
             return;
         }
 
-        // 일반 축소 로직
         currentTime += Time.deltaTime;
-        float progress = currentTime / shrinkDuration;
 
-        float currentScale = Mathf.Lerp(startScale, endScale, progress);
+        // 스케일 계산: perfectTime에 targetScale 도달
+        float progress = currentTime / perfectTime;
+        float currentScale;
 
-        if (approachRect != null)
-            approachRect.localScale = Vector3.one * currentScale;
-
-        // 타겟 지나면 페이드아웃
-        if (progress > 0.7f)
+        if (progress <= 1f)
         {
-            float fadeProgress = (progress - 0.7f) / 0.3f;
+            // 아직 타겟에 도달 전
+            currentScale = Mathf.Lerp(startScale, targetScale, progress);
+        }
+        else
+        {
+            // 타겟 지남 (Miss 영역)
+            float overProgress = (currentTime - perfectTime) / missWindow;
+            currentScale = Mathf.Lerp(targetScale, endScale, overProgress);
 
+            // 페이드아웃
+            float alpha = 1f - overProgress;
             if (approachCircle != null)
             {
                 Color c = approachCircle.color;
-                c.a = approachStartAlpha * (1f - fadeProgress);
+                c.a = approachStartAlpha * alpha;
                 approachCircle.color = c;
             }
             if (targetCircle != null)
             {
                 Color c = targetCircle.color;
-                c.a = targetStartAlpha * (1f - fadeProgress);
+                c.a = targetStartAlpha * alpha;
                 targetCircle.color = c;
             }
         }
 
-        if (progress >= 1f)
+        if (approachRect != null)
+            approachRect.localScale = Vector3.one * currentScale;
+
+        // 시간 초과 시 자동 사라짐 (Miss)
+        if (currentTime >= perfectTime + missWindow)
         {
             ReturnToPool();
         }
+    }
+
+    /// <summary>
+    /// 현재 판정 타이밍과의 오차 반환 (0 = 완벽)
+    /// </summary>
+    public float GetTimingError()
+    {
+        return Mathf.Abs(currentTime - perfectTime);
     }
 
     public void Hit(JudgementResult result)
@@ -162,12 +190,14 @@ public class Note : MonoBehaviour
 
         if (result != JudgementResult.Miss)
         {
-            if (result != JudgementResult.Miss)
-            {
-                // 바로 isHit = true 대신 코루틴으로 딜레이
-                StartCoroutine(HitWithDelay());
-            }
+            StartCoroutine(HitWithDelay());
         }
+    }
+
+    private IEnumerator HitWithDelay()
+    {
+        yield return new WaitForSeconds(hitDelay);
+        isHit = true;
     }
 
     private Color GetColorByResult(JudgementResult result)
@@ -185,11 +215,5 @@ public class Note : MonoBehaviour
     private void ReturnToPool()
     {
         PoolManager.Instance.Return(poolPrefabRef, transform.parent.gameObject);
-    }
-
-    private IEnumerator HitWithDelay() //판정노트 살짝 유지시키기
-    {
-        yield return new WaitForSeconds(hitDelay);  // 색상 유지
-        isHit = true;  // 이후 페이드아웃 시작
     }
 }
