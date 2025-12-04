@@ -36,6 +36,16 @@ public class MonsterSpawner : MonoBehaviour
     public float spawnIntervalReduction = 0.1f;
     public float minSpawnInterval = 0.3f;
 
+    [Header("플레이 영역 설정")]
+    [SerializeField] private GameObject[] wallObjects; // ✅ 4개 벽 할당
+    [SerializeField] private float wallPadding = 2f;   // 벽으로부터 여유 거리
+    [SerializeField] private float spawnHeight = 0.2f;
+
+    // 계산된 플레이 영역
+    private Vector2 playAreaMin;
+    private Vector2 playAreaMax;
+    private bool playAreaCalculated = false;
+
     private Coroutine spawnCoroutine;
     private Dictionary<int, WaveMonsterConfiguration> waveConfigCache;
     private HashSet<MonsterSO> cachedMonsterSOs = new HashSet<MonsterSO>();
@@ -45,11 +55,12 @@ public class MonsterSpawner : MonoBehaviour
     {
         if (waveManager == null)
         {
-            waveManager = FindObjectOfType<WaveManager>();
+            waveManager = FindFirstObjectByType<WaveManager>();
             if (waveManager == null)
                 Debug.LogError("[MonsterSpawner] WaveManager를 찾을 수 없습니다!");
         }
 
+        CalculatePlayAreaFromWalls(); // ✅ 플레이 영역 계산
         InitializeWaveConfigCache();
         CreatePoolsForAllMonsters();
         CacheAllMonsterSOs();
@@ -70,8 +81,58 @@ public class MonsterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 웨이브 설정을 딕셔너리로 캐시
+    /// ✅ 벽 오브젝트로부터 플레이 영역 자동 계산
     /// </summary>
+    private void CalculatePlayAreaFromWalls()
+    {
+        if (wallObjects == null || wallObjects.Length == 0)
+        {
+            Debug.LogWarning("[MonsterSpawner] wallObjects가 할당되지 않음. 기본 영역 사용.");
+            playAreaMin = new Vector2(-20f, -20f);
+            playAreaMax = new Vector2(20f, 20f);
+            playAreaCalculated = true;
+            return;
+        }
+
+        float minX = float.MaxValue, maxX = float.MinValue;
+        float minZ = float.MaxValue, maxZ = float.MinValue;
+
+        foreach (var wall in wallObjects)
+        {
+            if (wall == null) continue;
+
+            BoxCollider boxCol = wall.GetComponent<BoxCollider>();
+            if (boxCol != null)
+            {
+                Bounds bounds = boxCol.bounds;
+                
+                minX = Mathf.Min(minX, bounds.min.x);
+                maxX = Mathf.Max(maxX, bounds.max.x);
+                minZ = Mathf.Min(minZ, bounds.min.z);
+                maxZ = Mathf.Max(maxZ, bounds.max.z);
+            }
+            else
+            {
+                Renderer renderer = wall.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    Bounds bounds = renderer.bounds;
+                    
+                    minX = Mathf.Min(minX, bounds.min.x);
+                    maxX = Mathf.Max(maxX, bounds.max.x);
+                    minZ = Mathf.Min(minZ, bounds.min.z);
+                    maxZ = Mathf.Max(maxZ, bounds.max.z);
+                }
+            }
+        }
+
+        playAreaMin = new Vector2(minX, minZ);
+        playAreaMax = new Vector2(maxX, maxZ);
+        playAreaCalculated = true;
+
+        Debug.Log($"[MonsterSpawner] 플레이 영역 계산 완료: Min({playAreaMin.x:F1}, {playAreaMin.y:F1}), Max({playAreaMax.x:F1}, {playAreaMax.y:F1})");
+    }
+
     private void InitializeWaveConfigCache()
     {
         waveConfigCache = new Dictionary<int, WaveMonsterConfiguration>();
@@ -199,8 +260,12 @@ public class MonsterSpawner : MonoBehaviour
             spawnCoroutine = null;
         }
 
-        // 새 웨이브 시작 (웨이브 인덱스를 1부터 시작하도록 조정)
-        int waveNumber = waveManager != null ? waveManager.currentWave + 1 : 1;
+        if (!playAreaCalculated)
+        {
+            CalculatePlayAreaFromWalls();
+        }
+
+        int waveNumber = waveManager != null ? waveManager.currentWave : 1;
         Debug.Log($"[MonsterSpawner] 웨이브 {waveNumber} 스폰 시작 (지속시간: {duration}초)");
         
         spawnCoroutine = StartCoroutine(SpawnMonstersOverTime(waveNumber, duration));
@@ -243,11 +308,12 @@ public class MonsterSpawner : MonoBehaviour
         // 플레이어 기준으로 스폰 위치 설정 (없을 경우 맵 중앙)
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         Vector3 basePosition = player != null 
-            ? new Vector3(player.transform.position.x, 0.2f, player.transform.position.z) 
+            ? new Vector3(player.transform.position.x, spawnHeight, player.transform.position.z) 
             : Vector3.zero;
-        Vector3 spawnPosition = GetRandomSpawnPosition(basePosition);
+        
+        // ✅ 플레이 영역 내에서 랜덤 위치 생성
+        Vector3 spawnPosition = GetRandomSpawnPositionInBounds(basePosition);
 
-        // 풀에서 몬스터 가져오기
         GameObject newMonster = PoolManager.Instance.Get(prefabToSpawn);
         if (newMonster == null)
         {
@@ -270,7 +336,7 @@ public class MonsterSpawner : MonoBehaviour
             monsterAI.Initialize(hp, atk, spd);
             monsterAI.poolPrefabRef = prefabToSpawn;
             
-            Debug.Log($"[MonsterSpawner] Wave {waveNumber} {prefabToSpawn.name} | HP:{hp}, ATK:{atk}, SPD:{spd:F2}");
+            Debug.Log($"[MonsterSpawner] Wave {waveNumber} {prefabToSpawn.name} at {spawnPosition} | HP:{hp}, ATK:{atk}, SPD:{spd:F2}");
         }
         else
         {
@@ -279,8 +345,67 @@ public class MonsterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 웨이브에 따라 몬스터를 선택 (가중치 고려)
+    /// ✅ 플레이 영역 내에서 랜덤 위치 생성
     /// </summary>
+    private Vector3 GetRandomSpawnPositionInBounds(Vector3 basePosition)
+    {
+        int maxAttempts = 20;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            // 랜덤 방향과 거리
+            Vector2 randomCircle = Random.insideUnitCircle.normalized;
+            float distance = Random.Range(minDistance, maxDistance);
+            
+            Vector3 candidatePosition = basePosition + new Vector3(
+                randomCircle.x * distance, 
+                0, 
+                randomCircle.y * distance
+            );
+
+            // ✅ 플레이 영역 내부이고 최소 거리 만족하는지 확인
+            if (IsPositionInPlayArea(candidatePosition) && 
+                Vector3.Distance(new Vector3(candidatePosition.x, 0, candidatePosition.z), 
+                                new Vector3(basePosition.x, 0, basePosition.z)) >= minDistance)
+            {
+                candidatePosition.y = spawnHeight;
+                return candidatePosition;
+            }
+        }
+
+        // ✅ 실패 시 플레이어 근처 안전 위치 반환
+        Vector3 safePosition = ClampToPlayArea(basePosition);
+        safePosition.y = spawnHeight;
+        
+        Debug.LogWarning($"[MonsterSpawner] {maxAttempts}번 시도 후 유효한 위치를 찾지 못함. 안전 위치 사용: {safePosition}");
+        return safePosition;
+    }
+
+    /// <summary>
+    /// ✅ 위치가 플레이 영역 내부인지 확인
+    /// </summary>
+    private bool IsPositionInPlayArea(Vector3 position)
+    {
+        float x = position.x;
+        float z = position.z;
+
+        return x >= playAreaMin.x + wallPadding && 
+               x <= playAreaMax.x - wallPadding &&
+               z >= playAreaMin.y + wallPadding && 
+               z <= playAreaMax.y - wallPadding;
+    }
+
+    /// <summary>
+    /// ✅ 위치를 플레이 영역 내부로 제한
+    /// </summary>
+    private Vector3 ClampToPlayArea(Vector3 position)
+    {
+        float x = Mathf.Clamp(position.x, playAreaMin.x + wallPadding, playAreaMax.x - wallPadding);
+        float z = Mathf.Clamp(position.z, playAreaMin.y + wallPadding, playAreaMax.y - wallPadding);
+        
+        return new Vector3(x, position.y, z);
+    }
+
     private GameObject SelectMonsterForWave(int waveNumber)
     {
         WaveMonsterConfiguration config = GetWaveConfiguration(waveNumber);
@@ -391,36 +516,6 @@ public class MonsterSpawner : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// 플레이어 기준 랜덤한 위치 생성
-    /// </summary>
-    private Vector3 GetRandomSpawnPosition(Vector3 basePosition)
-    {
-        Vector3 spawnPosition;
-        float distance;
-        int attempts = 0;
-        const int maxAttempts = 10;
-
-        do
-        {
-            Vector2 randomCircle = Random.insideUnitCircle.normalized;
-            distance = Random.Range(minDistance, maxDistance);
-            spawnPosition = basePosition + new Vector3(randomCircle.x * distance, 0, randomCircle.y * distance);
-            attempts++;
-            
-            if (attempts > maxAttempts)
-            {
-                Debug.LogWarning("[MonsterSpawner] 적절한 스폰 위치를 찾을 수 없어 강제로 위치를 설정합니다.");
-                break;
-            }
-        } while (Vector3.Distance(spawnPosition, basePosition) < minDistance);
-
-        return spawnPosition;
-    }
-
-    /// <summary>
-    /// 현재 웨이브에서 사용 가능한 몬스터 종류 확인 (디버그용)
-    /// </summary>
     public void ShowCurrentWaveMonsters(int waveNumber)
     {
         WaveMonsterConfiguration config = GetWaveConfiguration(waveNumber);
@@ -464,8 +559,57 @@ public class MonsterSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 인스펙터에서 웨이브 설정 검증
+    /// ✅ 씬 뷰에서 플레이 영역 시각화
     /// </summary>
+    private void OnDrawGizmosSelected()
+    {
+        if (!playAreaCalculated && Application.isPlaying)
+            return;
+
+        if (!Application.isPlaying)
+        {
+            CalculatePlayAreaFromWalls();
+        }
+
+        // 전체 플레이 영역 (녹색)
+        Gizmos.color = Color.green;
+        Vector3 center = new Vector3(
+            (playAreaMin.x + playAreaMax.x) / 2f,
+            0.1f,
+            (playAreaMin.y + playAreaMax.y) / 2f
+        );
+        Vector3 size = new Vector3(
+            playAreaMax.x - playAreaMin.x,
+            0.1f,
+            playAreaMax.y - playAreaMin.y
+        );
+        Gizmos.DrawWireCube(center, size);
+
+        // 안전 영역 (패딩 적용, 노란색)
+        Gizmos.color = Color.yellow;
+        Vector3 safeCenter = new Vector3(
+            (playAreaMin.x + wallPadding + playAreaMax.x - wallPadding) / 2f,
+            0.1f,
+            (playAreaMin.y + wallPadding + playAreaMax.y - wallPadding) / 2f
+        );
+        Vector3 safeSize = new Vector3(
+            playAreaMax.x - playAreaMin.x - wallPadding * 2,
+            0.1f,
+            playAreaMax.y - playAreaMin.y - wallPadding * 2
+        );
+        Gizmos.DrawWireCube(safeCenter, safeSize);
+
+        // 스폰 범위 (플레이어 기준, 빨간색)
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+            Gizmos.DrawWireSphere(player.transform.position, minDistance);
+            Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f);
+            Gizmos.DrawWireSphere(player.transform.position, maxDistance);
+        }
+    }
+
     private void OnValidate()
     {
         // 웨이브 번호 중복 체크
