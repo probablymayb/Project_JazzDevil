@@ -303,6 +303,11 @@ MonoBehaviour:
   solidDamageMultiplier: 1.5
   goodDamageMultiplier: 1
   missDamageMultiplier: 0.5
+  excellentParticlePrefab: {fileID: 0}
+  solidParticlePrefab: {fileID: 0}
+  goodParticlePrefab: {fileID: 0}
+  missParticlePrefab: {fileID: 0}
+  particleLocalPos: {x: 0, y: 0, z: 5}
   showDebugInfo: 1
 --- !u!1 &124393458
 GameObject:
@@ -3377,6 +3382,22 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 8866614676552638162}
+    - target: {fileID: 5456103407087538781, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: fireThreshold
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5456103407087538781, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: particleLocalPos.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5456103407087538781, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: particleLocalPos.y
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5456103407087538781, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
+      propertyPath: particleLocalPos.z
+      value: 4.9
+      objectReference: {fileID: 0}
     - target: {fileID: 6640150673162809804, guid: e7d0f771f920a21449dea6d247c030ab, type: 3}
       propertyPath: player
       value: 
@@ -3980,6 +4001,11 @@ MonoBehaviour:
   solidDamageMultiplier: 1.5
   goodDamageMultiplier: 1
   missDamageMultiplier: 0.1
+  excellentParticlePrefab: {fileID: 2708598583397607911, guid: 6398d43fe79ea0140913dc5530c646af, type: 3}
+  solidParticlePrefab: {fileID: 5880797563127281583, guid: 265d3a5ba69981a4698ceabcedf368b0, type: 3}
+  goodParticlePrefab: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
+  missParticlePrefab: {fileID: 0}
+  particleLocalPos: {x: 0, y: -0.5, z: 2}
   showDebugInfo: 1
 --- !u!114 &1830606423 stripped
 MonoBehaviour:

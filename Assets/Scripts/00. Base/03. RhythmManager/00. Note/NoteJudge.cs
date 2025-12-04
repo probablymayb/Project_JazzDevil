@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-
+using System.Collections;
 public enum JudgementResult
 {
     None,
@@ -25,6 +25,7 @@ public class NoteJudge : MonoBehaviour
     [SerializeField] private NoteSpawner noteSpawner;
     [SerializeField] private JudgeNoteTextUI JudgeNoteTextUI;
 
+    
     public event Action<JudgementResult> OnJudgement;
 
     [Header("FMOD 사운드 이벤트")]
@@ -39,6 +40,16 @@ public class NoteJudge : MonoBehaviour
     [SerializeField] private float goodDamageMultiplier = 1.0f;
     [SerializeField] private float missDamageMultiplier = 0.1f;
 
+
+    [Header("판정 파티클")]
+    [SerializeField] private GameObject excellentParticlePrefab;
+    [SerializeField] private GameObject solidParticlePrefab;
+    [SerializeField] private GameObject goodParticlePrefab;
+    [SerializeField] private GameObject missParticlePrefab;
+    [SerializeField] private Vector3 particleLocalPos = new Vector3(0, 0, 5f);  // 화면 중앙
+
+    private Camera mainCamera;
+
     [Header("디버그")]
     [SerializeField] private bool showDebugInfo = true;
 
@@ -47,6 +58,8 @@ public class NoteJudge : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        mainCamera = Camera.main ?? FindFirstObjectByType<Camera>();
+
         rhythmManager = RhythmManager.Instance;
 
         if (rhythmManager == null)
@@ -89,9 +102,39 @@ public class NoteJudge : MonoBehaviour
 
         OnJudgement?.Invoke(result);
         PlayJudgementSound(result);
+        PlayJudgementParticle(result); 
         ShowJudgementFeedback(result);
 
         return result;
+    }
+    private void PlayJudgementParticle(JudgementResult result)
+    {
+        GameObject prefab = result switch
+        {
+            JudgementResult.Excellent => excellentParticlePrefab,
+            JudgementResult.Solid => solidParticlePrefab,
+            JudgementResult.Good => goodParticlePrefab,
+            JudgementResult.Miss => missParticlePrefab,
+            _ => null
+        };
+
+        if (prefab == null || mainCamera == null) return;
+
+        GameObject particle = PoolManager.Instance.Get(prefab);
+
+        // 카메라 자식으로 설정
+        particle.transform.SetParent(mainCamera.transform);
+        particle.transform.localPosition = particleLocalPos;
+        particle.transform.localRotation = Quaternion.identity;
+
+        var ps = particle.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Clear();
+            ps.Play();
+        }
+
+        StartCoroutine(ReturnParticleToPool(prefab, particle, 2f));
     }
 
     private JudgementResult GetJudgementFromError(float error)
@@ -159,5 +202,16 @@ public class NoteJudge : MonoBehaviour
     {
         if (showDebugInfo)
             Debug.Log($"Judgement UI: {result}");
+    }
+
+
+
+    private IEnumerator ReturnParticleToPool(GameObject prefab, GameObject particle, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // 풀 반환 전 부모 해제
+        particle.transform.SetParent(null);
+        PoolManager.Instance.Return(prefab, particle);
     }
 }
