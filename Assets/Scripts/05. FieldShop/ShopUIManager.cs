@@ -131,7 +131,7 @@ public class ShopUIManager : Singleton<ShopUIManager>
         {
             int currentLevel = SupporterManager.Instance.GetSupporterLevel(supporterSO.supporterType);
             int nextLevel = currentLevel + 1; // 업그레이드 후 레벨 표시
-            template = template.Insert(firstLineEnd, $" [Lv.{nextLevel}]");
+            template = template.Insert(firstLineEnd, $" <color=yellow><b>[Lv.{nextLevel}]</b></color>");
         }
 
         // 토큰 구성: (현재값->다음값) 또는 (현재값) 형태

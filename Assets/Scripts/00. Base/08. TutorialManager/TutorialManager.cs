@@ -1,3 +1,5 @@
+#define ALWAYS_TUTORIAL
+
 using UnityEngine;
 
 public class TutorialManager : Singleton<TutorialManager>
@@ -7,6 +9,13 @@ public class TutorialManager : Singleton<TutorialManager>
     protected override void Awake()
     {
         base.Awake();
+#if ALWAYS_TUTORIAL
+        // 항상 튜토리얼 팝업 띄우기
+        tutorialPopup.SetActive(true);
+
+        // 게임 상태를 Paused로 변경
+        GameManager.Instance.ChangeState(EGameState.Paused);
+#else
         // PlayerPrefs에서 튜토리얼 정보를 불러오기
         if (PlayerPrefs.GetInt("HasSeenTutorial", 0) == 0)
         {
@@ -24,6 +33,7 @@ public class TutorialManager : Singleton<TutorialManager>
             // 게임 상태를 Playing으로 변경
             GameManager.Instance.ChangeState(EGameState.Playing);
         }
+#endif
     }
 
     /// <summary>
