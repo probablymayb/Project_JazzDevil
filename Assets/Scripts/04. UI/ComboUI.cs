@@ -11,6 +11,13 @@ public class ComboUI : MonoBehaviour
     [SerializeField] private float punchScale = 1.3f;
     [SerializeField] private float punchDuration = 0.15f;
 
+    [Header("콤보 색상")]
+    [SerializeField] private Color defaultColor = Color.white;
+    [SerializeField] private Color bronzeColor = new Color(0.8f, 0.5f, 0.2f);    // 10+
+    [SerializeField] private Color silverColor = new Color(0.75f, 0.75f, 0.8f);  // 20+
+    [SerializeField] private Color goldColor = new Color(1f, 0.84f, 0f);         // 30+
+    [SerializeField] private Color rainbowColor = new Color(1f, 0.4f, 0.7f);     // 50+
+
     private void Start()
     {
         if (ComboManager.Instance != null)
@@ -19,7 +26,6 @@ public class ComboUI : MonoBehaviour
             ComboManager.Instance.OnComboBreak += OnComboBreak;
         }
 
-        // 초기 상태
         UpdateComboUI(0);
     }
 
@@ -36,7 +42,8 @@ public class ComboUI : MonoBehaviour
     {
         if (combo > 0)
         {
-            comboText.text = $"{combo}";
+            comboText.text = $"{combo} combo";
+            comboText.color = GetComboColor(combo);
             comboText.gameObject.SetActive(true);
 
             // 펀치 애니메이션
@@ -50,9 +57,17 @@ public class ComboUI : MonoBehaviour
         }
     }
 
+    private Color GetComboColor(int combo)
+    {
+        if (combo >= 50) return rainbowColor;
+        if (combo >= 30) return goldColor;
+        if (combo >= 20) return silverColor;
+        if (combo >= 10) return bronzeColor;
+        return defaultColor;
+    }
+
     private void OnComboBreak(int lastCombo)
     {
-        // 콤보 끊겼을 때 페이드아웃
         comboText.DOFade(0f, 0.3f).OnComplete(() =>
         {
             comboText.gameObject.SetActive(false);

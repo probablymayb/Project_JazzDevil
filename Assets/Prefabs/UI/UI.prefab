@@ -1398,7 +1398,7 @@ GameObject:
   - component: {fileID: 8819049740190931713}
   - component: {fileID: 5017546485126943277}
   m_Layer: 5
-  m_Name: NoteJudgeText (1)
+  m_Name: ComboText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1420,7 +1420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 29.875488, y: -82.112}
+  m_AnchoredPosition: {x: 29.875488, y: -24}
   m_SizeDelta: {x: 296.3299, y: 68.2214}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8819049740190931713
@@ -1444,7 +1444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.9568628, g: 0.7725491, b: 0.15686275, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1464,7 +1464,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: excellent
+  m_Text: 0 Combo
 --- !u!1 &3172997229855635886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2994,6 +2994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063a88b104ded8b498060be92ea15324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  comboText: {fileID: 5017546485126943277}
+  punchScale: 1.3
+  punchDuration: 0.15
 --- !u!1 &5671961434527261370
 GameObject:
   m_ObjectHideFlags: 0
