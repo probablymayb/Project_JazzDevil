@@ -94,6 +94,9 @@ MonoBehaviour:
   player: {fileID: 0}
   timer: {fileID: 8542359671574033155}
   waveManager: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningBlinkSpeed: 0.5
 --- !u!1 &258734905856028466
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,6 +261,9 @@ MonoBehaviour:
   player: {fileID: 0}
   timer: {fileID: 8542359671574033155}
   waveManager: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningBlinkSpeed: 0.5
 --- !u!114 &3659813587493577495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1380,6 +1386,85 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 2
   m_Text: "\uD14D\uC2A4\uD2B8\n\uD14D\uC2A4\uD2B8\n\uD14D\uC2A4\uD2B8"
+--- !u!1 &3137368136709708532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4553937258273497875}
+  - component: {fileID: 8819049740190931713}
+  - component: {fileID: 5017546485126943277}
+  m_Layer: 5
+  m_Name: NoteJudgeText (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4553937258273497875
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3137368136709708532}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2778897719271869542}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 29.875488, y: -82.112}
+  m_SizeDelta: {x: 296.3299, y: 68.2214}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8819049740190931713
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3137368136709708532}
+  m_CullTransparentMesh: 1
+--- !u!114 &5017546485126943277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3137368136709708532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: d213de783a9f65145ba813e3907ebd66, type: 3}
+    m_FontSize: 40
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 4
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: excellent
 --- !u!1 &3172997229855635886
 GameObject:
   m_ObjectHideFlags: 0
@@ -1684,6 +1769,9 @@ MonoBehaviour:
   player: {fileID: 0}
   timer: {fileID: 0}
   waveManager: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningBlinkSpeed: 0.5
 --- !u!114 &5403098770160391222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2264,6 +2352,9 @@ MonoBehaviour:
   player: {fileID: 0}
   timer: {fileID: 8542359671574033155}
   waveManager: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningBlinkSpeed: 0.5
 --- !u!1 &4198962022595492007
 GameObject:
   m_ObjectHideFlags: 0
@@ -2438,6 +2529,9 @@ MonoBehaviour:
   player: {fileID: 0}
   timer: {fileID: 0}
   waveManager: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningBlinkSpeed: 0.5
 --- !u!114 &7706340388979321703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2758,6 +2852,9 @@ MonoBehaviour:
   player: {fileID: 0}
   timer: {fileID: 0}
   waveManager: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningBlinkSpeed: 0.5
 --- !u!114 &2533549256208803223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2848,6 +2945,55 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &5518105452393597133
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2778897719271869542}
+  - component: {fileID: 5456103407087538781}
+  m_Layer: 5
+  m_Name: ComboUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2778897719271869542
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5518105452393597133}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4553937258273497875}
+  m_Father: {fileID: 8967741009738587808}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 467, y: 5}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5456103407087538781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5518105452393597133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063a88b104ded8b498060be92ea15324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5671961434527261370
 GameObject:
   m_ObjectHideFlags: 0
@@ -3885,6 +4031,7 @@ RectTransform:
   - {fileID: 2927951595494865442}
   - {fileID: 6409621997283580826}
   - {fileID: 8448675513595048462}
+  - {fileID: 2778897719271869542}
   - {fileID: 4859362542825864301}
   - {fileID: 6256016636243346555}
   m_Father: {fileID: 0}
