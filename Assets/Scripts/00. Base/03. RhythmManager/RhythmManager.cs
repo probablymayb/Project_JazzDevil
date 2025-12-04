@@ -32,6 +32,9 @@ public class RhythmManager : Singleton<RhythmManager>
         "Other"
     };
 
+    [Header("반복 설정")]
+    [SerializeField] private bool loopMusic = true;  // 음악 반복 여부
+
     [Header("전환 설정")]
     [SerializeField] private float fadeOutDuration = 0.5f;
     [SerializeField] private float fadeInDuration = 0.5f;
@@ -179,8 +182,13 @@ public class RhythmManager : Singleton<RhythmManager>
 
     private void Update()
     {
-        // 게임 상태가 Playing이 아니면 Update 수행하지 않음
         if (GameManager.Instance.CurrentGameState != EGameState.Playing) return;
+
+        // 음악 종료 체크
+        if (loopMusic)
+        {
+            CheckAndRestartMusic();
+        }
 
         // Timeline 마커 처리
         if (lastMarkerString != timelineInfo?.lastMarker)
@@ -196,6 +204,8 @@ public class RhythmManager : Singleton<RhythmManager>
             beatUpdated?.Invoke();
         }
 
+#if UNITY_EDITOR
+
         // 테스트 키 입력
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -206,8 +216,57 @@ public class RhythmManager : Singleton<RhythmManager>
         {
             RequestBPMIncrease();
         }
+#endif
+
     }
 
+    /// <summary>
+    /// 음악 종료 시 재시작
+    /// </summary>
+    private void CheckAndRestartMusic()
+    {
+        if (!CurrentMusicInstance.isValid()) return;
+        if (isTransitioning) return;
+
+        FMOD.Studio.PLAYBACK_STATE state;
+        CurrentMusicInstance.getPlaybackState(out state);
+
+        if (state == FMOD.Studio.PLAYBACK_STATE.STOPPED)
+        {
+            Debug.Log($"[RhythmManager] 음악 종료 감지, 재시작 (BPM: {currentBpm})");
+            RestartCurrentMusic();
+        }
+    }
+
+    /// <summary>
+    /// 현재 BPM 유지하며 음악 재시작
+    /// </summary>
+    private void RestartCurrentMusic()
+    {
+        // 기존 인스턴스 정리
+        if (CurrentMusicInstance.isValid())
+        {
+            CurrentMusicInstance.setUserData(IntPtr.Zero);
+            CurrentMusicInstance.release();
+        }
+
+        // 같은 BPM 인덱스로 새 인스턴스 생성
+        CurrentMusicInstance = RuntimeManager.CreateInstance(musicEvents[currentBpmIndex]);
+
+        // 세션 상태 복원
+        CopySessionStates(CurrentMusicInstance);
+
+        // 콜백 재설정
+        SetupTimelineCallback();
+
+        // 재생 시작
+        CurrentMusicInstance.start();
+
+        // 비트 카운터 리셋
+        lastBeat = 0;
+
+        Debug.Log($"[RhythmManager] 음악 재시작 완료 (BPM: {currentBpm})");
+    }
     /// <summary>
     /// 🆕 BPM 변경 요청 (다른 음원으로 전환)
     /// </summary>
