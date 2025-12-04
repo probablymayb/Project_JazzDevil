@@ -15,6 +15,9 @@ public class Shockwave : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private LayerMask enemyLayer;
+    
+    [Header("Hit Effect")]
+    [SerializeField] private GameObject hitEffectPrefab; // CFXR3 프리팹 할당
 
     // 충돌체 참조
     private SphereCollider damageCollider;
@@ -32,7 +35,7 @@ public class Shockwave : MonoBehaviour
         }
 
         damageCollider.isTrigger = true;
-        damageCollider.radius = 0.1f; // 시작 크기는 작게
+        damageCollider.radius = 0.1f;
 
         // 기본 적 레이어 설정
         if (enemyLayer.value == 0)
@@ -46,11 +49,8 @@ public class Shockwave : MonoBehaviour
 
     private void Start()
     {
-        // 시간이 지나면 자동 제거
         Destroy(gameObject, lifetime);
-
         StartCoroutine(ExpandCollider());
-       
     }
 
     // 외부에서 데미지 값 설정
@@ -111,18 +111,73 @@ public class Shockwave : MonoBehaviour
             if (monster != null)
             {
                 int monsterId = monster.GetInstanceID();
-                // 같은 몬스터에 중복 데미지 방지
+                
                 if (!damagedMonsterIds.Contains(monsterId))
                 {
                     monster.TakeDamage(damageAmount);
                     damagedMonsterIds.Add(monsterId);
-                    Debug.Log("monster damaged" + damageAmount);
+                    
+                    // 피격 이펙트 생성
+                    SpawnHitEffect(other.transform.position);
+                    
+                    Debug.Log($"[Shockwave] Monster damaged: {damageAmount}");
                 }
             }
         }
-        else
+    }
+
+    /// <summary>
+    /// 피격 위치에 이펙트 생성
+    /// </summary>
+    private void SpawnHitEffect(Vector3 hitPosition)
+    {
+        if (hitEffectPrefab == null)
         {
-            Debug.Log("enemyLayer.value: " + enemyLayer.value + ", Converted layer: " + (1 << other.gameObject.layer));
+            Debug.LogWarning("[Shockwave] hitEffectPrefab이 할당되지 않음!");
+            return;
+        }
+
+        // ✅ 어떤 프리팹이 사용되는지 확인
+        Debug.Log($"[Shockwave] 사용 중인 이펙트: {hitEffectPrefab.name}");
+
+        GameObject effect = PoolManager.Instance.Get(hitEffectPrefab);
+        if (effect != null)
+        {
+            Debug.Log($"[Shockwave] 생성된 이펙트 인스턴스: {effect.name} at {hitPosition}");
+            
+            effect.transform.position = hitPosition + Vector3.up * 0.5f;
+            effect.transform.rotation = Quaternion.identity;
+            effect.SetActive(true);
+            
+            ParticleSystem[] particles = effect.GetComponentsInChildren<ParticleSystem>();
+            Debug.Log($"[Shockwave] 파티클 시스템 수: {particles.Length}");
+            
+            foreach (var ps in particles)
+            {
+                ps.Clear();
+                ps.Play();
+                Debug.Log($"[Shockwave] 파티클 재생: {ps.name}");
+            }
+            
+            float maxDuration = 0f;
+            foreach (var ps in particles)
+            {
+                if (ps.main.duration > maxDuration)
+                    maxDuration = ps.main.duration + ps.main.startLifetime.constantMax;
+            }
+            
+            Debug.Log($"[Shockwave] 이펙트 지속시간: {maxDuration}초");
+            StartCoroutine(ReturnEffectToPool(effect, maxDuration));
+        }
+    }
+
+    private IEnumerator ReturnEffectToPool(GameObject effect, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        if (effect != null && PoolManager.Instance != null)
+        {
+            PoolManager.Instance.Return(hitEffectPrefab, effect);
         }
     }
 

@@ -17,9 +17,18 @@ public class HUD : MonoBehaviour
     public GameTimer timer;
     public WaveManager waveManager;
 
-    //몬스터 수 깜빡임
+    [Header("몬스터 카운트 경고 설정")]
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private Color warningColor = Color.red;
+    [SerializeField] private float warningBlinkSpeed = 0.5f;
+
+    // 타이틀 화면용 깜빡임
     private Coroutine blinkCoroutine;
     private bool isBlinking = false;
+
+    // 몬스터 카운트 경고용 깜빡임
+    private Coroutine monsterWarningCoroutine;
+    private bool isMonsterWarning = false;
 
     void LateUpdate()
     {
@@ -69,28 +78,30 @@ public class HUD : MonoBehaviour
                     {
                         if (monster.isClone) cloneCount++;
                     }
-                    // 최대치 표시
+                    
                     int maxCount = waveManager.maxEnemyThreshold;
                     myText.text = $"{cloneCount}ㅡ{maxCount}";
 
-                    // 깜빡임 여부 판정
                     float ratio = cloneCount / (float)maxCount;
+                    
                     if (ratio >= 0.8f)
                     {
-                        if (!isBlinking)
+                        // ✅ 80% 이상: 빨간색 깜빡임 시작
+                        if (!isMonsterWarning)
                         {
-                            blinkCoroutine = StartCoroutine(BlinkText());
-                            isBlinking = true;
+                            monsterWarningCoroutine = StartCoroutine(BlinkMonsterWarning());
+                            isMonsterWarning = true;
                         }
                     }
                     else
                     {
-                        if (isBlinking)
+                        // ✅ 80% 미만: 깜빡임 중지 및 원래 색상 복구
+                        if (isMonsterWarning)
                         {
-                            StopCoroutine(blinkCoroutine);
-                            isBlinking = false;
-                            // 원래 알파로 복구
-                            var c = myText.color;
+                            StopCoroutine(monsterWarningCoroutine);
+                            isMonsterWarning = false;
+                            
+                            var c = normalColor;
                             c.a = 1f;
                             myText.color = c;
                         }
@@ -100,19 +111,88 @@ public class HUD : MonoBehaviour
         }
     }
 
-    // 1초 간격으로 깜빡이는 코루틴
+    /// <summary>
+    /// 타이틀 화면용 깜빡임 (기존)
+    /// </summary>
     private System.Collections.IEnumerator BlinkText()
     {
         while (true)
         {
             var c = myText.color;
-            // 투명→불투명→투명 반복
             c.a = 0.2f;
             myText.color = c;
             yield return new WaitForSeconds(0.5f);
+            
             c.a = 1f;
             myText.color = c;
             yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    /// <summary>
+    /// 몬스터 카운트 경고용 빨간색 깜빡임 (새로 추가)
+    /// </summary>
+    private System.Collections.IEnumerator BlinkMonsterWarning()
+    {
+        while (true)
+        {
+            // 빨간색 반투명
+            var c = warningColor;
+            c.a = 0.3f;
+            myText.color = c;
+            yield return new WaitForSeconds(warningBlinkSpeed);
+            
+            // 빨간색 불투명
+            c.a = 1f;
+            myText.color = c;
+            yield return new WaitForSeconds(warningBlinkSpeed);
+        }
+    }
+
+    /// <summary>
+    /// 타이틀 화면에서 깜빡임 시작 (외부 호출용)
+    /// </summary>
+    public void StartTitleBlink()
+    {
+        if (!isBlinking && myText != null)
+        {
+            blinkCoroutine = StartCoroutine(BlinkText());
+            isBlinking = true;
+        }
+    }
+
+    /// <summary>
+    /// 타이틀 화면 깜빡임 중지 (외부 호출용)
+    /// </summary>
+    public void StopTitleBlink()
+    {
+        if (isBlinking && blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            isBlinking = false;
+            
+            if (myText != null)
+            {
+                var c = myText.color;
+                c.a = 1f;
+                myText.color = c;
+            }
+        }
+    }
+
+    private void OnDisable()
+    {
+        // 비활성화 시 모든 코루틴 정리
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            isBlinking = false;
+        }
+        
+        if (monsterWarningCoroutine != null)
+        {
+            StopCoroutine(monsterWarningCoroutine);
+            isMonsterWarning = false;
         }
     }
 }
