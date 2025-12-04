@@ -51,10 +51,8 @@ public class PlayerController : MonoBehaviour
     //Note Timing 판단
     [SerializeField] private NoteJudge noteJudge;
 
-
-    //Ride One sHot Audio
-    [SerializeField]
-    private EventReference rideOneShotSound;
+    [Header("Ride One Shot Audio")]
+    [SerializeField] private EventReference rideOneShotSound;
 
     private void Awake()
     {
@@ -92,6 +90,13 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationX |
                          RigidbodyConstraints.FreezeRotationY |
                          RigidbodyConstraints.FreezeRotationZ;
+
+        // ✅ Shockwave 풀 생성
+        if (shockwavePrefab != null)
+        {
+            PoolManager.Instance.CreatePool(shockwavePrefab, 10);
+            Debug.Log("[PlayerController] Shockwave 풀 생성 완료");
+        }
     }
 
     private void Update()
@@ -272,18 +277,25 @@ public class PlayerController : MonoBehaviour
             // 충격파 생성
             if (shockwavePrefab != null)
             {
-                GameObject shockwave = Instantiate(shockwavePrefab, nearestMonster.transform.position, Quaternion.identity);
-
-                // Shockwave 컴포넌트가 있다면 초기화
-                Shockwave shockwaveComponent = shockwave.GetComponent<Shockwave>();
-                if (shockwaveComponent != null)
+                // ✅ PoolManager에서 가져오기 (Instantiate 대신)
+                GameObject shockwave = PoolManager.Instance.Get(shockwavePrefab);
+                
+                if (shockwave != null)
                 {
-                    shockwaveComponent.Initialize(damage);
-                }
-                else
-                {
-                    // Shockwave 컴포넌트가 없는 경우 직접 데미지 처리
-                    nearestMonster.TakeDamage(damage);
+                    shockwave.transform.position = nearestMonster.transform.position;
+                    shockwave.transform.rotation = Quaternion.identity;
+                    
+                    Shockwave shockwaveComponent = shockwave.GetComponent<Shockwave>();
+                    if (shockwaveComponent != null)
+                    {
+                        shockwaveComponent.Initialize(damage);
+                        Debug.Log($"[PlayerController] Shockwave 생성: Damage {damage}");
+                    }
+                    else
+                    {
+                        Debug.LogError("[PlayerController] Shockwave 컴포넌트 없음!");
+                        nearestMonster.TakeDamage(damage);
+                    }
                 }
             }
             else
