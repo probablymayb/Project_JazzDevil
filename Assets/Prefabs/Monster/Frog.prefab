@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 026ff29cb908be04ba2432dc723a65b4, type: 3}
+  m_Sprite: {fileID: 44054565, guid: fbaa6b02281dedf409f9e40bf26b4fd0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -461,7 +461,6 @@ MonoBehaviour:
   hpBarImage: {fileID: 2553222081900611240}
   hpBarTransform: {fileID: 1604985559475219826}
   monsterData: {fileID: 11400000, guid: ddd6c6fe6d09d3a48976ee493dd06f28, type: 2}
-  attackDamage: 1
   goldReward: 10
   isClone: 0
   fixedPosition: {x: 0, y: 0, z: 0}
